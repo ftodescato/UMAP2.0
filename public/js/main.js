@@ -35446,29 +35446,1842 @@ angular.module('ui.router.state')
   .filter('isState', $IsStateFilter)
   .filter('includedByState', $IncludedByStateFilter);
 })(window, window.angular);
+/**
+ * Satellizer 0.14.0
+ * (c) 2016 Sahat Yalkabov
+ * License: MIT
+ */
+
+// CommonJS package manager support.
+if (typeof module !== 'undefined' && typeof exports !== 'undefined' && module.exports === exports) {
+  module.exports = 'satellizer';
+}
+
+(function(window, angular, undefined) {
+  'use strict';
+
+  if (!window.location.origin) {
+    window.location.origin = window.location.protocol + '//' + window.location.hostname + (window.location.port ? (':' + window.location.port) : '');
+  }
+
+  angular.module('satellizer', [])
+    .constant('SatellizerConfig', {
+      httpInterceptor: function() { return true; },
+      withCredentials: false,
+      tokenRoot: null,
+      baseUrl: '/',
+      loginUrl: '/auth/login',
+      signupUrl: '/auth/signup',
+      unlinkUrl: '/auth/unlink/',
+      tokenName: 'token',
+      tokenPrefix: 'satellizer',
+      authHeader: 'Authorization',
+      authToken: 'Bearer',
+      storageType: 'localStorage',
+      providers: {
+        facebook: {
+          name: 'facebook',
+          url: '/auth/facebook',
+          authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',
+          redirectUri: window.location.origin + '/',
+          requiredUrlParams: ['display', 'scope'],
+          scope: ['email'],
+          scopeDelimiter: ',',
+          display: 'popup',
+          oauthType: '2.0',
+          popupOptions: { width: 580, height: 400 }
+        },
+        google: {
+          name: 'google',
+          url: '/auth/google',
+          authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
+          redirectUri: window.location.origin,
+          requiredUrlParams: ['scope'],
+          optionalUrlParams: ['display'],
+          scope: ['profile', 'email'],
+          scopePrefix: 'openid',
+          scopeDelimiter: ' ',
+          display: 'popup',
+          oauthType: '2.0',
+          popupOptions: { width: 452, height: 633 }
+        },
+        github: {
+          name: 'github',
+          url: '/auth/github',
+          authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+          redirectUri: window.location.origin,
+          optionalUrlParams: ['scope'],
+          scope: ['user:email'],
+          scopeDelimiter: ' ',
+          oauthType: '2.0',
+          popupOptions: { width: 1020, height: 618 }
+        },
+        instagram: {
+          name: 'instagram',
+          url: '/auth/instagram',
+          authorizationEndpoint: 'https://api.instagram.com/oauth/authorize',
+          redirectUri: window.location.origin,
+          requiredUrlParams: ['scope'],
+          scope: ['basic'],
+          scopeDelimiter: '+',
+          oauthType: '2.0'
+        },
+        linkedin: {
+          name: 'linkedin',
+          url: '/auth/linkedin',
+          authorizationEndpoint: 'https://www.linkedin.com/uas/oauth2/authorization',
+          redirectUri: window.location.origin,
+          requiredUrlParams: ['state'],
+          scope: ['r_emailaddress'],
+          scopeDelimiter: ' ',
+          state: 'STATE',
+          oauthType: '2.0',
+          popupOptions: { width: 527, height: 582 }
+        },
+        twitter: {
+          name: 'twitter',
+          url: '/auth/twitter',
+          authorizationEndpoint: 'https://api.twitter.com/oauth/authenticate',
+          redirectUri: window.location.origin,
+          oauthType: '1.0',
+          popupOptions: { width: 495, height: 645 }
+        },
+        twitch: {
+          name: 'twitch',
+          url: '/auth/twitch',
+          authorizationEndpoint: 'https://api.twitch.tv/kraken/oauth2/authorize',
+          redirectUri: window.location.origin,
+          requiredUrlParams: ['scope'],
+          scope: ['user_read'],
+          scopeDelimiter: ' ',
+          display: 'popup',
+          oauthType: '2.0',
+          popupOptions: { width: 500, height: 560 }
+        },
+        live: {
+          name: 'live',
+          url: '/auth/live',
+          authorizationEndpoint: 'https://login.live.com/oauth20_authorize.srf',
+          redirectUri: window.location.origin,
+          requiredUrlParams: ['display', 'scope'],
+          scope: ['wl.emails'],
+          scopeDelimiter: ' ',
+          display: 'popup',
+          oauthType: '2.0',
+          popupOptions: { width: 500, height: 560 }
+        },
+        yahoo: {
+          name: 'yahoo',
+          url: '/auth/yahoo',
+          authorizationEndpoint: 'https://api.login.yahoo.com/oauth2/request_auth',
+          redirectUri: window.location.origin,
+          scope: [],
+          scopeDelimiter: ',',
+          oauthType: '2.0',
+          popupOptions: { width: 559, height: 519 }
+        },
+        bitbucket: {
+          name: 'bitbucket',
+          url: '/auth/bitbucket',
+          authorizationEndpoint: 'https://bitbucket.org/site/oauth2/authorize',
+          redirectUri: window.location.origin + '/',
+          requiredUrlParams: ['scope'],
+          scope: ['email'],
+          scopeDelimiter: ' ',
+          oauthType: '2.0',
+          popupOptions: { width: 1028, height: 529 }
+        }
+      }
+    })
+    .provider('$auth', ['SatellizerConfig', function(config) {
+      Object.defineProperties(this, {
+        httpInterceptor: {
+          get: function() { return config.httpInterceptor; },
+          set: function(value) {
+            if (typeof value === 'function') {
+              config.httpInterceptor = value;
+            } else {
+              config.httpInterceptor = function() {
+                return value;
+              };
+            }
+          }
+        },
+        baseUrl: {
+          get: function() { return config.baseUrl; },
+          set: function(value) { config.baseUrl = value; }
+        },
+        loginUrl: {
+          get: function() { return config.loginUrl; },
+          set: function(value) { config.loginUrl = value; }
+        },
+        signupUrl: {
+          get: function() { return config.signupUrl; },
+          set: function(value) { config.signupUrl = value; }
+        },
+        tokenRoot: {
+          get: function() { return config.tokenRoot; },
+          set: function(value) { config.tokenRoot = value; }
+        },
+        tokenName: {
+          get: function() { return config.tokenName; },
+          set: function(value) { config.tokenName = value; }
+        },
+        tokenPrefix: {
+          get: function() { return config.tokenPrefix; },
+          set: function(value) { config.tokenPrefix = value; }
+        },
+        unlinkUrl: {
+          get: function() { return config.unlinkUrl; },
+          set: function(value) { config.unlinkUrl = value; }
+        },
+        authHeader: {
+          get: function() { return config.authHeader; },
+          set: function(value) { config.authHeader = value; }
+        },
+        authToken: {
+          get: function() { return config.authToken; },
+          set: function(value) { config.authToken = value; }
+        },
+        withCredentials: {
+          get: function() { return config.withCredentials; },
+          set: function(value) { config.withCredentials = value; }
+        },
+        storageType: {
+          get: function() { return config.storageType; },
+          set: function(value) { config.storageType = value; }
+        }
+      });
+
+      angular.forEach(Object.keys(config.providers), function(provider) {
+        this[provider] = function(params) {
+          return angular.extend(config.providers[provider], params);
+        };
+      }, this);
+
+      var oauth = function(params) {
+        config.providers[params.name] = config.providers[params.name] || {};
+        angular.extend(config.providers[params.name], params);
+      };
+
+      this.oauth1 = function(params) {
+        oauth(params);
+        config.providers[params.name].oauthType = '1.0';
+      };
+
+      this.oauth2 = function(params) {
+        oauth(params);
+        config.providers[params.name].oauthType = '2.0';
+      };
+
+      this.$get = [
+        '$q',
+        'SatellizerShared',
+        'SatellizerLocal',
+        'SatellizerOauth',
+        function($q, shared, local, oauth) {
+          var $auth = {};
+
+          $auth.login = function(user, opts) {
+            return local.login(user, opts);
+          };
+
+          $auth.signup = function(user, options) {
+            return local.signup(user, options);
+          };
+
+          $auth.logout = function() {
+            return shared.logout();
+          };
+
+          $auth.authenticate = function(name, userData) {
+            return oauth.authenticate(name, userData);
+          };
+
+          $auth.link = function(name, userData) {
+            return oauth.authenticate(name, userData);
+          };
+
+          $auth.unlink = function(provider, opts) {
+            return oauth.unlink(provider, opts);
+          };
+
+          $auth.isAuthenticated = function() {
+            return shared.isAuthenticated();
+          };
+
+          $auth.getToken = function() {
+            return shared.getToken();
+          };
+
+          $auth.setToken = function(token) {
+            shared.setToken({ access_token: token });
+          };
+
+          $auth.removeToken = function() {
+            return shared.removeToken();
+          };
+
+          $auth.getPayload = function() {
+            return shared.getPayload();
+          };
+
+          $auth.setStorageType = function(type) {
+            return shared.setStorageType(type);
+          };
+
+          return $auth;
+        }];
+    }])
+    .factory('SatellizerShared', [
+      '$q',
+      '$window',
+      '$log',
+      'SatellizerConfig',
+      'SatellizerStorage',
+      function($q, $window, $log, config, storage) {
+        var Shared = {};
+
+        var tokenName = config.tokenPrefix ? [config.tokenPrefix, config.tokenName].join('_') : config.tokenName;
+
+        Shared.getToken = function() {
+          return storage.get(tokenName);
+        };
+
+        Shared.getPayload = function() {
+          var token = storage.get(tokenName);
+
+          if (token && token.split('.').length === 3) {
+            try {
+              var base64Url = token.split('.')[1];
+              var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+              return JSON.parse(decodeURIComponent(escape(window.atob(base64))));
+            } catch(e) {
+              return undefined;
+            }
+          }
+        };
+
+        Shared.setToken = function(response) {
+          if (!response) {
+            return $log.warn('Can\'t set token without passing a value');
+          }
+
+          var accessToken = response && response.access_token;
+          var token;
+
+          if (accessToken) {
+            if (angular.isObject(accessToken) && angular.isObject(accessToken.data)) {
+              response = accessToken;
+            } else if (angular.isString(accessToken)) {
+              token = accessToken;
+            }
+          }
+
+          if (!token && response) {
+            var tokenRootData = config.tokenRoot && config.tokenRoot.split('.').reduce(function(o, x) { return o[x]; }, response.data);
+            token = tokenRootData ? tokenRootData[config.tokenName] : response.data && response.data[config.tokenName];
+          }
+
+          if (!token) {
+            var tokenPath = config.tokenRoot ? config.tokenRoot + '.' + config.tokenName : config.tokenName;
+            return $log.warn('Expecting a token named "' + tokenPath);
+          }
+
+          storage.set(tokenName, token);
+        };
+
+        Shared.removeToken = function() {
+          storage.remove(tokenName);
+        };
+
+        /**
+         * @returns {boolean}
+         */
+        Shared.isAuthenticated = function() {
+          var token = storage.get(tokenName);
+          // A token is present
+          if (token) {
+            // Token with a valid JWT format XXX.YYY.ZZZ
+            if (token.split('.').length === 3) {
+              // Could be a valid JWT or an access token with the same format
+              try {
+                var base64Url = token.split('.')[1];
+                var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                var exp = JSON.parse($window.atob(base64)).exp;
+                // JWT with an optonal expiration claims
+                if (exp) {
+                  var isExpired = Math.round(new Date().getTime() / 1000) >= exp;
+                  if (isExpired) {
+                    // FAIL: Expired token
+                    return false;
+                  } else {
+                    // PASS: Non-expired token
+                    return true;
+                  }
+                }
+              } catch(e) {
+                // PASS: Non-JWT token that looks like JWT
+                return true;
+              }
+            }
+            // PASS: All other tokens
+            return true;
+          }
+          // FAIL: No token at all
+          return false;
+        };
+
+        Shared.logout = function() {
+          storage.remove(tokenName);
+          return $q.when();
+        };
+
+        Shared.setStorageType = function(type) {
+          config.storageType = type;
+        };
+
+        return Shared;
+      }])
+    .factory('SatellizerOauth', [
+      '$q',
+      '$http',
+      'SatellizerConfig',
+      'SatellizerUtils',
+      'SatellizerShared',
+      'SatellizerOauth1',
+      'SatellizerOauth2',
+      function($q, $http, config, utils, shared, Oauth1, Oauth2) {
+        var Oauth = {};
+
+        Oauth.authenticate = function(name, userData) {
+          var provider = config.providers[name].oauthType === '1.0' ? new Oauth1() : new Oauth2();
+          var deferred = $q.defer();
+
+          provider.open(config.providers[name], userData || {})
+            .then(function(response) {
+              // This is for a scenario when someone wishes to opt out from
+              // Satellizer's magic by doing authorization code exchange and
+              // saving a token manually.
+              if (config.providers[name].url) {
+                shared.setToken(response, false);
+              }
+              deferred.resolve(response);
+            })
+            .catch(function(error) {
+              deferred.reject(error);
+            });
+
+          return deferred.promise;
+        };
+
+        Oauth.unlink = function(provider, opts) {
+          opts = opts || {};
+          opts.url = opts.url ? opts.url : utils.joinUrl(config.baseUrl, config.unlinkUrl);
+          opts.data = { provider: provider } || opts.data;
+          opts.method = opts.method || 'POST';
+          opts.withCredentials = opts.withCredentials || config.withCredentials;
+
+          return $http(opts);
+        };
+
+        return Oauth;
+      }])
+    .factory('SatellizerLocal', [
+      '$http',
+      'SatellizerUtils',
+      'SatellizerShared',
+      'SatellizerConfig',
+      function($http, utils, shared, config) {
+        var Local = {};
+
+        Local.login = function(user, opts) {
+          opts = opts || {};
+          opts.url = opts.url ? opts.url : utils.joinUrl(config.baseUrl, config.loginUrl);
+          opts.data = user || opts.data;
+          opts.method = opts.method || 'POST';
+          opts.withCredentials = opts.withCredentials || config.withCredentials;
+
+          return $http(opts).then(function(response) {
+            shared.setToken(response);
+            return response;
+          });
+        };
+
+        Local.signup = function(user, opts) {
+          opts = opts || {};
+          opts.url = opts.url ? opts.url : utils.joinUrl(config.baseUrl, config.signupUrl);
+          opts.data = user || opts.data;
+          opts.method = opts.method || 'POST';
+          opts.withCredentials = opts.withCredentials || config.withCredentials;
+
+          return $http(opts);
+        };
+
+        return Local;
+      }])
+    .factory('SatellizerOauth2', [
+      '$q',
+      '$http',
+      '$window',
+      '$timeout',
+      'SatellizerPopup',
+      'SatellizerUtils',
+      'SatellizerConfig',
+      'SatellizerStorage',
+      function($q, $http, $window, $timeout, popup, utils, config, storage) {
+        return function() {
+          var Oauth2 = {};
+
+          var defaults = {
+            defaultUrlParams: ['response_type', 'client_id', 'redirect_uri'],
+            responseType: 'code',
+            responseParams: {
+              code: 'code',
+              clientId: 'clientId',
+              redirectUri: 'redirectUri'
+            }
+          };
+
+          Oauth2.open = function(options, userData) {
+            defaults = utils.merge(options, defaults);
+            var defer = $q.defer();
+
+            $timeout(function () {
+              var url;
+              var openPopup;
+              var stateName = defaults.name + '_state';
+
+              if (angular.isFunction(defaults.state)) {
+                storage.set(stateName, defaults.state());
+              } else if (angular.isString(defaults.state)) {
+                storage.set(stateName, defaults.state);
+              }
+
+              url = [defaults.authorizationEndpoint, Oauth2.buildQueryString()].join('?');
+
+              if (window.cordova) {
+                openPopup = popup.open(url, defaults.name, defaults.popupOptions, defaults.redirectUri).eventListener(defaults.redirectUri);
+              } else {
+                openPopup = popup.open(url, defaults.name, defaults.popupOptions, defaults.redirectUri).pollPopup(defaults.redirectUri);
+              }
+
+              return openPopup
+                .then(function(oauthData) {
+                  // When no server URL provided, return popup params as-is.
+                  // This is for a scenario when someone wishes to opt out from
+                  // Satellizer's magic by doing authorization code exchange and
+                  // saving a token manually.
+                  if (defaults.responseType === 'token' || !defaults.url) {
+                    defer.resolve(oauthData);
+                  }
+
+                if (oauthData.state && oauthData.state !== storage.get(stateName)) {
+                  return defer.reject(
+                    'The value returned in the state parameter does not match the state value from your original ' +
+                    'authorization code request.'
+                  );
+                }
+
+                  defer.resolve(Oauth2.exchangeForToken(oauthData, userData));
+                });
+            });
+
+            return defer.promise;
+          };
+
+          Oauth2.exchangeForToken = function(oauthData, userData) {
+            var data = angular.extend({}, userData);
+
+            angular.forEach(defaults.responseParams, function(value, key) {
+              switch (key) {
+                case 'code':
+                  data[value] = oauthData.code;
+                  break;
+                case 'clientId':
+                  data[value] = defaults.clientId;
+                  break;
+                case 'redirectUri':
+                  data[value] = defaults.redirectUri;
+                  break;
+                default:
+                  data[value] = oauthData[key];
+              }
+            });
+
+            if (oauthData.state) {
+              data.state = oauthData.state;
+            }
+
+            var exchangeForTokenUrl = config.baseUrl ? utils.joinUrl(config.baseUrl, defaults.url) : defaults.url;
+
+            return $http.post(exchangeForTokenUrl, data, { withCredentials: config.withCredentials });
+          };
+
+          Oauth2.buildQueryString = function() {
+            var keyValuePairs = [];
+            var urlParamsCategories = ['defaultUrlParams', 'requiredUrlParams', 'optionalUrlParams'];
+
+            angular.forEach(urlParamsCategories, function(paramsCategory) {
+              angular.forEach(defaults[paramsCategory], function(paramName) {
+                var camelizedName = utils.camelCase(paramName);
+                var paramValue = angular.isFunction(defaults[paramName]) ? defaults[paramName]() : defaults[camelizedName];
+
+                if (paramName === 'redirect_uri' && !paramValue) {
+                    return;
+                }
+
+                if (paramName === 'state') {
+                  var stateName = defaults.name + '_state';
+                  paramValue = encodeURIComponent(storage.get(stateName));
+                }
+
+                if (paramName === 'scope' && Array.isArray(paramValue)) {
+                  paramValue = paramValue.join(defaults.scopeDelimiter);
+
+                  if (defaults.scopePrefix) {
+                    paramValue = [defaults.scopePrefix, paramValue].join(defaults.scopeDelimiter);
+                  }
+                }
+
+                keyValuePairs.push([paramName, paramValue]);
+              });
+            });
+
+            return keyValuePairs.map(function(pair) {
+              return pair.join('=');
+            }).join('&');
+          };
+
+          return Oauth2;
+        };
+      }])
+    .factory('SatellizerOauth1', [
+      '$q',
+      '$http',
+      'SatellizerPopup',
+      'SatellizerConfig',
+      'SatellizerUtils',
+      function($q, $http, popup, config, utils) {
+        return function() {
+          var Oauth1 = {};
+
+          var defaults = {
+            url: null,
+            name: null,
+            popupOptions: null,
+            redirectUri: null,
+            authorizationEndpoint: null
+          };
+
+          Oauth1.open = function(options, userData) {
+            angular.extend(defaults, options);
+            var popupWindow;
+            var serverUrl = config.baseUrl ? utils.joinUrl(config.baseUrl, defaults.url) : defaults.url;
+
+            if (!window.cordova) {
+                popupWindow = popup.open('', defaults.name, defaults.popupOptions, defaults.redirectUri);
+            }
+
+            return $http.post(serverUrl, defaults)
+              .then(function(response) {
+                var url = [defaults.authorizationEndpoint, Oauth1.buildQueryString(response.data)].join('?');
+
+                if (window.cordova) {
+                  popupWindow = popup.open(url, defaults.name, defaults.popupOptions, defaults.redirectUri);
+                } else {
+                  popupWindow.popupWindow.location = url;
+                }
+
+                var popupListener;
+
+                if (window.cordova) {
+                  popupListener = popupWindow.eventListener(defaults.redirectUri);
+                } else {
+                  popupListener = popupWindow.pollPopup(defaults.redirectUri);
+                }
+
+                return popupListener
+                  .then(function(response) {
+                    return Oauth1.exchangeForToken(response, userData);
+                  });
+              });
+
+          };
+
+          Oauth1.exchangeForToken = function(oauthData, userData) {
+            var data = angular.extend({}, userData, oauthData);
+            var exchangeForTokenUrl = config.baseUrl ? utils.joinUrl(config.baseUrl, defaults.url) : defaults.url;
+            return $http.post(exchangeForTokenUrl, data, { withCredentials: config.withCredentials });
+          };
+
+          Oauth1.buildQueryString = function(obj) {
+            var str = [];
+
+            angular.forEach(obj, function(value, key) {
+              str.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+            });
+
+            return str.join('&');
+          };
+
+          return Oauth1;
+        };
+      }])
+    .factory('SatellizerPopup', [
+      '$q',
+      '$interval',
+      '$window',
+      'SatellizerConfig',
+      'SatellizerUtils',
+      function($q, $interval, $window, config, utils) {
+        var Popup = {};
+
+        Popup.url = '';
+        Popup.popupWindow = null;
+
+        Popup.open = function(url, name, options) {
+          Popup.url = url;
+
+          var stringifiedOptions = Popup.stringifyOptions(Popup.prepareOptions(options));
+          var UA = $window.navigator.userAgent;
+          var windowName = (window.cordova || UA.indexOf('CriOS') > -1) ? '_blank' : name;
+
+          Popup.popupWindow = $window.open(url, windowName, stringifiedOptions);
+
+          $window.popup = Popup.popupWindow;
+
+          if (Popup.popupWindow && Popup.popupWindow.focus) {
+            Popup.popupWindow.focus();
+          }
+
+          return Popup;
+        };
+
+        Popup.eventListener = function(redirectUri) {
+          var deferred = $q.defer();
+
+          Popup.popupWindow.addEventListener('loadstart', function(event) {
+            if (event.url.indexOf(redirectUri) !== 0) {
+              return;
+            }
+
+            var parser = document.createElement('a');
+            parser.href = event.url;
+
+            if (parser.search || parser.hash) {
+              var queryParams = parser.search.substring(1).replace(/\/$/, '');
+              var hashParams = parser.hash.substring(1).replace(/\/$/, '');
+              var hash = utils.parseQueryString(hashParams);
+              var qs = utils.parseQueryString(queryParams);
+
+              angular.extend(qs, hash);
+
+              if (!qs.error) {
+                deferred.resolve(qs);
+              }
+
+              Popup.popupWindow.close();
+            }
+          });
+
+          Popup.popupWindow.addEventListener('loaderror', function() {
+            deferred.reject('Authorization Failed');
+          });
+
+          return deferred.promise;
+        };
+
+        Popup.pollPopup = function(redirectUri) {
+          var deferred = $q.defer();
+
+          var redirectUriParser = document.createElement('a');
+          redirectUriParser.href = redirectUri;
+
+          var redirectUriPath = utils.getFullUrlPath(redirectUriParser);
+
+          var polling = $interval(function() {
+            if (!Popup.popupWindow || Popup.popupWindow.closed || Popup.popupWindow.closed === undefined) {
+              deferred.reject('The popup window was closed.');
+              $interval.cancel(polling);
+            }
+
+            try {
+              var popupWindowPath = utils.getFullUrlPath(Popup.popupWindow.location);
+
+              // Redirect has occurred.
+              if (popupWindowPath === redirectUriPath) {
+                // Contains query/hash parameters as expected.
+                if (Popup.popupWindow.location.search || Popup.popupWindow.location.hash) {
+                  var queryParams = Popup.popupWindow.location.search.substring(1).replace(/\/$/, '');
+                  var hashParams = Popup.popupWindow.location.hash.substring(1).replace(/[\/$]/, '');
+                  var hash = utils.parseQueryString(hashParams);
+                  var qs = utils.parseQueryString(queryParams);
+
+                  angular.extend(qs, hash);
+
+                  if (qs.error) {
+                    deferred.reject(qs);
+                  } else {
+                    deferred.resolve(qs);
+                  }
+                } else {
+                  // Does not contain query/hash parameters, can't do anything at this point.
+                  deferred.reject(
+                    'Redirect has occurred but no query or hash parameters were found. ' +
+                    'They were either not set during the redirect, or were removed before Satellizer ' +
+                    'could read them, e.g. AngularJS routing mechanism.'
+                  );
+                }
+
+                $interval.cancel(polling);
+                Popup.popupWindow.close();
+              }
+            } catch (error) {
+              // Ignore DOMException: Blocked a frame with origin from accessing a cross-origin frame.
+              // A hack to get around same-origin security policy errors in IE.
+            }
+          }, 20);
+
+          return deferred.promise;
+        };
+
+        Popup.prepareOptions = function(options) {
+          options = options || {};
+          var width = options.width || 500;
+          var height = options.height || 500;
+
+          return angular.extend({
+            width: width,
+            height: height,
+            left: $window.screenX + (($window.outerWidth - width) / 2),
+            top: $window.screenY + (($window.outerHeight - height) / 2.5)
+          }, options);
+        };
+
+        Popup.stringifyOptions = function(options) {
+          var parts = [];
+          angular.forEach(options, function(value, key) {
+            parts.push(key + '=' + value);
+          });
+          return parts.join(',');
+        };
+
+        return Popup;
+      }])
+    .service('SatellizerUtils', function() {
+      this.getFullUrlPath = function(location) {
+        return location.protocol + '//' + location.hostname +
+        (location.port ? ':' + location.port : '') + location.pathname;
+      };
+
+      this.camelCase = function(name) {
+        return name.replace(/([\:\-\_]+(.))/g, function(_, separator, letter, offset) {
+          return offset ? letter.toUpperCase() : letter;
+        });
+      };
+
+      this.parseQueryString = function(keyValue) {
+        var obj = {}, key, value;
+        angular.forEach((keyValue || '').split('&'), function(keyValue) {
+          if (keyValue) {
+            value = keyValue.split('=');
+            key = decodeURIComponent(value[0]);
+            obj[key] = angular.isDefined(value[1]) ? decodeURIComponent(value[1]) : true;
+          }
+        });
+        return obj;
+      };
+
+      this.joinUrl = function(baseUrl, url) {
+        if (/^(?:[a-z]+:)?\/\//i.test(url)) {
+          return url;
+        }
+
+        var joined = [baseUrl, url].join('/');
+
+        var normalize = function(str) {
+          return str
+            .replace(/[\/]+/g, '/')
+            .replace(/\/\?/g, '?')
+            .replace(/\/\#/g, '#')
+            .replace(/\:\//g, '://');
+        };
+
+        return normalize(joined);
+      };
+
+      this.merge = function(obj1, obj2) {
+        var result = {};
+        for (var i in obj1) {
+          if (obj1.hasOwnProperty(i)) {
+            if ((i in obj2) && (typeof obj1[i] === 'object') && (i !== null)) {
+              result[i] = this.merge(obj1[i], obj2[i]);
+            } else {
+              result[i] = obj1[i];
+            }
+          }
+        }
+        for (i in obj2) {
+          if (obj2.hasOwnProperty(i)) {
+            if (i in result) {
+              continue;
+            }
+            result[i] = obj2[i];
+          }
+
+        }
+        return result;
+      };
+    })
+    .factory('SatellizerStorage', ['$window', '$log', 'SatellizerConfig', function($window, $log, config) {
+
+      var store = {};
+
+      // Check if localStorage or sessionStorage is available or enabled
+      var isStorageAvailable = (function() {
+        try {
+          var supported = config.storageType in $window && $window[config.storageType] !== null;
+
+          if (supported) {
+            var key = Math.random().toString(36).substring(7);
+            $window[config.storageType].setItem(key, '');
+            $window[config.storageType].removeItem(key);
+          }
+
+          return supported;
+        } catch (e) {
+          return false;
+        }
+      })();
+
+      if (!isStorageAvailable) {
+        $log.warn(config.storageType + ' is not available.');
+      }
+
+      return {
+        get: function(key) {
+          return isStorageAvailable ? $window[config.storageType].getItem(key) : store[key];
+        },
+        set: function(key, value) {
+          return isStorageAvailable ? $window[config.storageType].setItem(key, value) : store[key] = value;
+        },
+        remove: function(key) {
+          return isStorageAvailable ? $window[config.storageType].removeItem(key): delete store[key];
+        }
+      };
+
+    }])
+    .factory('SatellizerInterceptor', [
+      '$q',
+      'SatellizerConfig',
+      'SatellizerStorage',
+      'SatellizerShared',
+      function($q, config, storage, shared) {
+        return {
+          request: function(request) {
+            if (request.skipAuthorization) {
+              return request;
+            }
+
+            if (shared.isAuthenticated() && config.httpInterceptor(request)) {
+              var tokenName = config.tokenPrefix ? config.tokenPrefix + '_' + config.tokenName : config.tokenName;
+              var token = storage.get(tokenName);
+
+              if (config.authHeader && config.authToken) {
+                token = config.authToken + ' ' + token;
+              }
+
+              request.headers[config.authHeader] = token;
+            }
+
+            return request;
+          },
+          responseError: function(response) {
+            return $q.reject(response);
+          }
+        };
+      }])
+    .config(['$httpProvider', function($httpProvider) {
+      $httpProvider.interceptors.push('SatellizerInterceptor');
+    }]);
+
+})(window, window.angular);
+
+/**
+ * @license AngularJS v1.5.5
+ * (c) 2010-2016 Google, Inc. http://angularjs.org
+ * License: MIT
+ */
+(function(window, angular) {'use strict';
+
+var $resourceMinErr = angular.$$minErr('$resource');
+
+// Helper functions and regex to lookup a dotted path on an object
+// stopping at undefined/null.  The path must be composed of ASCII
+// identifiers (just like $parse)
+var MEMBER_NAME_REGEX = /^(\.[a-zA-Z_$@][0-9a-zA-Z_$@]*)+$/;
+
+function isValidDottedPath(path) {
+  return (path != null && path !== '' && path !== 'hasOwnProperty' &&
+      MEMBER_NAME_REGEX.test('.' + path));
+}
+
+function lookupDottedPath(obj, path) {
+  if (!isValidDottedPath(path)) {
+    throw $resourceMinErr('badmember', 'Dotted member path "@{0}" is invalid.', path);
+  }
+  var keys = path.split('.');
+  for (var i = 0, ii = keys.length; i < ii && angular.isDefined(obj); i++) {
+    var key = keys[i];
+    obj = (obj !== null) ? obj[key] : undefined;
+  }
+  return obj;
+}
+
+/**
+ * Create a shallow copy of an object and clear other fields from the destination
+ */
+function shallowClearAndCopy(src, dst) {
+  dst = dst || {};
+
+  angular.forEach(dst, function(value, key) {
+    delete dst[key];
+  });
+
+  for (var key in src) {
+    if (src.hasOwnProperty(key) && !(key.charAt(0) === '$' && key.charAt(1) === '$')) {
+      dst[key] = src[key];
+    }
+  }
+
+  return dst;
+}
+
+/**
+ * @ngdoc module
+ * @name ngResource
+ * @description
+ *
+ * # ngResource
+ *
+ * The `ngResource` module provides interaction support with RESTful services
+ * via the $resource service.
+ *
+ *
+ * <div doc-module-components="ngResource"></div>
+ *
+ * See {@link ngResource.$resource `$resource`} for usage.
+ */
+
+/**
+ * @ngdoc service
+ * @name $resource
+ * @requires $http
+ * @requires ng.$log
+ * @requires $q
+ * @requires ng.$timeout
+ *
+ * @description
+ * A factory which creates a resource object that lets you interact with
+ * [RESTful](http://en.wikipedia.org/wiki/Representational_State_Transfer) server-side data sources.
+ *
+ * The returned resource object has action methods which provide high-level behaviors without
+ * the need to interact with the low level {@link ng.$http $http} service.
+ *
+ * Requires the {@link ngResource `ngResource`} module to be installed.
+ *
+ * By default, trailing slashes will be stripped from the calculated URLs,
+ * which can pose problems with server backends that do not expect that
+ * behavior.  This can be disabled by configuring the `$resourceProvider` like
+ * this:
+ *
+ * ```js
+     app.config(['$resourceProvider', function($resourceProvider) {
+       // Don't strip trailing slashes from calculated URLs
+       $resourceProvider.defaults.stripTrailingSlashes = false;
+     }]);
+ * ```
+ *
+ * @param {string} url A parameterized URL template with parameters prefixed by `:` as in
+ *   `/user/:username`. If you are using a URL with a port number (e.g.
+ *   `http://example.com:8080/api`), it will be respected.
+ *
+ *   If you are using a url with a suffix, just add the suffix, like this:
+ *   `$resource('http://example.com/resource.json')` or `$resource('http://example.com/:id.json')`
+ *   or even `$resource('http://example.com/resource/:resource_id.:format')`
+ *   If the parameter before the suffix is empty, :resource_id in this case, then the `/.` will be
+ *   collapsed down to a single `.`.  If you need this sequence to appear and not collapse then you
+ *   can escape it with `/\.`.
+ *
+ * @param {Object=} paramDefaults Default values for `url` parameters. These can be overridden in
+ *   `actions` methods. If a parameter value is a function, it will be executed every time
+ *   when a param value needs to be obtained for a request (unless the param was overridden).
+ *
+ *   Each key value in the parameter object is first bound to url template if present and then any
+ *   excess keys are appended to the url search query after the `?`.
+ *
+ *   Given a template `/path/:verb` and parameter `{verb:'greet', salutation:'Hello'}` results in
+ *   URL `/path/greet?salutation=Hello`.
+ *
+ *   If the parameter value is prefixed with `@` then the value for that parameter will be extracted
+ *   from the corresponding property on the `data` object (provided when calling an action method).
+ *   For example, if the `defaultParam` object is `{someParam: '@someProp'}` then the value of
+ *   `someParam` will be `data.someProp`.
+ *
+ * @param {Object.<Object>=} actions Hash with declaration of custom actions that should extend
+ *   the default set of resource actions. The declaration should be created in the format of {@link
+ *   ng.$http#usage $http.config}:
+ *
+ *       {action1: {method:?, params:?, isArray:?, headers:?, ...},
+ *        action2: {method:?, params:?, isArray:?, headers:?, ...},
+ *        ...}
+ *
+ *   Where:
+ *
+ *   - **`action`** – {string} – The name of action. This name becomes the name of the method on
+ *     your resource object.
+ *   - **`method`** – {string} – Case insensitive HTTP method (e.g. `GET`, `POST`, `PUT`,
+ *     `DELETE`, `JSONP`, etc).
+ *   - **`params`** – {Object=} – Optional set of pre-bound parameters for this action. If any of
+ *     the parameter value is a function, it will be executed every time when a param value needs to
+ *     be obtained for a request (unless the param was overridden).
+ *   - **`url`** – {string} – action specific `url` override. The url templating is supported just
+ *     like for the resource-level urls.
+ *   - **`isArray`** – {boolean=} – If true then the returned object for this action is an array,
+ *     see `returns` section.
+ *   - **`transformRequest`** –
+ *     `{function(data, headersGetter)|Array.<function(data, headersGetter)>}` –
+ *     transform function or an array of such functions. The transform function takes the http
+ *     request body and headers and returns its transformed (typically serialized) version.
+ *     By default, transformRequest will contain one function that checks if the request data is
+ *     an object and serializes to using `angular.toJson`. To prevent this behavior, set
+ *     `transformRequest` to an empty array: `transformRequest: []`
+ *   - **`transformResponse`** –
+ *     `{function(data, headersGetter)|Array.<function(data, headersGetter)>}` –
+ *     transform function or an array of such functions. The transform function takes the http
+ *     response body and headers and returns its transformed (typically deserialized) version.
+ *     By default, transformResponse will contain one function that checks if the response looks
+ *     like a JSON string and deserializes it using `angular.fromJson`. To prevent this behavior,
+ *     set `transformResponse` to an empty array: `transformResponse: []`
+ *   - **`cache`** – `{boolean|Cache}` – If true, a default $http cache will be used to cache the
+ *     GET request, otherwise if a cache instance built with
+ *     {@link ng.$cacheFactory $cacheFactory}, this cache will be used for
+ *     caching.
+ *   - **`timeout`** – `{number}` – timeout in milliseconds.<br />
+ *     **Note:** In contrast to {@link ng.$http#usage $http.config}, {@link ng.$q promises} are
+ *     **not** supported in $resource, because the same value would be used for multiple requests.
+ *     If you are looking for a way to cancel requests, you should use the `cancellable` option.
+ *   - **`cancellable`** – `{boolean}` – if set to true, the request made by a "non-instance" call
+ *     will be cancelled (if not already completed) by calling `$cancelRequest()` on the call's
+ *     return value. Calling `$cancelRequest()` for a non-cancellable or an already
+ *     completed/cancelled request will have no effect.<br />
+ *   - **`withCredentials`** - `{boolean}` - whether to set the `withCredentials` flag on the
+ *     XHR object. See
+ *     [requests with credentials](https://developer.mozilla.org/en/http_access_control#section_5)
+ *     for more information.
+ *   - **`responseType`** - `{string}` - see
+ *     [requestType](https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest#responseType).
+ *   - **`interceptor`** - `{Object=}` - The interceptor object has two optional methods -
+ *     `response` and `responseError`. Both `response` and `responseError` interceptors get called
+ *     with `http response` object. See {@link ng.$http $http interceptors}.
+ *
+ * @param {Object} options Hash with custom settings that should extend the
+ *   default `$resourceProvider` behavior.  The supported options are:
+ *
+ *   - **`stripTrailingSlashes`** – {boolean} – If true then the trailing
+ *   slashes from any calculated URL will be stripped. (Defaults to true.)
+ *   - **`cancellable`** – {boolean} – If true, the request made by a "non-instance" call will be
+ *   cancelled (if not already completed) by calling `$cancelRequest()` on the call's return value.
+ *   This can be overwritten per action. (Defaults to false.)
+ *
+ * @returns {Object} A resource "class" object with methods for the default set of resource actions
+ *   optionally extended with custom `actions`. The default set contains these actions:
+ *   ```js
+ *   { 'get':    {method:'GET'},
+ *     'save':   {method:'POST'},
+ *     'query':  {method:'GET', isArray:true},
+ *     'remove': {method:'DELETE'},
+ *     'delete': {method:'DELETE'} };
+ *   ```
+ *
+ *   Calling these methods invoke an {@link ng.$http} with the specified http method,
+ *   destination and parameters. When the data is returned from the server then the object is an
+ *   instance of the resource class. The actions `save`, `remove` and `delete` are available on it
+ *   as  methods with the `$` prefix. This allows you to easily perform CRUD operations (create,
+ *   read, update, delete) on server-side data like this:
+ *   ```js
+ *   var User = $resource('/user/:userId', {userId:'@id'});
+ *   var user = User.get({userId:123}, function() {
+ *     user.abc = true;
+ *     user.$save();
+ *   });
+ *   ```
+ *
+ *   It is important to realize that invoking a $resource object method immediately returns an
+ *   empty reference (object or array depending on `isArray`). Once the data is returned from the
+ *   server the existing reference is populated with the actual data. This is a useful trick since
+ *   usually the resource is assigned to a model which is then rendered by the view. Having an empty
+ *   object results in no rendering, once the data arrives from the server then the object is
+ *   populated with the data and the view automatically re-renders itself showing the new data. This
+ *   means that in most cases one never has to write a callback function for the action methods.
+ *
+ *   The action methods on the class object or instance object can be invoked with the following
+ *   parameters:
+ *
+ *   - HTTP GET "class" actions: `Resource.action([parameters], [success], [error])`
+ *   - non-GET "class" actions: `Resource.action([parameters], postData, [success], [error])`
+ *   - non-GET instance actions:  `instance.$action([parameters], [success], [error])`
+ *
+ *
+ *   Success callback is called with (value, responseHeaders) arguments, where the value is
+ *   the populated resource instance or collection object. The error callback is called
+ *   with (httpResponse) argument.
+ *
+ *   Class actions return empty instance (with additional properties below).
+ *   Instance actions return promise of the action.
+ *
+ *   The Resource instances and collections have these additional properties:
+ *
+ *   - `$promise`: the {@link ng.$q promise} of the original server interaction that created this
+ *     instance or collection.
+ *
+ *     On success, the promise is resolved with the same resource instance or collection object,
+ *     updated with data from server. This makes it easy to use in
+ *     {@link ngRoute.$routeProvider resolve section of $routeProvider.when()} to defer view
+ *     rendering until the resource(s) are loaded.
+ *
+ *     On failure, the promise is rejected with the {@link ng.$http http response} object, without
+ *     the `resource` property.
+ *
+ *     If an interceptor object was provided, the promise will instead be resolved with the value
+ *     returned by the interceptor.
+ *
+ *   - `$resolved`: `true` after first server interaction is completed (either with success or
+ *      rejection), `false` before that. Knowing if the Resource has been resolved is useful in
+ *      data-binding.
+ *
+ *   The Resource instances and collections have these additional methods:
+ *
+ *   - `$cancelRequest`: If there is a cancellable, pending request related to the instance or
+ *      collection, calling this method will abort the request.
+ *
+ * @example
+ *
+ * # Credit card resource
+ *
+ * ```js
+     // Define CreditCard class
+     var CreditCard = $resource('/user/:userId/card/:cardId',
+      {userId:123, cardId:'@id'}, {
+       charge: {method:'POST', params:{charge:true}}
+      });
+
+     // We can retrieve a collection from the server
+     var cards = CreditCard.query(function() {
+       // GET: /user/123/card
+       // server returns: [ {id:456, number:'1234', name:'Smith'} ];
+
+       var card = cards[0];
+       // each item is an instance of CreditCard
+       expect(card instanceof CreditCard).toEqual(true);
+       card.name = "J. Smith";
+       // non GET methods are mapped onto the instances
+       card.$save();
+       // POST: /user/123/card/456 {id:456, number:'1234', name:'J. Smith'}
+       // server returns: {id:456, number:'1234', name: 'J. Smith'};
+
+       // our custom method is mapped as well.
+       card.$charge({amount:9.99});
+       // POST: /user/123/card/456?amount=9.99&charge=true {id:456, number:'1234', name:'J. Smith'}
+     });
+
+     // we can create an instance as well
+     var newCard = new CreditCard({number:'0123'});
+     newCard.name = "Mike Smith";
+     newCard.$save();
+     // POST: /user/123/card {number:'0123', name:'Mike Smith'}
+     // server returns: {id:789, number:'0123', name: 'Mike Smith'};
+     expect(newCard.id).toEqual(789);
+ * ```
+ *
+ * The object returned from this function execution is a resource "class" which has "static" method
+ * for each action in the definition.
+ *
+ * Calling these methods invoke `$http` on the `url` template with the given `method`, `params` and
+ * `headers`.
+ *
+ * @example
+ *
+ * # User resource
+ *
+ * When the data is returned from the server then the object is an instance of the resource type and
+ * all of the non-GET methods are available with `$` prefix. This allows you to easily support CRUD
+ * operations (create, read, update, delete) on server-side data.
+
+   ```js
+     var User = $resource('/user/:userId', {userId:'@id'});
+     User.get({userId:123}, function(user) {
+       user.abc = true;
+       user.$save();
+     });
+   ```
+ *
+ * It's worth noting that the success callback for `get`, `query` and other methods gets passed
+ * in the response that came from the server as well as $http header getter function, so one
+ * could rewrite the above example and get access to http headers as:
+ *
+   ```js
+     var User = $resource('/user/:userId', {userId:'@id'});
+     User.get({userId:123}, function(user, getResponseHeaders){
+       user.abc = true;
+       user.$save(function(user, putResponseHeaders) {
+         //user => saved user object
+         //putResponseHeaders => $http header getter
+       });
+     });
+   ```
+ *
+ * You can also access the raw `$http` promise via the `$promise` property on the object returned
+ *
+   ```
+     var User = $resource('/user/:userId', {userId:'@id'});
+     User.get({userId:123})
+         .$promise.then(function(user) {
+           $scope.user = user;
+         });
+   ```
+ *
+ * @example
+ *
+ * # Creating a custom 'PUT' request
+ *
+ * In this example we create a custom method on our resource to make a PUT request
+ * ```js
+ *    var app = angular.module('app', ['ngResource', 'ngRoute']);
+ *
+ *    // Some APIs expect a PUT request in the format URL/object/ID
+ *    // Here we are creating an 'update' method
+ *    app.factory('Notes', ['$resource', function($resource) {
+ *    return $resource('/notes/:id', null,
+ *        {
+ *            'update': { method:'PUT' }
+ *        });
+ *    }]);
+ *
+ *    // In our controller we get the ID from the URL using ngRoute and $routeParams
+ *    // We pass in $routeParams and our Notes factory along with $scope
+ *    app.controller('NotesCtrl', ['$scope', '$routeParams', 'Notes',
+                                      function($scope, $routeParams, Notes) {
+ *    // First get a note object from the factory
+ *    var note = Notes.get({ id:$routeParams.id });
+ *    $id = note.id;
+ *
+ *    // Now call update passing in the ID first then the object you are updating
+ *    Notes.update({ id:$id }, note);
+ *
+ *    // This will PUT /notes/ID with the note object in the request payload
+ *    }]);
+ * ```
+ *
+ * @example
+ *
+ * # Cancelling requests
+ *
+ * If an action's configuration specifies that it is cancellable, you can cancel the request related
+ * to an instance or collection (as long as it is a result of a "non-instance" call):
+ *
+   ```js
+     // ...defining the `Hotel` resource...
+     var Hotel = $resource('/api/hotel/:id', {id: '@id'}, {
+       // Let's make the `query()` method cancellable
+       query: {method: 'get', isArray: true, cancellable: true}
+     });
+
+     // ...somewhere in the PlanVacationController...
+     ...
+     this.onDestinationChanged = function onDestinationChanged(destination) {
+       // We don't care about any pending request for hotels
+       // in a different destination any more
+       this.availableHotels.$cancelRequest();
+
+       // Let's query for hotels in '<destination>'
+       // (calls: /api/hotel?location=<destination>)
+       this.availableHotels = Hotel.query({location: destination});
+     };
+   ```
+ *
+ */
+angular.module('ngResource', ['ng']).
+  provider('$resource', function() {
+    var PROTOCOL_AND_DOMAIN_REGEX = /^https?:\/\/[^\/]*/;
+    var provider = this;
+
+    this.defaults = {
+      // Strip slashes by default
+      stripTrailingSlashes: true,
+
+      // Default actions configuration
+      actions: {
+        'get': {method: 'GET'},
+        'save': {method: 'POST'},
+        'query': {method: 'GET', isArray: true},
+        'remove': {method: 'DELETE'},
+        'delete': {method: 'DELETE'}
+      }
+    };
+
+    this.$get = ['$http', '$log', '$q', '$timeout', function($http, $log, $q, $timeout) {
+
+      var noop = angular.noop,
+        forEach = angular.forEach,
+        extend = angular.extend,
+        copy = angular.copy,
+        isFunction = angular.isFunction;
+
+      /**
+       * We need our custom method because encodeURIComponent is too aggressive and doesn't follow
+       * http://www.ietf.org/rfc/rfc3986.txt with regards to the character set
+       * (pchar) allowed in path segments:
+       *    segment       = *pchar
+       *    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+       *    pct-encoded   = "%" HEXDIG HEXDIG
+       *    unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+       *    sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
+       *                     / "*" / "+" / "," / ";" / "="
+       */
+      function encodeUriSegment(val) {
+        return encodeUriQuery(val, true).
+          replace(/%26/gi, '&').
+          replace(/%3D/gi, '=').
+          replace(/%2B/gi, '+');
+      }
+
+
+      /**
+       * This method is intended for encoding *key* or *value* parts of query component. We need a
+       * custom method because encodeURIComponent is too aggressive and encodes stuff that doesn't
+       * have to be encoded per http://tools.ietf.org/html/rfc3986:
+       *    query       = *( pchar / "/" / "?" )
+       *    pchar         = unreserved / pct-encoded / sub-delims / ":" / "@"
+       *    unreserved    = ALPHA / DIGIT / "-" / "." / "_" / "~"
+       *    pct-encoded   = "%" HEXDIG HEXDIG
+       *    sub-delims    = "!" / "$" / "&" / "'" / "(" / ")"
+       *                     / "*" / "+" / "," / ";" / "="
+       */
+      function encodeUriQuery(val, pctEncodeSpaces) {
+        return encodeURIComponent(val).
+          replace(/%40/gi, '@').
+          replace(/%3A/gi, ':').
+          replace(/%24/g, '$').
+          replace(/%2C/gi, ',').
+          replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
+      }
+
+      function Route(template, defaults) {
+        this.template = template;
+        this.defaults = extend({}, provider.defaults, defaults);
+        this.urlParams = {};
+      }
+
+      Route.prototype = {
+        setUrlParams: function(config, params, actionUrl) {
+          var self = this,
+            url = actionUrl || self.template,
+            val,
+            encodedVal,
+            protocolAndDomain = '';
+
+          var urlParams = self.urlParams = {};
+          forEach(url.split(/\W/), function(param) {
+            if (param === 'hasOwnProperty') {
+              throw $resourceMinErr('badname', "hasOwnProperty is not a valid parameter name.");
+            }
+            if (!(new RegExp("^\\d+$").test(param)) && param &&
+              (new RegExp("(^|[^\\\\]):" + param + "(\\W|$)").test(url))) {
+              urlParams[param] = {
+                isQueryParamValue: (new RegExp("\\?.*=:" + param + "(?:\\W|$)")).test(url)
+              };
+            }
+          });
+          url = url.replace(/\\:/g, ':');
+          url = url.replace(PROTOCOL_AND_DOMAIN_REGEX, function(match) {
+            protocolAndDomain = match;
+            return '';
+          });
+
+          params = params || {};
+          forEach(self.urlParams, function(paramInfo, urlParam) {
+            val = params.hasOwnProperty(urlParam) ? params[urlParam] : self.defaults[urlParam];
+            if (angular.isDefined(val) && val !== null) {
+              if (paramInfo.isQueryParamValue) {
+                encodedVal = encodeUriQuery(val, true);
+              } else {
+                encodedVal = encodeUriSegment(val);
+              }
+              url = url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"), function(match, p1) {
+                return encodedVal + p1;
+              });
+            } else {
+              url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W|$)", "g"), function(match,
+                  leadingSlashes, tail) {
+                if (tail.charAt(0) == '/') {
+                  return tail;
+                } else {
+                  return leadingSlashes + tail;
+                }
+              });
+            }
+          });
+
+          // strip trailing slashes and set the url (unless this behavior is specifically disabled)
+          if (self.defaults.stripTrailingSlashes) {
+            url = url.replace(/\/+$/, '') || '/';
+          }
+
+          // then replace collapse `/.` if found in the last URL path segment before the query
+          // E.g. `http://url.com/id./format?q=x` becomes `http://url.com/id.format?q=x`
+          url = url.replace(/\/\.(?=\w+($|\?))/, '.');
+          // replace escaped `/\.` with `/.`
+          config.url = protocolAndDomain + url.replace(/\/\\\./, '/.');
+
+
+          // set params - delegate param encoding to $http
+          forEach(params, function(value, key) {
+            if (!self.urlParams[key]) {
+              config.params = config.params || {};
+              config.params[key] = value;
+            }
+          });
+        }
+      };
+
+
+      function resourceFactory(url, paramDefaults, actions, options) {
+        var route = new Route(url, options);
+
+        actions = extend({}, provider.defaults.actions, actions);
+
+        function extractParams(data, actionParams) {
+          var ids = {};
+          actionParams = extend({}, paramDefaults, actionParams);
+          forEach(actionParams, function(value, key) {
+            if (isFunction(value)) { value = value(); }
+            ids[key] = value && value.charAt && value.charAt(0) == '@' ?
+              lookupDottedPath(data, value.substr(1)) : value;
+          });
+          return ids;
+        }
+
+        function defaultResponseInterceptor(response) {
+          return response.resource;
+        }
+
+        function Resource(value) {
+          shallowClearAndCopy(value || {}, this);
+        }
+
+        Resource.prototype.toJSON = function() {
+          var data = extend({}, this);
+          delete data.$promise;
+          delete data.$resolved;
+          return data;
+        };
+
+        forEach(actions, function(action, name) {
+          var hasBody = /^(POST|PUT|PATCH)$/i.test(action.method);
+          var numericTimeout = action.timeout;
+          var cancellable = angular.isDefined(action.cancellable) ? action.cancellable :
+              (options && angular.isDefined(options.cancellable)) ? options.cancellable :
+              provider.defaults.cancellable;
+
+          if (numericTimeout && !angular.isNumber(numericTimeout)) {
+            $log.debug('ngResource:\n' +
+                       '  Only numeric values are allowed as `timeout`.\n' +
+                       '  Promises are not supported in $resource, because the same value would ' +
+                       'be used for multiple requests. If you are looking for a way to cancel ' +
+                       'requests, you should use the `cancellable` option.');
+            delete action.timeout;
+            numericTimeout = null;
+          }
+
+          Resource[name] = function(a1, a2, a3, a4) {
+            var params = {}, data, success, error;
+
+            /* jshint -W086 */ /* (purposefully fall through case statements) */
+            switch (arguments.length) {
+              case 4:
+                error = a4;
+                success = a3;
+              //fallthrough
+              case 3:
+              case 2:
+                if (isFunction(a2)) {
+                  if (isFunction(a1)) {
+                    success = a1;
+                    error = a2;
+                    break;
+                  }
+
+                  success = a2;
+                  error = a3;
+                  //fallthrough
+                } else {
+                  params = a1;
+                  data = a2;
+                  success = a3;
+                  break;
+                }
+              case 1:
+                if (isFunction(a1)) success = a1;
+                else if (hasBody) data = a1;
+                else params = a1;
+                break;
+              case 0: break;
+              default:
+                throw $resourceMinErr('badargs',
+                  "Expected up to 4 arguments [params, data, success, error], got {0} arguments",
+                  arguments.length);
+            }
+            /* jshint +W086 */ /* (purposefully fall through case statements) */
+
+            var isInstanceCall = this instanceof Resource;
+            var value = isInstanceCall ? data : (action.isArray ? [] : new Resource(data));
+            var httpConfig = {};
+            var responseInterceptor = action.interceptor && action.interceptor.response ||
+              defaultResponseInterceptor;
+            var responseErrorInterceptor = action.interceptor && action.interceptor.responseError ||
+              undefined;
+            var timeoutDeferred;
+            var numericTimeoutPromise;
+
+            forEach(action, function(value, key) {
+              switch (key) {
+                default:
+                  httpConfig[key] = copy(value);
+                  break;
+                case 'params':
+                case 'isArray':
+                case 'interceptor':
+                case 'cancellable':
+                  break;
+              }
+            });
+
+            if (!isInstanceCall && cancellable) {
+              timeoutDeferred = $q.defer();
+              httpConfig.timeout = timeoutDeferred.promise;
+
+              if (numericTimeout) {
+                numericTimeoutPromise = $timeout(timeoutDeferred.resolve, numericTimeout);
+              }
+            }
+
+            if (hasBody) httpConfig.data = data;
+            route.setUrlParams(httpConfig,
+              extend({}, extractParams(data, action.params || {}), params),
+              action.url);
+
+            var promise = $http(httpConfig).then(function(response) {
+              var data = response.data;
+
+              if (data) {
+                // Need to convert action.isArray to boolean in case it is undefined
+                // jshint -W018
+                if (angular.isArray(data) !== (!!action.isArray)) {
+                  throw $resourceMinErr('badcfg',
+                      'Error in resource configuration for action `{0}`. Expected response to ' +
+                      'contain an {1} but got an {2} (Request: {3} {4})', name, action.isArray ? 'array' : 'object',
+                    angular.isArray(data) ? 'array' : 'object', httpConfig.method, httpConfig.url);
+                }
+                // jshint +W018
+                if (action.isArray) {
+                  value.length = 0;
+                  forEach(data, function(item) {
+                    if (typeof item === "object") {
+                      value.push(new Resource(item));
+                    } else {
+                      // Valid JSON values may be string literals, and these should not be converted
+                      // into objects. These items will not have access to the Resource prototype
+                      // methods, but unfortunately there
+                      value.push(item);
+                    }
+                  });
+                } else {
+                  var promise = value.$promise;     // Save the promise
+                  shallowClearAndCopy(data, value);
+                  value.$promise = promise;         // Restore the promise
+                }
+              }
+              response.resource = value;
+
+              return response;
+            }, function(response) {
+              (error || noop)(response);
+              return $q.reject(response);
+            });
+
+            promise['finally'](function() {
+              value.$resolved = true;
+              if (!isInstanceCall && cancellable) {
+                value.$cancelRequest = angular.noop;
+                $timeout.cancel(numericTimeoutPromise);
+                timeoutDeferred = numericTimeoutPromise = httpConfig.timeout = null;
+              }
+            });
+
+            promise = promise.then(
+              function(response) {
+                var value = responseInterceptor(response);
+                (success || noop)(value, response.headers);
+                return value;
+              },
+              responseErrorInterceptor);
+
+            if (!isInstanceCall) {
+              // we are creating instance / collection
+              // - set the initial promise
+              // - return the instance / collection
+              value.$promise = promise;
+              value.$resolved = false;
+              if (cancellable) value.$cancelRequest = timeoutDeferred.resolve;
+
+              return value;
+            }
+
+            // instance call
+            return promise;
+          };
+
+
+          Resource.prototype['$' + name] = function(params, success, error) {
+            if (isFunction(params)) {
+              error = success; success = params; params = {};
+            }
+            var result = Resource[name].call(this, params, this, success, error);
+            return result.$promise || result;
+          };
+        });
+
+        Resource.bind = function(additionalParamDefaults) {
+          return resourceFactory(url, extend({}, paramDefaults, additionalParamDefaults), actions);
+        };
+
+        return Resource;
+      }
+
+      return resourceFactory;
+    }];
+  });
+
+
+})(window, window.angular);
+
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router']);
-  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+  var umap = angular.module('umap', ['ui.router','umap.company']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
+  function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
+  //  $urlRouterProvider.otherwise('/');
+
     $stateProvider.state('home', {
       url: '/',
       //abstract:true,
       views: {
             'header': {
-              //templateUrl: 'assets/html/shared/header.html'
-              controller: 'header/HeaderCtrl'
+              templateUrl: 'assets/html/shared/header.html'
+              //controller: 'header/HeaderCtrl'
             },
             'content': {
-              templateUrl: 'assets/html/home.html'
+              templateUrl: 'assets/html/shared/index.html',
+              controller: 'AppController'
             },
             'footer': {
               templateUrl: 'assets/html/shared/footer.html'
             //  controller: 'footer/FooterCtrl'
             }
     }
-  })
-    $urlRouterProvider.otherwise('/');
+  });/*
+  $httpProvider.interceptors.push(function($q, $injector) {
+     return {
+       request: function(request) {
+         // Add auth token for Silhouette if user is authenticated
+         var $auth = $injector.get('$auth');
+         if ($auth.isAuthenticated()) {
+           request.headers['X-Auth-Token'] = $auth.getToken();
+         }
+
+         // Add CSRF token for the Play CSRF filter
+         var cookies = $injector.get('$cookies');
+         var token = cookies.get('PLAY_CSRF_TOKEN');
+         if (token) {
+           // Play looks for a token with the name Csrf-Token
+           // https://www.playframework.com/documentation/2.4.x/ScalaCsrf
+           request.headers['Csrf-Token'] = token;
+         }
+
+         return request;
+       },
+
+       responseError: function(rejection) {
+         if (rejection.status === 401) {
+           $injector.get('$state').go('signIn');
+         }
+         return $q.reject(rejection);
+       }
+     }});
      //$locationProvider.html5Mode(true);
+     // Auth config
+    $authProvider.httpInterceptor = true; // Add Authorization header to HTTP request
+    $authProvider.loginOnSignup = true;
+    $authProvider.loginRedirect = '/home';
+    $authProvider.logoutRedirect = '/';
+    $authProvider.signupRedirect = '/home';
+    $authProvider.loginUrl = '/signIn';
+    $authProvider.signupUrl = '/signUp';
+    $authProvider.loginRoute = '/signIn';
+    $authProvider.signupRoute = '/signUp';
+    $authProvider.tokenName = 'token';
+    $authProvider.tokenPrefix = 'satellizer'; // Local Storage name prefix
+    $authProvider.authHeader = 'X-Auth-Token';
+    $authProvider.platform = 'browser';
+    $authProvider.storage = 'localStorage'; */
+  }]);
+umap.controller('AppController',['$scope',function($scope) {
+  // body...
+}]);
+
+
+})();
+
+(function(){
+  'use strict';
+  var umap = angular.module('umap.company',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('companies', {
+      url: '/superAdmin/addCompanies',
+      views: {
+            'content': {
+              templateUrl: 'assets/html/superAdmin/companies.html',
+              controller:  'CompanyController'
+            }
+        }
+  });
+  $urlRouterProvider.otherwise('/');
+
+
+     //$locationProvider.html5Mode(true);
+  }]);
+
+    umap.factory('CompanyService', function($resource) {
+      return $resource('/api/companies/:id'); // Note the full endpoint address
+    });
+
+  umap.controller('CompanyController',['$scope','CompanyService', function($scope, CompanyService) {
+     $scope.company = {'name':''};
+      $scope.addCompany = function (){
+        CompanyService.save();
+      };
   }]);
 })();
