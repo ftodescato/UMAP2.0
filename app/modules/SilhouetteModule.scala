@@ -18,6 +18,8 @@ import com.mohiva.play.silhouette.impl.repositories.DelegableAuthInfoRepository
 import com.mohiva.play.silhouette.impl.services._
 import com.mohiva.play.silhouette.impl.util._
 import models.User
+import models.daos.user._
+import models.daos.company._
 import models.daos._
 import models.services.{ UserService, UserServiceImpl }
 import net.ceedubs.ficus.Ficus._
@@ -55,6 +57,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
 
     bind[UserService].to[UserServiceImpl]
     bind[UserDAO].to[UserDAOImpl]
+    bind[CompanyDAO].to[CompanyDAOImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]

@@ -30,11 +30,18 @@ class CompanyController @Inject() (
   //passwordHasher: PasswordHasher)
   extends Silhouette[User, JWTAuthenticator] {
 
-  /**
-   * Registers a new user.
-   *
-   * @return The result to display.
-   */
+
+def showCompanies = Action.async{ implicit request =>
+ val companies = companyDao.findAll()
+   companies.flatMap{
+    companies =>
+   Future.successful(Ok(Json.toJson(companies)))
+   }
+  //Future.successful(Ok(Json.obj("test"->"test")))
+}
+
+
+
   def addCompany = Action.async(parse.json) { implicit request =>
     request.body.validate[CompanyForm.Data].map { data =>
       val companyInfo = data.companyName
