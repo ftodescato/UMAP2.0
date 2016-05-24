@@ -1,0 +1,17 @@
+{
+  "name": "umap-2.0",
+  "version": "1.0.0",
+  "description": "Play Silhouette Reactive Mongo Angular Seed Project ===================================================",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Giovanni Rodighiero",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-jade": "^1.1.0",
+    "gulp-watch": "^4.3.6"
+  }
+}
