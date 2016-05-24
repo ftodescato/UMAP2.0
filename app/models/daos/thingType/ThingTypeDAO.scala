@@ -29,4 +29,8 @@ trait ThingTypeDAO {
    * @return The saved thingType.
    */
   def save(thingType: ThingType): Future[ThingType]
+
+  def update(thingTypeID: UUID, thingType2: ThingType)
+
+  def remove(thingTypeID: UUID)
 }

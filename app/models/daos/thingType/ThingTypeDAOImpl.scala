@@ -48,4 +48,12 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
     collection.insert(thingType)
     Future.successful(thingType)
   }
+
+  def update(thingTypeID: UUID, thingType2: ThingType) = {
+    collection.update(Json.obj("thingTypeID" -> thingTypeID), thingType2)
+  }
+
+  def remove(thingTypeID: UUID) = {
+    collection.remove(Json.obj("thingTypeID" -> thingTypeID))
+  }
 }
