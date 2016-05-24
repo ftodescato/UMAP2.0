@@ -35,4 +35,8 @@ trait NotificationDAO {
    * @return The saved notification.
    */
   def save(notification: Notification): Future[Notification]
+
+  def update(notificationID: UUID, notification2: Notification)
+
+  def remove(notificationID: UUID)
 }

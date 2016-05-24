@@ -39,4 +39,6 @@ trait CompanyDAO {
 
   def update(companyID: UUID, company2: Company)
 
+  def remove(companyID: UUID)
+
 }

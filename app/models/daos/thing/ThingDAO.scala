@@ -53,4 +53,8 @@ trait ThingDAO {
    * @return The saved thing.
    */
   def save(thing: Thing): Future[Thing]
+
+  def update(thingID: UUID, thing2: Thing)
+
+  def remove(thingID: UUID)
 }

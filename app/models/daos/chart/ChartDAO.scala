@@ -37,4 +37,8 @@ trait ChartDAO {
    * @return The saved chart.
    */
   def save(chart: Chart): Future[Chart]
+
+  def update(chartID: UUID, chart2: Chart)
+
+  def remove(chartID: UUID)
 }

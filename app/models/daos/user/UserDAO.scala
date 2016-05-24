@@ -35,4 +35,8 @@ trait UserDAO {
    * @return The saved user.
    */
   def save(user: User): Future[User]
+
+  def update(userID: UUID, user2: User)
+
+  def remove(userID: UUID)
 }

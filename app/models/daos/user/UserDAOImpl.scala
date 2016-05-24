@@ -56,4 +56,12 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
       upsert = true)
     Future.successful(user)
   }
+
+  def update(userID: UUID, user2: User) = {
+    collection.update(Json.obj("userID" -> userID),user2)
+  }
+
+  def remove(userID: UUID) = {
+    collection.remove(Json.obj("userID" -> userID))
+  }
 }
