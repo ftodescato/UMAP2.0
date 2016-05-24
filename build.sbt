@@ -58,3 +58,6 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
 
 
 fork in run := false
+
+
+fork in run := true
