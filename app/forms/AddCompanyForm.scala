@@ -4,27 +4,23 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
 
-/**
- * The form which handles the sign up process.
- */
-object SignUpForm {
+
+
+object CompanyForm {
 
   /**
    * A play framework form.
    */
   val form = Form(
     mapping(
-      "email" -> email,
-      "password" -> nonEmptyText,
-      "role" -> nonEmptyText
+      "companyName" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
-    email: String,
-    password: String,
-    role: String)
+    companyName: String)
+
 
   /**
    * The companion object.

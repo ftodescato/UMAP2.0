@@ -79,4 +79,5 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     collection.insert(thing)
     Future.successful(thing)
   }
+  
 }

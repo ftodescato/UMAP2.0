@@ -57,4 +57,5 @@ class ChartDAOImpl @Inject() (db : DB) extends ChartDAO {
     collection.insert(chart)
     Future.successful(chart)
   }
+
 }

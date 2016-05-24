@@ -14,7 +14,7 @@ import play.api.libs.json.Json
  */
 case class Chart(
   chartID: UUID,
-  chartName: Option[String],
+  chartName: String,
   thingID: Option[UUID],
   thingTypeID: Option[UUID]
    )

@@ -38,5 +38,5 @@ trait CompanyDAO {
   def save(company: Company): Future[Company]
 
   def update(companyID: UUID, company2: Company)
-
+  
 }
