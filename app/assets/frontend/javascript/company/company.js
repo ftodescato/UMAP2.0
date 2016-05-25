@@ -20,6 +20,15 @@
           }
       }
 });
+$stateProvider.state('updateCompany', {
+  url: '/superAdmin/companies/:id',
+  views: {
+        'content': {
+          templateUrl: 'assets/html/superAdmin/companies/updateCompany.html',
+          controller:  'CompanyControllerDetails'
+        }
+    }
+});
   $urlRouterProvider.otherwise('/');
 
 
@@ -27,7 +36,11 @@
   }]);
 
     umap.factory('CompanyService', function($resource) {
-      return $resource('/api/companies/:id');
+      return $resource('/api/companies/:id',{id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      });
     });
 
 
@@ -44,6 +57,14 @@
       });
     }
     $scope.companies = CompanyService.query();
+  }]);
 
+  umap.controller('CompanyControllerDetails',['$scope','CompanyService','$http','$stateParams', function($scope, CompanyService,$http,$stateParams) {
+    $scope.company = CompanyService.get({ id:  $stateParams.id });
+    $scope.editCompany = function(){
+      CompanyService.update({id:  $stateParams.id}, $scope.company, function(){
+
+      });
+    }
   }]);
 })();

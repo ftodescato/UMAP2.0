@@ -57,9 +57,10 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
     collection.insert(company)
     Future.successful(company)
   }
-  def update(companyID: UUID, company2: Company)   = {
+
+  def update(companyID: UUID, company2: Company) = {
     collection.update(Json.obj("companyID" -> companyID),company2)
-      Future.successful(company)
+      Future.successful(company2)
   }
 
   def remove(companyID: UUID) = {

@@ -40,6 +40,13 @@ def showCompanies = Action.async{ implicit request =>
    }
   //Future.successful(Ok(Json.obj("test"->"test")))
 }
+def showCompanyDetails(companyID: UUID) = Action.async{ implicit request =>
+  val company = companyDao.find(companyID)
+    company.flatMap{
+     company =>
+    Future.successful(Ok(Json.toJson(company)))
+    }
+}
 
 def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit request =>
   request.body.validate[EditCompanyForm.Data].map { data =>
@@ -58,19 +65,15 @@ def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit reque
             Ok(Json.obj("ok" -> "ok"))
           }
         }
-    }.recoverTotal {
+      }.recoverTotal {
   case error =>
     Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
     }
-
 }
 
 
   def addCompany = Action.async(parse.json) { implicit request =>
     request.body.validate[AddCompanyForm.Data].map { data =>
-      val companyInfo = data.companyName
-      companyDao.find(companyInfo).flatMap {
-        => company
           //val authInfo = passwordHasher.hash(data.password)
           val company = Company(
             companyID = UUID.randomUUID(),
@@ -87,7 +90,6 @@ def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit reque
             //env.eventBus.publish(LoginEvent(user, request, request2Messages))
             Ok(Json.obj("ok" -> "ok"))
           }
-      }
     }.recoverTotal {
       case error =>
         Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
