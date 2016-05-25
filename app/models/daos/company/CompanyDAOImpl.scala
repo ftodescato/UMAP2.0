@@ -29,7 +29,7 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
    * @param companyName The name of the company to find.
    * @return The found company or None if no company for the given name could be found.
    */
-  def find(companyName: String): Future[Option[Company]] = {
+  def findByName(companyName: String): Future[Option[Company]] = {
     collection.find(Json.obj("companyName" -> companyName)).one[Company]
   }
 
@@ -43,7 +43,7 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
    * @param companyID The ID of the company to find.
    * @return The found company or None if no company for the given ID could be found.
    */
-  def find(companyID: UUID) : Future[Option[Company]] = {
+  def findByID(companyID: UUID) : Future[Option[Company]] = {
     collection.find(Json.obj("companyID" -> companyID)).one[Company]
   }
 
@@ -65,5 +65,6 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
 
   def remove(companyID: UUID) = {
     collection.remove(Json.obj("companyID" -> companyID))
+    Future.successful(true)
   }
 }
