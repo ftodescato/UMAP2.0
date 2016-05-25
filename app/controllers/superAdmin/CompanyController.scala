@@ -48,12 +48,10 @@ def showCompanyDetails(companyID: UUID) = Action.async{ implicit request =>
     }
 }
 
-def delete(companyID: UUID) = Action.async(parse.json) { implicit request =>
-  request.body.validate[DeleteCompanyForm.Data].map { data =>
+def delete(companyID: UUID) = Action.async{ implicit request =>
   companyDao.findByID(companyID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
       case Some (company) =>
-        //val valore = true//serve se no non va
         for{
           company <- companyDao.remove(companyID)
         }yield {
@@ -62,10 +60,7 @@ def delete(companyID: UUID) = Action.async(parse.json) { implicit request =>
             Ok(Json.obj("ok" -> "ok"))
           }
         }
-      }.recoverTotal {
-  case error =>
-    Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
-    }
+
  }
 
 
