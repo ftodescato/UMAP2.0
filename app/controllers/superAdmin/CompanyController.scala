@@ -35,7 +35,7 @@ class CompanyController @Inject() (
    *
    * @return The result to display.
    */
-  def addCompany = Action.async(parse.json) { implicit request =>
+  def addCompany = UserAwareAction.async(parse.json) { implicit request =>
     request.body.validate[CompanyForm.Data].map { data =>
       val companyInfo = data.companyName
       companyDao.find(companyInfo).flatMap {

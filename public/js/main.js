@@ -37179,6 +37179,56 @@ angular.module('ngResource', ['ng']).
 
 (function(){
   'use strict';
+  var umap = angular.module('umap.company',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('addCompanies', {
+      url: '/superAdmin/addCompanies',
+      views: {
+            'content': {
+              templateUrl: 'assets/html/superAdmin/companies.html',
+              controller:  'CompanyController'
+            }
+        }
+  });
+  $stateProvider.state('companies', {
+    url: '/superAdmin/companies',
+    views: {
+          'content': {
+            templateUrl: 'assets/html/superAdmin/companies/index.html',
+            controller:  'CompanyController'
+          }
+      }
+});
+  $urlRouterProvider.otherwise('/');
+
+
+     //$locationProvider.html5Mode(true);
+  }]);
+
+    umap.factory('CompanyService', function($resource) {
+      return $resource('/api/companies/:id');
+    });
+
+
+  umap.controller('CompanyController',['$scope','CompanyService','$http', function($scope, CompanyService,$http) {
+     $scope.company = {'companyName':''};
+      $scope.addCompany = function(){
+        CompanyService.save($scope.company, function(){
+
+        });
+      };
+    $scope.addTest = function(){
+      $http.post('/api/companies', $scope.company).success(function(){
+        console.log('ok');
+      });
+    }
+    $scope.companies = CompanyService.query();
+
+  }]);
+})();
+
+(function(){
+  'use strict';
 
   var umap = angular.module('umap', ['ui.router','umap.company']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
@@ -37202,86 +37252,32 @@ angular.module('ngResource', ['ng']).
             //  controller: 'footer/FooterCtrl'
             }
     }
-  });/*
+  });
   $httpProvider.interceptors.push(function($q, $injector) {
-     return {
-       request: function(request) {
-         // Add auth token for Silhouette if user is authenticated
-         var $auth = $injector.get('$auth');
-         if ($auth.isAuthenticated()) {
-           request.headers['X-Auth-Token'] = $auth.getToken();
-         }
+    return {
+      request: function(request) {
+        // Add auth token for Silhouette if user is authenticated
 
-         // Add CSRF token for the Play CSRF filter
-         var cookies = $injector.get('$cookies');
-         var token = cookies.get('PLAY_CSRF_TOKEN');
-         if (token) {
-           // Play looks for a token with the name Csrf-Token
-           // https://www.playframework.com/documentation/2.4.x/ScalaCsrf
-           request.headers['Csrf-Token'] = token;
-         }
+          request.headers['Content-Type'] = 'application/json';
+          request.headers['Csrf-Token'] = 'nocheck';
 
-         return request;
-       },
 
-       responseError: function(rejection) {
-         if (rejection.status === 401) {
-           $injector.get('$state').go('signIn');
-         }
-         return $q.reject(rejection);
-       }
-     }});
-     //$locationProvider.html5Mode(true);
-     // Auth config
-    $authProvider.httpInterceptor = true; // Add Authorization header to HTTP request
-    $authProvider.loginOnSignup = true;
-    $authProvider.loginRedirect = '/home';
-    $authProvider.logoutRedirect = '/';
-    $authProvider.signupRedirect = '/home';
-    $authProvider.loginUrl = '/signIn';
-    $authProvider.signupUrl = '/signUp';
-    $authProvider.loginRoute = '/signIn';
-    $authProvider.signupRoute = '/signUp';
-    $authProvider.tokenName = 'token';
-    $authProvider.tokenPrefix = 'satellizer'; // Local Storage name prefix
-    $authProvider.authHeader = 'X-Auth-Token';
-    $authProvider.platform = 'browser';
-    $authProvider.storage = 'localStorage'; */
+        return request;
+      },
+
+      responseError: function(rejection) {
+        /*
+        if (rejection.status === 401) {
+          $injector.get('$state').go('signIn');
+        }
+        return $q.reject(rejection);*/
+      }
+    };
+  });
   }]);
 umap.controller('AppController',['$scope',function($scope) {
   // body...
 }]);
 
 
-})();
-
-(function(){
-  'use strict';
-  var umap = angular.module('umap.company',['ui.router','ngResource']);
-  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
-    $stateProvider.state('companies', {
-      url: '/superAdmin/addCompanies',
-      views: {
-            'content': {
-              templateUrl: 'assets/html/superAdmin/companies.html',
-              controller:  'CompanyController'
-            }
-        }
-  });
-  $urlRouterProvider.otherwise('/');
-
-
-     //$locationProvider.html5Mode(true);
-  }]);
-
-    umap.factory('CompanyService', function($resource) {
-      return $resource('/api/companies/:id'); // Note the full endpoint address
-    });
-
-  umap.controller('CompanyController',['$scope','CompanyService', function($scope, CompanyService) {
-     $scope.company = {'name':''};
-      $scope.addCompany = function (){
-        CompanyService.save();
-      };
-  }]);
 })();
