@@ -40,9 +40,30 @@ def showCompanies = Action.async{ implicit request =>
   //Future.successful(Ok(Json.obj("test"->"test")))
 }
 
+def delete(companyID: UUID) = Action.async(parse.json) { implicit request =>
+  request.body.validate[DeleteCompanyForm.Data].map { data =>
+  companyDao.findByID(companyID).flatMap{
+      case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
+      case Some (company) =>
+        //val valore = true//serve se no non va
+        for{
+          company <- companyDao.remove(companyID)
+        }yield {
+            //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+            Ok(Json.obj("ok" -> "ok"))
+          }
+        }
+      }.recoverTotal {
+  case error =>
+    Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+    }
+ }
+
+
 def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit request =>
   request.body.validate[EditCompanyForm.Data].map { data =>
-  companyDao.find(companyID).flatMap{
+  companyDao.findByID(companyID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
       case Some (company) =>
         val company2 = Company(

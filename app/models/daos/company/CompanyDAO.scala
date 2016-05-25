@@ -18,7 +18,7 @@ trait CompanyDAO {
    * @return The found company or None if no company for the given name could be found.
    */
 
-  def find(companyName: String): Future[Option[Company]]
+  def findByName(companyName: String): Future[Option[Company]]
   def findAll(): Future[List[Company]]
 
   /**
@@ -27,7 +27,7 @@ trait CompanyDAO {
    * @param companyID The ID of the company to find.
    * @return The found company or None if no company for the given ID could be found.
    */
-  def find(companyID: UUID): Future[Option[Company]]
+  def findByID(companyID: UUID): Future[Option[Company]]
 
   /**
    * Saves a company.
@@ -39,6 +39,6 @@ trait CompanyDAO {
 
   def update(companyID: UUID, company2: Company): Future[Company]
 
-  def remove(companyID: UUID)
+  def remove(companyID: UUID):  Future[Boolean]
 
 }

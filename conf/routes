@@ -12,7 +12,7 @@ POST        /signUp                          controllers.SignUpController.signUp
 
 GET         /api/companies               controllers.superAdmin.CompanyController.showCompanies
 POST        /api/companies                 controllers.superAdmin.CompanyController.addCompany
-
+DELETE      /api/companies/:id            controllers.superAdmin.CompanyController.delete(id: java.util.UUID)
 
 # Dynamic part of the url
 #GET         /views/$template<.+>.html        controllers.ApplicationController.view(template)
