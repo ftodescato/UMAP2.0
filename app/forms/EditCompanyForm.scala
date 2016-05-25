@@ -4,9 +4,10 @@ import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
 
-
-
-object AddCompanyForm {
+/**
+ * The form which handles the sign up process.
+ */
+object EditCompanyForm {
 
   /**
    * A play framework form.
@@ -17,19 +18,22 @@ object AddCompanyForm {
     )(Data.apply)(Data.unapply)
   )
 
+  /**
+   * The form data.
 
+   */
   case class Data(
-    companyName: String)
-
+    companyName: String
+  )
 
   /**
-   * The companion object.
-   */
+  * The companion object.
+  */
   object Data {
 
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
-    implicit val jsonFormat = Json.format[Data]
+  /**
+   * Converts the [Date] object to Json and vice versa.
+   */
+  implicit val jsonFormat = Json.format[Data]
   }
 }
