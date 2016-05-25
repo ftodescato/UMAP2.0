@@ -41,7 +41,7 @@ def showCompanies = Action.async{ implicit request =>
   //Future.successful(Ok(Json.obj("test"->"test")))
 }
 def showCompanyDetails(companyID: UUID) = Action.async{ implicit request =>
-  val company = companyDao.find(companyID)
+  val company = companyDao.findByID(companyID)
     company.flatMap{
      company =>
     Future.successful(Ok(Json.toJson(company)))

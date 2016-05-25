@@ -44,7 +44,7 @@ $stateProvider.state('updateCompany', {
     });
 
 
-  umap.controller('CompanyController',['$scope','CompanyService','$http', function($scope, CompanyService,$http) {
+  umap.controller('CompanyController',['$scope','CompanyService','$http','$stateParams', function($scope, CompanyService,$http, $stateParams) {
      $scope.company = {'companyName':''};
       $scope.addCompany = function(){
         CompanyService.save($scope.company, function(){
@@ -57,6 +57,11 @@ $stateProvider.state('updateCompany', {
       });
     }
     $scope.companies = CompanyService.query();
+    $scope.deleteCompany = function(param){
+      CompanyService.delete({id:  param}, function(){
+
+      });
+    };
   }]);
 
   umap.controller('CompanyControllerDetails',['$scope','CompanyService','$http','$stateParams', function($scope, CompanyService,$http,$stateParams) {
