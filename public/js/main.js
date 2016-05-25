@@ -37180,22 +37180,21 @@ angular.module('ngResource', ['ng']).
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','umap.company']);
+  var umap = angular.module('umap', ['ui.router','umap.company','umap.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   //  $urlRouterProvider.otherwise('/');
 
-    $stateProvider.state('home', {
-      url: '/',
-      //abstract:true,
+    $stateProvider.state('root', {
+    //  url: '/',
+      abstract:true,
       views: {
             'header': {
               templateUrl: 'assets/html/shared/header.html'
-              //controller: 'header/HeaderCtrl'
+              controller: 'HeaderController'
             },
             'content': {
-              templateUrl: 'assets/html/shared/index.html',
-              controller: 'AppController'
+
             },
             'footer': {
               templateUrl: 'assets/html/shared/footer.html'
@@ -37225,10 +37224,151 @@ angular.module('ngResource', ['ng']).
     };
   });
   }]);
-umap.controller('AppController',['$scope',function($scope) {
-  // body...
+umap.controller('HeaderController',['$scope',function($scope) {
+  
 }]);
 
 
 })();
 
+(function(){
+  'use strict';
+  var umap = angular.module('umap.company',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.addCompanies', {
+      url: '/superAdmin/addCompany',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/companies/addCompany.html',
+              controller:  'CompanyController'
+            }
+        }
+  });
+  $stateProvider.state('root.companies', {
+    url: '/superAdmin/companies',
+    views: {
+          'content@': {
+            templateUrl: 'assets/html/superAdmin/companies/index.html',
+            controller:  'CompanyController'
+          }
+      }
+});
+$stateProvider.state('root.updateCompany', {
+  url: '/superAdmin/companies/:id',
+  views: {
+        'content@': {
+          templateUrl: 'assets/html/superAdmin/companies/updateCompany.html',
+          controller:  'CompanyControllerDetails'
+        }
+    }
+});
+  $urlRouterProvider.otherwise('/');
+
+
+     //$locationProvider.html5Mode(true);
+  }]);
+
+    umap.factory('CompanyService', function($resource) {
+      return $resource('/api/companies/:id',{id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      });
+    });
+
+
+  umap.controller('CompanyController',['$scope','CompanyService','$http','$stateParams','$location', function($scope, CompanyService,$http, $stateParams,$location) {
+     $scope.company = {'companyName':''};
+      $scope.addCompany = function(){
+        CompanyService.save($scope.company, function(){
+          $location.path('/superAdmin/companies')
+        });
+      };
+    $scope.companies = CompanyService.query();
+    $scope.deleteCompany = function(param){
+      CompanyService.delete({id:  param}, function(){
+        $location.path('/superAdmin/companies')
+      });
+    };
+  }]);
+
+  umap.controller('CompanyControllerDetails',['$scope','CompanyService','$http','$stateParams', function($scope, CompanyService,$http,$stateParams) {
+    $scope.company = CompanyService.get({ id:  $stateParams.id });
+    $scope.editCompany = function(){
+      CompanyService.update({id:  $stateParams.id}, $scope.company, function(){
+        $location.path('/superAdmin/companies')
+      });
+    }
+  }]);
+})();
+
+(function(){
+  'use strict';
+  var umap = angular.module('umap.user',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.addUser', {
+      url: '/superAdmin/addUser',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/user/addUser.html',
+              controller:  'UserController'
+            }
+        }
+  });
+  $stateProvider.state('root.users', {
+    url: '/superAdmin/users',
+    views: {
+          'content@': {
+            templateUrl: 'assets/html/superAdmin/users/index.html',
+            controller:  'UserController'
+          }
+      }
+});
+$stateProvider.state('root.updateUser', {
+  url: '/superAdmin/users/:id',
+  views: {
+        'content@': {
+          templateUrl: 'assets/html/superAdmin/users/updateCompany.html',
+          controller:  'UserControllerDetails'
+        }
+    }
+});
+
+     //$locationProvider.html5Mode(true);
+  }]);
+
+    umap.factory('UserService', function($resource) {
+      return $resource('/api/users/:id',{id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      });
+    });
+
+
+  umap.controller('UserController',['$scope','UserService','$http','$stateParams','$location', function($scope, UserService,$http, $stateParams,$location) {
+     $scope.user = {
+       'email':'',
+       'role': 'superAdmin'};
+      $scope.addUser = function(){
+        UserService.save($scope.user, function(){
+          $location.path('/superAdmin/users')
+        });
+      };
+    $scope.users = UserService.query();
+    $scope.deleteUser = function(param){
+      UserService.delete({id:  param}, function(){
+        $location.path('/superAdmin/users')
+      });
+    };
+  }]);
+
+  umap.controller('UserControllerDetails',['$scope','UserService','$http','$stateParams', function($scope, UserService,$http,$stateParams) {
+    $scope.user = CompanyService.get({ id:  $stateParams.id });
+    $scope.editUser = function(){
+      UserService.update({id:  $stateParams.id}, $scope.user, function(){
+        $location.path('/superAdmin/users')
+      });
+    }
+  }]);
+})();

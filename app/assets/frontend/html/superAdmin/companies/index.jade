@@ -4,5 +4,4 @@ section(id="companiesList")
     p {{company.companyName}}
     a(ui-sref="updateCompany({id:company.companyID})") Modifica
     form(ng-submit="deleteCompany(company.companyID)")
-      input(type="hidden" ng-model="company.companyName"  value="{{company.companyName}}")
       button(type='submit') Elimina

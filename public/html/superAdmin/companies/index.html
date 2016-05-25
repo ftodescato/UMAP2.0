@@ -4,7 +4,6 @@
   <article ng-repeat="company in companies">
     <p>{{company.companyName}}</p><a ui-sref="updateCompany({id:company.companyID})">Modifica</a>
     <form ng-submit="deleteCompany(company.companyID)">
-      <input type="hidden" ng-model="company.companyName" value="{{company.companyName}}"/>
       <button type="submit">Elimina</button>
     </form>
   </article>

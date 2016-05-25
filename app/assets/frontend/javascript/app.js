@@ -1,22 +1,21 @@
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','umap.company']);
+  var umap = angular.module('umap', ['ui.router','umap.company','umap.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   //  $urlRouterProvider.otherwise('/');
 
-    $stateProvider.state('home', {
-      url: '/',
-      //abstract:true,
+    $stateProvider.state('root', {
+    //  url: '/',
+      abstract:true,
       views: {
             'header': {
               templateUrl: 'assets/html/shared/header.html'
-              //controller: 'header/HeaderCtrl'
+              controller: 'HeaderController'
             },
             'content': {
-              templateUrl: 'assets/html/shared/index.html',
-              controller: 'AppController'
+
             },
             'footer': {
               templateUrl: 'assets/html/shared/footer.html'
@@ -46,8 +45,8 @@
     };
   });
   }]);
-umap.controller('AppController',['$scope',function($scope) {
-  // body...
+umap.controller('HeaderController',['$scope',function($scope) {
+  
 }]);
 
 

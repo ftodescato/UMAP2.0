@@ -2,28 +2,28 @@
   'use strict';
   var umap = angular.module('umap.company',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
-    $stateProvider.state('addCompanies', {
+    $stateProvider.state('root.addCompanies', {
       url: '/superAdmin/addCompany',
       views: {
-            'content': {
+            'content@': {
               templateUrl: 'assets/html/superAdmin/companies/addCompany.html',
               controller:  'CompanyController'
             }
         }
   });
-  $stateProvider.state('companies', {
+  $stateProvider.state('root.companies', {
     url: '/superAdmin/companies',
     views: {
-          'content': {
+          'content@': {
             templateUrl: 'assets/html/superAdmin/companies/index.html',
             controller:  'CompanyController'
           }
       }
 });
-$stateProvider.state('updateCompany', {
+$stateProvider.state('root.updateCompany', {
   url: '/superAdmin/companies/:id',
   views: {
-        'content': {
+        'content@': {
           templateUrl: 'assets/html/superAdmin/companies/updateCompany.html',
           controller:  'CompanyControllerDetails'
         }
