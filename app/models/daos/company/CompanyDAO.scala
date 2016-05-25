@@ -37,7 +37,7 @@ trait CompanyDAO {
    */
   def save(company: Company): Future[Company]
 
-  def update(companyID: UUID, company2: Company)
+  def update(companyID: UUID, company2: Company): Future[Company]
 
   def remove(companyID: UUID)
 
