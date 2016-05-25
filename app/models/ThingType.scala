@@ -3,18 +3,16 @@ package models
 import java.util.UUID
 import play.api.libs.json.Json
 
-/**
- * The thingType object.
- *
- * @param thingTypeID The unique ID of the thingType.
- * @param thingTypeName The last name of the thingType.
- * @param companyID The list of company ID of thingType.
- */
+
 
 case class ThingType(
   thingTypeID: UUID,
   thingTypeName: String,
-  companyID: List[UUID]
+  companyID: List[UUID],
+  valuesInt: Option[List[Map[String, Int]]],
+  valuesString: Option[List[Map[String, String]]],
+  valuesFloat: Option[List[Map[String, Float]]],
+  valuesDouble: Option[List[Map[String, Double]]]
    )
 
 
