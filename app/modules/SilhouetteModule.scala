@@ -18,6 +18,8 @@ import com.mohiva.play.silhouette.impl.repositories.DelegableAuthInfoRepository
 import com.mohiva.play.silhouette.impl.services._
 import com.mohiva.play.silhouette.impl.util._
 import models.User
+import models.daos.user._
+import models.daos.company._
 import models.daos._
 import models.daos.user._
 import models.daos.company._
