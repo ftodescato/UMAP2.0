@@ -9,7 +9,7 @@ import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import forms._
+import forms.formCompany._
 import models.Company
 import models.User
 import models.daos.company.CompanyDAO

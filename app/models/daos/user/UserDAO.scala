@@ -20,13 +20,15 @@ trait UserDAO {
    */
   def find(loginInfo: LoginInfo): Future[Option[User]]
 
+  def findAll(): Future[List[User]]
+
   /**
    * Finds a user by its user ID.
    *
    * @param userID The ID of the user to find.
    * @return The found user or None if no user for the given ID could be found.
    */
-  def find(userID: UUID): Future[Option[User]]
+  def findByID(userID: UUID): Future[Option[User]]
 
   /**
    * Saves a user.
@@ -36,7 +38,7 @@ trait UserDAO {
    */
   def save(user: User): Future[User]
 
-  def update(userID: UUID, user2: User)
+  def update(userID: UUID, user2: User): Future[User]
 
-  def remove(userID: UUID)
+  def remove(userID: UUID): Future[Boolean]
 }

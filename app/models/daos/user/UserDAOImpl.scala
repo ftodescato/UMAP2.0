@@ -24,6 +24,10 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
 
   def collection: JSONCollection = db.collection[JSONCollection]("user")
 
+
+  def findAll(): Future[List[User]] = {
+    collection.find(Json.obj()).cursor[User]().collect[List]()
+  }
   /**
     * Finds a user by its login info.
     *
@@ -40,7 +44,7 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
     * @param userID The ID of the user to find.
     * @return The found user or None if no user for the given ID could be found.
     */
-  def find(userID: UUID) : Future[Option[User]] = {
+  def findByID(userID: UUID) : Future[Option[User]] = {
     collection.find(Json.obj("userID" -> userID)).one[User]
   }
 
@@ -59,9 +63,11 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
 
   def update(userID: UUID, user2: User) = {
     collection.update(Json.obj("userID" -> userID),user2)
+    Future.successful(user2)
   }
 
   def remove(userID: UUID) = {
     collection.remove(Json.obj("userID" -> userID))
+    Future.successful(true)
   }
 }

@@ -11,9 +11,8 @@ case class Thing(
   thingPassword: String,
   thingName: String,
   companyID: UUID,
-  thingTypeID: UUID,
-
-   )
+  thingTypeID: UUID
+)
 
 
 /**
