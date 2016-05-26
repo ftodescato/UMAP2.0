@@ -1,7 +1,0 @@
-New log file opened at Tue May 24 16:34:23 CEST 2016 by 7524@Asus-mac40
-Taking next connection to: 50277
-New client attempting to connect on port: 50279-50277
-  Address = /10.93.0.156:50277
-This client on port 50279 has uuid f4598a78-1764-4a51-adc9-344bdfe06ea6 configName play-fork-run humanReadableName Play Fork Run protocolVersion 1 featureTags Vector()
-Connected Clients: play-fork-run-f4598a78-1764-4a51-adc9-344bdfe06ea6
-Taking next connection to: 50277
