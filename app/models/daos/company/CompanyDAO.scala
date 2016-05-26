@@ -19,6 +19,7 @@ trait CompanyDAO {
    */
 
   def findByName(companyName: String): Future[Option[Company]]
+
   def findAll(): Future[List[Company]]
 
   /**

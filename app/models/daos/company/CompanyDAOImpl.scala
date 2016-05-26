@@ -30,7 +30,9 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
    * @return The found company or None if no company for the given name could be found.
    */
   def findByName(companyName: String): Future[Option[Company]] = {
+
     collection.find(Json.obj("companyName" -> companyName)).one[Company]
+
   }
 
   def findAll(): Future[List[Company]] = {

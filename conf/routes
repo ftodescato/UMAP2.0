@@ -10,7 +10,7 @@ GET         /signOut                         controllers.ApplicationController.s
 POST        /signIn                          controllers.shared.AuthController.authenticate
 
 POST        /api/users                         controllers.superAdmin.UserController.addUser
-GET        /api/users                         controllers.superAdmin.UserController.showUsers
+GET         /api/users                         controllers.superAdmin.UserController.showUsers
 DELETE      /api/users/:id            controllers.superAdmin.UserController.delete(id: java.util.UUID)
 
 

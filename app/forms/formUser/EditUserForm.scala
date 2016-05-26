@@ -16,6 +16,7 @@ object EditUserForm {
     mapping(
       "email" -> email,
       "password" -> nonEmptyText,
+      "company" -> nonEmptyText,
       "role"  -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
@@ -27,6 +28,7 @@ object EditUserForm {
   case class Data(
     email: String,
     password: String,
+    company: String,
     role: String
   )
 

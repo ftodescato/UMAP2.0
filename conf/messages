@@ -4,6 +4,7 @@ invalid.credentials = Invalid credentials!
 invalid.data = Invalid data!
 access.denied = Access denied!
 user.exists = There already exists a user with this email!
+company.notExists = Company not exists!
 could.not.authenticate = Could not authenticate with social provider! Please try again!
 
 toggle.navigation = Toggle navigation

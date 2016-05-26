@@ -13,6 +13,7 @@ import forms.formUser._
 import models.User
 import models.services._
 import models.daos.user._
+import models.daos.company._
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -35,6 +36,7 @@ class UserController @Inject() (
   val env: Environment[User, JWTAuthenticator],
   userService: UserService,
   userDao: UserDAO,
+  companyDao: CompanyDAO,
   authInfoRepository: AuthInfoRepository,
   avatarService: AvatarService,
   passwordHasher: PasswordHasher)
@@ -57,7 +59,7 @@ class UserController @Inject() (
     }
 
 
-    def delete(userID: UUID) = SecuredAction.async{ implicit request =>
+    def delete(userID: UUID) = Action.async{ implicit request =>
       userDao.findByID(userID).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
           case Some (user) =>
@@ -83,6 +85,7 @@ class UserController @Inject() (
               userID = user.userID,
               loginInfo = loginInfo,
               email = Some(data.email),
+              company = data.company,
               role = data.role
             )
             for {
@@ -97,11 +100,12 @@ class UserController @Inject() (
               Ok(Json.obj("token" -> token))
             }
         }
+
       }.recoverTotal {
         case error =>
           Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
-      }
-   }
+    }
+}
 
   def addUser = Action.async(parse.json) { implicit request =>
     request.body.validate[SignUpForm.Data].map { data =>
@@ -109,27 +113,34 @@ class UserController @Inject() (
       userDao.find(loginInfo).flatMap {
         case Some(user) =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("user.exists"))))
-        case None =>
-          val authInfo = passwordHasher.hash(data.password)
-          val user = User(
-            userID = UUID.randomUUID(),
-            loginInfo = loginInfo,
-            email = Some(data.email),
-            role = data.role
-          )
-          for {
-            //user <- userService.save(user.copy(avatarURL = avatar))
-            user <- userDao.save(user)
-            authInfo <- authInfoRepository.add(loginInfo, authInfo)
-            authenticator <- env.authenticatorService.create(loginInfo)
-            token <- env.authenticatorService.init(authenticator)
-          } yield {
-            env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            env.eventBus.publish(LoginEvent(user, request, request2Messages))
-            Ok(Json.obj("token" -> token))
+            case None =>
+            val companyInfo = data.company
+            companyDao.findByName(companyInfo).flatMap{
+            case Some(companyToAssign) =>
+            val authInfo = passwordHasher.hash(data.password)
+            val user = User(
+              userID = UUID.randomUUID(),
+              loginInfo = loginInfo,
+              email = Some(data.email),
+              company = data.company,
+              role = data.role
+            )
+            for {
+              //user <- userService.save(user.copy(avatarURL = avatar))
+              user <- userDao.save(user)
+              authInfo <- authInfoRepository.add(loginInfo, authInfo)
+              authenticator <- env.authenticatorService.create(loginInfo)
+              token <- env.authenticatorService.init(authenticator)
+            } yield {
+              env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+              env.eventBus.publish(LoginEvent(user, request, request2Messages))
+              Ok(Json.obj("token" -> token))
+            }
+            case None =>
+              Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
           }
       }
-    }.recoverTotal {
+  }.recoverTotal {
       case error =>
         Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
     }
