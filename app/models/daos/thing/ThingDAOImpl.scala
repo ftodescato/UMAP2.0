@@ -86,5 +86,6 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
 
   def remove(thingID: UUID) = {
     collection.remove(Json.obj("thingID" -> thingID))
+    Future.successful(true)
   }
 }
