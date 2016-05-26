@@ -52,7 +52,7 @@ def showCompanyDetails(companyID: UUID) = Action.async{ implicit request =>
 
 def delete(companyID: UUID) = Action.async{ implicit request =>
   companyDao.findByID(companyID).flatMap{
-      case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
+      case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
       case Some (company) =>
         for{
           company <- userDao.removeByCompany(companyID)
@@ -67,28 +67,10 @@ def delete(companyID: UUID) = Action.async{ implicit request =>
  }
 
 
-
-// def delete(companyID: UUID) = Action.async{ implicit request =>
-//   companyDao.findByID(companyID).flatMap{
-//       case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
-//       case Some (company) =>
-//       val userToDelete = userDao.findByIDCompany(companyID)
-//         for{
-//           userToDelete <- userDao.removeByCompany(companyID)
-//           // company <- companyDao.remove(companyID)
-//         }yield {
-//             //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-//             //env.eventBus.publish(LoginEvent(user, request, request2Messages))
-//             Ok(Json.obj("ok" -> "ok"))
-//           }
-//     }
-//  }
-
-
 def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit request =>
   request.body.validate[EditCompanyForm.Data].map { data =>
   companyDao.findByID(companyID).flatMap{
-      case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
+      case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
       case Some (company) =>
         val company2 = Company(
             companyID = company.companyID,
