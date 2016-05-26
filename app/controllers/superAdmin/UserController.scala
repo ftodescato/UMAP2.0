@@ -57,12 +57,12 @@ class UserController @Inject() (
     }
 
 
-    def delete(userID: UUID) = Action.async{ implicit request =>
-      companyDao.findByID(companyID).flatMap{
-          case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
-          case Some (company) =>
+    def delete(userID: UUID) = SecuredAction.async{ implicit request =>
+      userDao.findByID(userID).flatMap{
+          case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
+          case Some (user) =>
             for{
-              company <- companyDao.remove(companyID)
+              user <- userDao.remove(userID)
             }yield {
                 //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
                 //env.eventBus.publish(LoginEvent(user, request, request2Messages))
