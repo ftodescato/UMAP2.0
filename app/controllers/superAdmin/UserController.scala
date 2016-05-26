@@ -56,6 +56,22 @@ class UserController @Inject() (
         }
     }
 
+
+    def delete(userID: UUID) = Action.async{ implicit request =>
+      companyDao.findByID(companyID).flatMap{
+          case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
+          case Some (company) =>
+            for{
+              company <- companyDao.remove(companyID)
+            }yield {
+                //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+                //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+                Ok(Json.obj("ok" -> "ok"))
+              }
+            }
+
+     }
+
     def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
       request.body.validate[EditUserForm.Data].map { data =>
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)

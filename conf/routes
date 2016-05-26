@@ -10,6 +10,9 @@ GET         /signOut                         controllers.ApplicationController.s
 POST        /signIn                          controllers.shared.AuthController.authenticate
 
 POST        /api/users                         controllers.superAdmin.UserController.addUser
+GET        /api/users                         controllers.superAdmin.UserController.showUsers
+DELETE      /api/users/:id            controllers.superAdmin.UserController.delete(id: java.util.UUID)
+
 
 GET         /api/companies/:id               controllers.superAdmin.CompanyController.showCompanyDetails(id: java.util.UUID)
 PUT         /api/companies/:id               controllers.superAdmin.CompanyController.updateCompany(id: java.util.UUID)
