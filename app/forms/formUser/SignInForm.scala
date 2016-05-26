@@ -2,6 +2,7 @@ package forms.formUser
 
 import play.api.data.Form
 import play.api.data.Forms._
+import play.api.libs.json.Json
 
 /**
  * The form which handles the submission of the credentials.
@@ -30,4 +31,15 @@ object SignInForm {
     email: String,
     password: String,
     rememberMe: Boolean)
+
+    /**
+     * The companion object.
+     */
+    object Data {
+
+      /**
+       * Converts the [Date] object to Json and vice versa.
+       */
+      implicit val jsonFormat = Json.format[Data]
+    }
 }
