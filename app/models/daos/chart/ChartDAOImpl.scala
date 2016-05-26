@@ -64,6 +64,7 @@ class ChartDAOImpl @Inject() (db : DB) extends ChartDAO {
 
   def remove(chartID: UUID) = {
     collection.remove(Json.obj("chartID" -> chartID))
+    Future.successful(true)
   }
 
 }
