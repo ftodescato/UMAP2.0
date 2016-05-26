@@ -12,6 +12,7 @@ import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.formCompany._
 import models.Company
 import models.User
+import models.daos.user.UserDAO
 import models.daos.company.CompanyDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -24,7 +25,8 @@ import scala.concurrent.Future
 class CompanyController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
-  companyDao: CompanyDAO)
+  companyDao: CompanyDAO,
+  userDao: UserDAO)
   //authInfoRepository: AuthInfoRepository,
   //avatarService: AvatarService,
   //passwordHasher: PasswordHasher)
@@ -53,15 +55,34 @@ def delete(companyID: UUID) = Action.async{ implicit request =>
       case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
       case Some (company) =>
         for{
-          company <- companyDao.remove(companyID)
+          company <- userDao.removeByCompany(companyID)
+          //company <- companyDao.remove(companyID)
         }yield {
+            companyDao.remove(companyID)
             //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //env.eventBus.publish(LoginEvent(user, request, request2Messages))
             Ok(Json.obj("ok" -> "ok"))
           }
-        }
-
+    }
  }
+
+
+
+// def delete(companyID: UUID) = Action.async{ implicit request =>
+//   companyDao.findByID(companyID).flatMap{
+//       case None => Future.successful(BadRequest(Json.obj("message" -> "Company non trovata")))
+//       case Some (company) =>
+//       val userToDelete = userDao.findByIDCompany(companyID)
+//         for{
+//           userToDelete <- userDao.removeByCompany(companyID)
+//           // company <- companyDao.remove(companyID)
+//         }yield {
+//             //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+//             //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+//             Ok(Json.obj("ok" -> "ok"))
+//           }
+//     }
+//  }
 
 
 def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit request =>

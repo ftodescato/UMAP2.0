@@ -10,7 +10,7 @@ case class User(
   userID: UUID,
   loginInfo: LoginInfo,
   email: Option[String],
-  company: String,
+  company: UUID,
   role: String) extends Identity
 
 /**

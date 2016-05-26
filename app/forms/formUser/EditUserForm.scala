@@ -3,6 +3,7 @@ package forms.formUser
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+import java.util.UUID
 
 /**
  * The form which handles the sign up process.
@@ -16,7 +17,7 @@ object EditUserForm {
     mapping(
       "email" -> email,
       "password" -> nonEmptyText,
-      "company" -> nonEmptyText,
+      "company" -> uuid,
       "role"  -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
@@ -28,7 +29,7 @@ object EditUserForm {
   case class Data(
     email: String,
     password: String,
-    company: String,
+    company: UUID,
     role: String
   )
 

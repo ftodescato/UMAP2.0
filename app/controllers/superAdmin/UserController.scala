@@ -78,8 +78,11 @@ class UserController @Inject() (
       request.body.validate[EditUserForm.Data].map { data =>
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
         userService.retrieve(loginInfo).flatMap {
-          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.exists"))))
+          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
           case Some(user) =>
+          val companyInfo = data.company
+          companyDao.findByID(companyInfo).flatMap{
+          case Some(companyToAssign) =>
             val authInfo = passwordHasher.hash(data.password)
             val user2 = User(
               userID = user.userID,
@@ -99,6 +102,9 @@ class UserController @Inject() (
               env.eventBus.publish(LoginEvent(user, request, request2Messages))
               Ok(Json.obj("token" -> token))
             }
+            case None =>
+              Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+          }
         }
 
       }.recoverTotal {
@@ -115,7 +121,7 @@ class UserController @Inject() (
           Future.successful(BadRequest(Json.obj("message" -> Messages("user.exists"))))
             case None =>
             val companyInfo = data.company
-            companyDao.findByName(companyInfo).flatMap{
+            companyDao.findByID(companyInfo).flatMap{
             case Some(companyToAssign) =>
             val authInfo = passwordHasher.hash(data.password)
             val user = User(

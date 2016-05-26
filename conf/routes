@@ -11,7 +11,8 @@ POST        /signIn                          controllers.shared.AuthController.a
 
 POST        /api/users                         controllers.superAdmin.UserController.addUser
 GET         /api/users                         controllers.superAdmin.UserController.showUsers
-DELETE      /api/users/:id            controllers.superAdmin.UserController.delete(id: java.util.UUID)
+PUT         /api/users/:id                     controllers.superAdmin.UserController.updateUser(id: java.util.UUID)
+DELETE      /api/users/:id                     controllers.superAdmin.UserController.delete(id: java.util.UUID)
 
 
 GET         /api/companies/:id               controllers.superAdmin.CompanyController.showCompanyDetails(id: java.util.UUID)
