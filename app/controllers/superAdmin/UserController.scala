@@ -56,7 +56,7 @@ class UserController @Inject() (
         }
     }
 
-    def updateUser = Action.async(parse.json) { implicit request =>
+    def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
       request.body.validate[EditUserForm.Data].map { data =>
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
         userService.retrieve(loginInfo).flatMap {
@@ -64,14 +64,14 @@ class UserController @Inject() (
           case Some(user) =>
             val authInfo = passwordHasher.hash(data.password)
             val user2 = User(
-              userID = Some(data.userID),
+              userID = user.userID,
               loginInfo = loginInfo,
               email = Some(data.email),
               role = data.role
             )
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
-              user <- userService.update(userID,user2)
+              user <- userDao.update(userID,user2)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               token <- env.authenticatorService.init(authenticator)

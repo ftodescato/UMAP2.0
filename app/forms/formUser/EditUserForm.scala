@@ -15,6 +15,7 @@ object EditUserForm {
   val form = Form(
     mapping(
       "email" -> email,
+      "password" -> nonEmptyText,
       "role"  -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
@@ -25,6 +26,7 @@ object EditUserForm {
    */
   case class Data(
     email: String,
+    password: String,
     role: String
   )
 
