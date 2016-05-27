@@ -50,83 +50,93 @@ extends Silhouette[User, JWTAuthenticator] {
   //     Future.successful(Ok(Json.toJson(company)))
   //   }
   // }
-  //
-  // def delete(companyID: UUID) = Action.async{ implicit request =>
-  //   companyDao.findByID(companyID).flatMap{
-  //     case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-  //     case Some (company) =>
-  //       for{
-  //         company <- userDao.removeByCompany(companyID)
-  //       }yield{
-  //         companyDao.remove(companyID)
-  //         //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-  //         //env.eventBus.publish(LoginEvent(user, request, request2Messages))
-  //         Ok(Json.obj("ok" -> "ok"))
-  //        }
-  //   }
-  // }
-  //
-  // def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit request =>
-  //   request.body.validate[EditCompany.Data].map { data =>
-  //     companyDao.findByID(companyID).flatMap{
-  //       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-  //       case Some (company) =>
-  //         val company2 = Company(
-  //             companyID = company.companyID,
-  //             companyName = Some(data.companyName)
-  //         )
-  //         for{
-  //           company <- companyDao.update(companyID,company2)
-  //         }yield {
-  //           //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-  //           //env.eventBus.publish(LoginEvent(user, request, request2Messages))
-  //           Ok(Json.obj("ok" -> "ok"))
-  //          }
-  //     }
-  //   }.recoverTotal {
-  //       case error =>
-  //         Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
-  //     }
-  // }
+
+  def delete(thingID: UUID) = Action.async{ implicit request =>
+    thingDao.findByID(thingID).flatMap{
+      case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+      case Some (thing) =>
+        for{
+          thing <- thingDao.remove(thingID)
+        }yield{
+          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+          Ok(Json.obj("ok" -> "ok"))
+         }
+    }
+  }
+
+  def updateThing (thingID : UUID) = Action.async(parse.json) { implicit request =>
+    request.body.validate[EditThing.Data].map { data =>
+      val companyInfo = data.company
+      companyDao.findByID(companyInfo).flatMap{
+        case Some (companyToAssign) =>
+          val thingTypeInfo = data.thingTypeID
+          thingTypeDao.findByID(thingTypeInfo).flatMap{
+            case Some(thingTypeToAssign) =>
+              val thing2 = Thing(
+                  thingID = UUID.randomUUID(),
+                  name = data.thingName,
+                  serialNumber = data.serialNumber,
+                  description = data.description,
+                  thingTypeID = data.thingTypeID,
+                  companyID = data.company
+              )
+              for{
+                thing <- thingDao.update(thingID,thing2)
+              }yield {
+                //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+                //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+                Ok(Json.obj("ok" -> "ok"))
+               }
+            case None =>
+              Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
+          }
+        case None =>
+         Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+       }
+     }.recoverTotal {
+        case error =>
+          Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+       }
+  }
 
   def addThing = Action.async(parse.json) { implicit request =>
     request.body.validate[AddThing.Data].map { data =>
       val companyInfo = data.company
       companyDao.findByID(companyInfo).flatMap{
         case Some(companyToAssign) =>
-        val thingTypeInfo = data.thingTypeID
-        thingTypeDao.findByID(thingTypeInfo).flatMap{
-        case Some(thingTypeToAssign) =>
-
-      //val authInfo = passwordHasher.hash(data.password)
-      val thing = Thing(
-          thingID = UUID.randomUUID(),
-          name = data.thingName,
-          serialNumber = data.serialNumber,
-          description = data.description,
-          thingTypeID = data.thingTypeID,
-          companyID = data.company
-      )
-      for{
-        thing <- thingDao.save(thing)
-        //user <- userService.save(user.copy(avatarURL = avatar))
-        //authInfo <- authInfoRepository.add(loginInfo, authInfo)
-        //authenticator <- env.authenticatorService.create(loginInfo)
-        //token <- env.authenticatorService.init(authenticator)
-      } yield {
-          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
-          Ok(Json.obj("ok" -> "ok"))
-        }
-        case None =>
-          Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
-      }
+          val thingTypeInfo = data.thingTypeID
+          thingTypeDao.findByID(thingTypeInfo).flatMap{
+            case Some(thingTypeToAssign) =>
+              //val authInfo = passwordHasher.hash(data.password)
+              val thing = Thing(
+                  thingID = UUID.randomUUID(),
+                  name = data.thingName,
+                  serialNumber = data.serialNumber,
+                  description = data.description,
+                  thingTypeID = data.thingTypeID,
+                  companyID = data.company
+              )
+              for{
+                thing <- thingDao.save(thing)
+                //user <- userService.save(user.copy(avatarURL = avatar))
+                //authInfo <- authInfoRepository.add(loginInfo, authInfo)
+                //authenticator <- env.authenticatorService.create(loginInfo)
+                //token <- env.authenticatorService.init(authenticator)
+              } yield {
+                  //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+                  //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+                  Ok(Json.obj("ok" -> "ok"))
+                }
+                case None =>
+                  Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
+          }
         case None =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
       }
-      }.recoverTotal {
+    }.recoverTotal {
           case error =>
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
-        }
+      }
   }
 }

@@ -5,6 +5,7 @@ invalid.data = Invalid data!
 access.denied = Access denied!
 user.exists = There already exists a user with this email!
 user.notComplete = User does not complete!
+thing.notExists = Thing does not exists!
 thingType.notExists = ThingType does not exists!
 company.notExists = Company does not exists!
 could.not.authenticate = Could not authenticate with social provider! Please try again!

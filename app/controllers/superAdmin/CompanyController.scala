@@ -55,7 +55,7 @@ class CompanyController @Inject() (
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
       case Some (company) =>
         for{
-          company <- userDao.removeByCompany(companyID)
+          company <- userDao.remove(companyID)
         }yield{
           companyDao.remove(companyID)
           //env.eventBus.publish(SignUpEvent(user, request, request2Messages))

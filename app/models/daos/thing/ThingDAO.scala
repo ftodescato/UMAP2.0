@@ -24,7 +24,7 @@ trait ThingDAO {
 
   def save(thing: Thing): Future[Thing]
 
-  def update(thingID: UUID, thing2: Thing)
+  def update(thingID: UUID, thing2: Thing): Future[Thing]
 
-  def remove(thingID: UUID)
+  def remove(thingID: UUID): Future[Boolean]
 }
