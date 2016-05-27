@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.{ Environment, LogoutEvent, Silhouette }
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
-// import forms.formAccount._
+//import forms.formAccount._
 import models._
 import play.api.i18n.MessagesApi
 import play.api.libs.concurrent.Execution.Implicits._
@@ -14,24 +14,13 @@ import play.api.mvc.Action
 
 import scala.concurrent.Future
 
-/**
- * The basic application controller.
- *
- * @param messagesApi The Play messages API.
- * @param env The Silhouette environment.
- * @param socialProviderRegistry The social provider registry.
- */
 class AccountController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
 
 
-  // /**
-  //  * Handles the index action.
-  //  *
-  //  * @return The result to display.
-  //  */
+
   //  def editProfile = SecuredAction.async { implicit request =>
   //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))
   //  }

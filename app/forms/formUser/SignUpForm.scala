@@ -15,6 +15,8 @@ object SignUpForm {
    */
   val form = Form(
     mapping(
+      "name" -> nonEmptyText,
+      "surname" -> nonEmptyText,
       "email" -> email,
       "password" -> nonEmptyText,
       "company" -> uuid,
@@ -24,6 +26,8 @@ object SignUpForm {
 
 
   case class Data(
+    name: String,
+    surname: String,
     email: String,
     password: String,
     company: UUID,

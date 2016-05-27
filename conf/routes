@@ -2,27 +2,30 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /                           controllers.Assets.at(path="/public", file="html/layout.html")
+GET         /                                  controllers.Assets.at(path="/public", file="html/layout.html")
 GET         /testDue                           controllers.ApplicationController.index
-GET         /user                            controllers.ApplicationController.user
-POST         /test                            controllers.ApplicationController.test
-GET         /signOut                         controllers.ApplicationController.signOut
-POST        /signIn                          controllers.shared.AuthController.authenticate
+GET         /user                              controllers.ApplicationController.user
+GET         /signOut                           controllers.ApplicationController.signOut
+POST        /test                              controllers.ApplicationController.test
+POST        /signIn                            controllers.shared.AuthController.authenticate
 
-POST        /api/users                         controllers.superAdmin.UserController.addUser
-GET         /api/users                         controllers.superAdmin.UserController.showUsers
-PUT         /api/users/:id                     controllers.superAdmin.UserController.updateUser(id: java.util.UUID)
-DELETE      /api/users/:id                     controllers.superAdmin.UserController.delete(id: java.util.UUID)
+GET         /api/usersA/:id                    controllers.admin.UserController.showUsers(id: java.util.UUID)
+POST        /api/usersA/:id                    controllers.admin.UserController.addUser(id: java.util.UUID)
+#PUT         /api/usersA/:id                   controllers.admin.UserController.updateUser(id: java.util.UUID)
 
+GET         /api/usersSA                       controllers.superAdmin.UserController.showUsers
+POST        /api/usersSA                       controllers.superAdmin.UserController.addUser
+PUT         /api/usersSA/:id                   controllers.superAdmin.UserController.updateUser(id: java.util.UUID)
+DELETE      /api/usersSA/:id                   controllers.superAdmin.UserController.delete(id: java.util.UUID)
 
-GET         /api/companies/:id               controllers.superAdmin.CompanyController.showCompanyDetails(id: java.util.UUID)
-PUT         /api/companies/:id               controllers.superAdmin.CompanyController.updateCompany(id: java.util.UUID)
-GET         /api/companies               controllers.superAdmin.CompanyController.showCompanies
-POST        /api/companies                 controllers.superAdmin.CompanyController.addCompany
-DELETE      /api/companies/:id            controllers.superAdmin.CompanyController.delete(id: java.util.UUID)
+GET         /api/companiesSA/:id               controllers.superAdmin.CompanyController.showCompanyDetails(id: java.util.UUID)
+GET         /api/companiesSA                   controllers.superAdmin.CompanyController.showCompanies
+POST        /api/companiesSA                   controllers.superAdmin.CompanyController.addCompany
+PUT         /api/companiesSA/:id               controllers.superAdmin.CompanyController.updateCompany(id: java.util.UUID)
+DELETE      /api/companiesSA/:id               controllers.superAdmin.CompanyController.delete(id: java.util.UUID)
 
 # Dynamic part of the url
-#GET         /views/$template<.+>.html        controllers.ApplicationController.view(template)
+#GET         /views/$template<.+>.html       controllers.ApplicationController.view(template)
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file                    controllers.Assets.at(path="/public", file)

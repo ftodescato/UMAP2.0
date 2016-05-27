@@ -8,6 +8,8 @@ import play.api.libs.json.Json
 
 case class User(
   userID: UUID,
+  name: String,
+  surname: String,
   loginInfo: LoginInfo,
   email: Option[String],
   company: UUID,

@@ -1,4 +1,4 @@
-package controllers.superAdmin
+package controllers.admin
 
 import java.util.UUID
 import javax.inject.Inject
@@ -11,6 +11,7 @@ import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.formUser._
 import models.User
+import models.Company
 import models.services._
 import models.daos.user._
 import models.daos.company._
@@ -33,15 +34,15 @@ class UserController @Inject() (
   passwordHasher: PasswordHasher)
   extends Silhouette[User, JWTAuthenticator] {
 
-  def showUsers = Action.async{ implicit request =>
-   val users = userDao.findAll()
+  def showUsers(companyID: UUID) = Action.async{ implicit request =>
+   val users = userDao.findByIDCompany(companyID)
    users.flatMap{
     users =>
      Future.successful(Ok(Json.toJson(users)))
    }
-  }
+ }
 
-    def showUserDetails(userID: UUID) = Action.async{ implicit request =>
+ def showUserDetails(userID: UUID) = Action.async{ implicit request =>
       val user = userDao.findByID(userID)
         user.flatMap{
          user =>
@@ -49,7 +50,7 @@ class UserController @Inject() (
         }
     }
 
-
+    //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
     def delete(userID: UUID) = Action.async{ implicit request =>
       userDao.findByID(userID).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
@@ -62,7 +63,6 @@ class UserController @Inject() (
                 Ok(Json.obj("ok" -> "ok"))
               }
             }
-
      }
 
     def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
@@ -71,9 +71,7 @@ class UserController @Inject() (
         userService.retrieve(loginInfo).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
           case Some(user) =>
-          val companyInfo = data.company
-          companyDao.findByID(companyInfo).flatMap{
-          case Some(companyToAssign) =>
+            val companyInfo = companyDao.findByIDUser(userID)
             val authInfo = passwordHasher.hash(data.password)
             val user2 = User(
               userID = user.userID,
@@ -95,9 +93,6 @@ class UserController @Inject() (
               env.eventBus.publish(LoginEvent(user, request, request2Messages))
               Ok(Json.obj("token" -> token))
             }
-            case None =>
-              Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-          }
         }
       }.recoverTotal {
         case error =>
@@ -105,16 +100,13 @@ class UserController @Inject() (
     }
 }
 
-  def addUser = Action.async(parse.json) { implicit request =>
+  def addUser(companyID: UUID) = Action.async(parse.json) { implicit request =>
     request.body.validate[SignUpForm.Data].map { data =>
       val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userDao.find(loginInfo).flatMap {
         case Some(user) =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("user.exists"))))
             case None =>
-            val companyInfo = data.company
-            companyDao.findByID(companyInfo).flatMap{
-            case Some(companyToAssign) =>
             val authInfo = passwordHasher.hash(data.password)
             val user = User(
               userID = UUID.randomUUID(),
@@ -122,7 +114,7 @@ class UserController @Inject() (
               surname = data.surname,
               loginInfo = loginInfo,
               email = Some(data.email),
-              company = data.company,
+              company = companyID,
               role = data.role
             )
             for {
@@ -136,9 +128,6 @@ class UserController @Inject() (
               env.eventBus.publish(LoginEvent(user, request, request2Messages))
               Ok(Json.obj("token" -> token))
             }
-            case None =>
-              Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-          }
       }
   }.recoverTotal {
       case error =>
