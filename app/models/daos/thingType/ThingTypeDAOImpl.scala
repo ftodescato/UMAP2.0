@@ -32,7 +32,7 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
     collection.find(Json.obj("thingTypeID" -> thingTypeID)).one[ThingType]
   }
 
-  def save(thingType: ThingType) = {
+  def save(thingType: ThingType): Future[ThingType] = {
     collection.insert(thingType)
     Future.successful(thingType)
   }
@@ -41,7 +41,7 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
     collection.update(Json.obj("thingTypeID" -> thingTypeID), thingType2)
   }
 
-  def remove(thingTypeID: UUID) = {
+  def remove(thingTypeID: UUID): Future[Boolean] = {
     collection.remove(Json.obj("thingTypeID" -> thingTypeID))
     Future.successful(true)
   }

@@ -20,5 +20,5 @@ trait ThingTypeDAO {
 
   def update(thingTypeID: UUID, thingType2: ThingType)
 
-  def remove(thingTypeID: UUID)
+  def remove(thingTypeID: UUID): Future[Boolean]
 }
