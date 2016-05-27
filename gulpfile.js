@@ -5,7 +5,7 @@ var watch = require('gulp-watch');
 
 gulp.task('js', function () {
   gulp.src([
-  'vendor/bower_components/jquery/dist/jquery.min.js',
+//  'vendor/bower_components/jquery/dist/jquery.min.js',
   'vendor/bower_components/angular/angular.js',
   'vendor/bower_components/angular-ui-router/release/angular-ui-router.js',
   'vendor/bower_components/satellizer/satellizer.js',

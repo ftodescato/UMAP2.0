@@ -1,5 +1,20 @@
 section(id="companiesList")
   h1 Lista delle company presenti
+  button(class="btn btn-success" ui-sref="root.addCompanies()") Nuova
+  
+  table(class="table")
+    thead
+      th Id Company
+      th Nome
+      th Azioni
+    tbody
+      tr(ng-repeat="company in companies")
+        td {{company.companyID}}
+        td {{company.companyName}}
+        td
+          button(class="btn btn-warning" ui-sref="updateCompany({id:company.companyID})") Modifica
+          form(ng-submit="deleteCompany(company.companyID)")
+            button(class="btn btn-danger" type='submit') Elimina 
   article(ng-repeat="company in companies")
     p {{company.companyName}}
     a(ui-sref="updateCompany({id:company.companyID})") Modifica

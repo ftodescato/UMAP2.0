@@ -11,7 +11,7 @@
       abstract:true,
       views: {
             'header': {
-              templateUrl: 'assets/html/shared/header.html'
+              templateUrl: 'assets/html/shared/header.html',
               controller: 'HeaderController'
             },
             'content': {
@@ -46,7 +46,7 @@
   });
   }]);
 umap.controller('HeaderController',['$scope',function($scope) {
-  
+
 }]);
 
 

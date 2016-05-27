@@ -1,6 +1,26 @@
 
 <section id="companiesList">
   <h1>Lista delle company presenti</h1>
+  <button ui-sref="root.addCompanies()" class="btn btn-success">Nuova</button>
+  <table class="table">
+    <thead>
+      <th>Id Company</th>
+      <th>Nome</th>
+      <th>Azioni</th>
+    </thead>
+    <tbody>
+      <tr ng-repeat="company in companies">
+        <td>{{company.companyID}}</td>
+        <td>{{company.companyName}}</td>
+        <td>
+          <button ui-sref="updateCompany({id:company.companyID})" class="btn btn-warning">Modifica</button>
+          <form ng-submit="deleteCompany(company.companyID)">
+            <button type="submit" class="btn btn-danger">Elimina </button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
   <article ng-repeat="company in companies">
     <p>{{company.companyName}}</p><a ui-sref="updateCompany({id:company.companyID})">Modifica</a>
     <form ng-submit="deleteCompany(company.companyID)">
