@@ -10,7 +10,7 @@ import com.mohiva.play.silhouette.api.util.{Clock, Credentials}
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
-import forms.formUser.SignInForm
+import forms.user.SignIn
 import models.User
 import models.daos.user.UserDAO
 import net.ceedubs.ficus.Ficus._
@@ -47,13 +47,13 @@ class CredentialsAuthController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
   /**
-   * Converts the JSON into a `SignInForm.Data` object.
+   * Converts the JSON into a `SignIn.Data` object.
    */
   implicit val dataReads = (
     (__ \ 'email).read[String] and
     (__ \ 'password).read[String] and
     (__ \ 'rememberMe).read[Boolean]
-  )(SignInForm.Data.apply _)
+  )(SignIn.Data.apply _)
 
   /**
    * Authenticates a user against the credentials provider.
@@ -61,7 +61,7 @@ class CredentialsAuthController @Inject() (
    * @return The result to display.
    */
   def authenticate = Action.async(parse.json) { implicit request =>
-    request.body.validate[SignInForm.Data].map { data =>
+    request.body.validate[SignIn.Data].map { data =>
       credentialsProvider.authenticate(Credentials(data.email, data.password)).flatMap { loginInfo =>
         userDao.find(loginInfo).flatMap {
           case Some(user) => env.authenticatorService.create(loginInfo).map {

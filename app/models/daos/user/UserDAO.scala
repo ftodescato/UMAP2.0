@@ -21,6 +21,10 @@ trait UserDAO {
 
   def findByID(userID: UUID): Future[Option[User]]
 
+  def findByName(userName: String): Future[List[User]]
+
+  def findBySurname(userSurname: String): Future[List[User]]
+
   def save(user: User): Future[User]
 
   def update(userID: UUID, user2: User): Future[User]

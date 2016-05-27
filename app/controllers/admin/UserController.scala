@@ -9,7 +9,7 @@ import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import forms.formUser._
+import forms.user._
 import models.User
 import models.Company
 import models.services._
@@ -40,8 +40,27 @@ class UserController @Inject() (
     users =>
      Future.successful(Ok(Json.toJson(users)))
    }
- }
+  }
 
+  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
+  def showUsersByName(userName: String) = Action.async{ implicit request =>
+    val users = userDao.findByName(userName)
+    users.flatMap{
+     users =>
+      Future.successful(Ok(Json.toJson(users)))
+    }
+  }
+
+  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
+  def showUsersBySurname(userSurname: String) = Action.async{ implicit request =>
+    val users = userDao.findBySurname(userSurname)
+    users.flatMap{
+     users =>
+      Future.successful(Ok(Json.toJson(users)))
+    }
+  }
+
+  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
  def showUserDetails(userID: UUID) = Action.async{ implicit request =>
       val user = userDao.findByID(userID)
         user.flatMap{
@@ -65,8 +84,9 @@ class UserController @Inject() (
             }
      }
 
+     //lato fronted bisogna fare la aggiungere la company dell'admin (nascosta nella form)
     def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
-      request.body.validate[EditUserForm.Data].map { data =>
+      request.body.validate[EditUser.Data].map { data =>
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
         userService.retrieve(loginInfo).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
@@ -101,7 +121,7 @@ class UserController @Inject() (
 }
 
   def addUser(companyID: UUID) = Action.async(parse.json) { implicit request =>
-    request.body.validate[SignUpForm.Data].map { data =>
+    request.body.validate[SignUp.Data].map { data =>
       val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userDao.find(loginInfo).flatMap {
         case Some(user) =>

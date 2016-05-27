@@ -7,11 +7,11 @@ import play.api.libs.json.Json
 
 case class Thing(
   thingID: UUID,
+  name: String,
   serialNumber: String,
-  thingPassword: String,
-  thingName: String,
-  companyID: UUID,
-  thingTypeID: UUID
+  description: String,
+  thingTypeID: UUID,
+  companyID: UUID
 )
 
 

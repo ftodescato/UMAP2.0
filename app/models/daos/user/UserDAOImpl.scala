@@ -41,6 +41,14 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
     collection.find(Json.obj("userID" -> userID)).one[User]
   }
 
+  def findByName(userName: String) :  Future[List[User]] = {
+    collection.find(Json.obj("name" -> userName)).cursor[User]().collect[List]()
+  }
+
+  def findBySurname(userSurname: String) :  Future[List[User]] = {
+    collection.find(Json.obj("surname" -> userSurname)).cursor[User]().collect[List]()
+  }
+
   def save(user: User) = {
     collection.update(Json.obj("userID" -> user.userID),
       user,

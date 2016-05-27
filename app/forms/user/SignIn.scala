@@ -1,4 +1,4 @@
-package forms.formUser
+package forms.user
 
 import play.api.data.Form
 import play.api.data.Forms._
@@ -7,7 +7,7 @@ import play.api.libs.json.Json
 /**
  * The form which handles the submission of the credentials.
  */
-object SignInForm {
+object SignIn {
 
   /**
    * A play framework form.

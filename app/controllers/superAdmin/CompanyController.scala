@@ -5,7 +5,7 @@ import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
-import forms.formCompany._
+import forms.company._
 import models.Company
 import models.User
 import models.daos.user.UserDAO
@@ -66,7 +66,7 @@ class CompanyController @Inject() (
   }
 
   def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit request =>
-    request.body.validate[EditCompanyForm.Data].map { data =>
+    request.body.validate[EditCompany.Data].map { data =>
       companyDao.findByID(companyID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
         case Some (company) =>
@@ -89,7 +89,7 @@ class CompanyController @Inject() (
   }
 
   def addCompany = Action.async(parse.json) { implicit request =>
-    request.body.validate[AddCompanyForm.Data].map { data =>
+    request.body.validate[AddCompany.Data].map { data =>
       //val authInfo = passwordHasher.hash(data.password)
       val company = Company(
           companyID = UUID.randomUUID(),

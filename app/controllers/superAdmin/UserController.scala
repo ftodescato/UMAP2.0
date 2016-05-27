@@ -9,7 +9,7 @@ import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-import forms.formUser._
+import forms.user._
 import models.User
 import models.services._
 import models.daos.user._
@@ -66,7 +66,7 @@ class UserController @Inject() (
      }
 
     def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
-      request.body.validate[EditUserForm.Data].map { data =>
+      request.body.validate[EditUser.Data].map { data =>
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
         userService.retrieve(loginInfo).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
@@ -106,7 +106,7 @@ class UserController @Inject() (
 }
 
   def addUser = Action.async(parse.json) { implicit request =>
-    request.body.validate[SignUpForm.Data].map { data =>
+    request.body.validate[SignUp.Data].map { data =>
       val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userDao.find(loginInfo).flatMap {
         case Some(user) =>

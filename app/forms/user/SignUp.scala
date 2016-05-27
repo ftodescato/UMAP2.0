@@ -1,4 +1,4 @@
-package forms.formUser
+package forms.user
 
 import play.api.data.Form
 import play.api.data.Forms._
@@ -8,7 +8,7 @@ import java.util.UUID
 /**
  * The form which handles the sign up process.
  */
-object SignUpForm {
+object SignUp {
 
   /**
    * A play framework form.
