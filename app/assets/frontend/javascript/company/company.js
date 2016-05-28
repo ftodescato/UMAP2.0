@@ -36,7 +36,7 @@
   }]);
 
   umap.factory('CompanyService', function($resource) {
-    return $resource('/api/companies/:id',{id: "@id"},{
+    return $resource('/api/companiesSA/:id',{id: "@id"},{
       update: {
         method: 'PUT' // this method issues a PUT request
       }

@@ -15,7 +15,7 @@
   }]);
   umap.factory('Login',['$resource',function($resource){
     return{
-      Login: $resource('http://localhost:9000/singUp',{})
+      Login: $resource('/api/usersSA/:id',{})
     }
   }]);
   umap.controller('LoginController',['Login',function(Login){

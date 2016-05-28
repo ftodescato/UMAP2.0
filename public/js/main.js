@@ -37243,7 +37243,7 @@ umap.controller('HeaderController',['$scope',function($scope) {
   }]);
   umap.factory('Login',['$resource',function($resource){
     return{
-      Login: $resource('http://localhost:9000/singUp',{})
+      Login: $resource('/api/usersSA/:id',{})
     }
   }]);
   umap.controller('LoginController',['Login',function(Login){
@@ -37289,7 +37289,7 @@ umap.controller('HeaderController',['$scope',function($scope) {
   }]);
 
   umap.factory('CompanyService', function($resource) {
-    return $resource('/api/companies/:id',{id: "@id"},{
+    return $resource('/api/companiesSA/:id',{id: "@id"},{
       update: {
         method: 'PUT' // this method issues a PUT request
       }
