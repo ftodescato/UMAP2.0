@@ -1,20 +1,26 @@
-package forms
+package forms.user
 
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+import java.util.UUID
 
 /**
  * The form which handles the sign up process.
  */
-object EditCompanyForm {
+object EditUser {
 
   /**
    * A play framework form.
    */
   val form = Form(
     mapping(
-      "companyName" -> nonEmptyText
+      "name" -> nonEmptyText,
+      "surname" -> nonEmptyText,
+      "email" -> email,
+      "password" -> nonEmptyText,
+      "company" -> uuid,
+      "role"  -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
@@ -23,7 +29,12 @@ object EditCompanyForm {
 
    */
   case class Data(
-    companyName: String
+    name: String,
+    surname: String,
+    email: String,
+    password: String,
+    company: UUID,
+    role: String
   )
 
   /**

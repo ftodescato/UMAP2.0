@@ -1,4 +1,4 @@
-package forms
+package forms.company
 
 import play.api.data.Form
 import play.api.data.Forms._
@@ -6,7 +6,7 @@ import play.api.libs.json.Json
 
 
 
-object AddCompanyForm {
+object AddCompany {
 
   /**
    * A play framework form.

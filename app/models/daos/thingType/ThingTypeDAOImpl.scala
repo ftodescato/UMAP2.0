@@ -28,23 +28,11 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
     collection.find(Json.obj()).cursor[ThingType]().collect[List]()
   }
 
-  /**
-   * Finds a thingType by its thingType ID.
-   *
-   * @param thingTypeID The ID of the thingType to find.
-   * @return The found thingType or None if no thingType for the given ID could be found.
-   */
-  def find(thingTypeID: UUID) : Future[Option[ThingType]] = {
+  def findByID(thingTypeID: UUID) : Future[Option[ThingType]] = {
     collection.find(Json.obj("thingTypeID" -> thingTypeID)).one[ThingType]
   }
 
-  /**
-   * Saves a thingType.
-   *
-   * @param thingType The thingType to save.
-   * @return The saved thingType.
-   */
-  def save(thingType: ThingType) = {
+  def save(thingType: ThingType): Future[ThingType] = {
     collection.insert(thingType)
     Future.successful(thingType)
   }
@@ -53,7 +41,8 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
     collection.update(Json.obj("thingTypeID" -> thingTypeID), thingType2)
   }
 
-  def remove(thingTypeID: UUID) = {
+  def remove(thingTypeID: UUID): Future[Boolean] = {
     collection.remove(Json.obj("thingTypeID" -> thingTypeID))
+    Future.successful(true)
   }
 }

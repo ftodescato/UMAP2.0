@@ -65,5 +65,6 @@ class NotificationDAOImpl @Inject() (db : DB) extends NotificationDAO {
 
   def remove(notificationID: UUID) = {
     collection.remove(Json.obj("notificationID" -> notificationID))
+    Future.successful(true)
   }
 }
