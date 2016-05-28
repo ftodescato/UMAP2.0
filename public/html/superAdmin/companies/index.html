@@ -21,10 +21,4 @@
       </tr>
     </tbody>
   </table>
-  <article ng-repeat="company in companies">
-    <p>{{company.companyName}}</p><a ui-sref="updateCompany({id:company.companyID})">Modifica</a>
-    <form ng-submit="deleteCompany(company.companyID)">
-      <button type="submit">Elimina</button>
-    </form>
-  </article>
 </section>

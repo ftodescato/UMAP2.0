@@ -37302,8 +37302,8 @@ umap.controller('HeaderController',['$scope',function($scope) {
      $scope.company = {'companyName':''};
       $scope.addCompany = function(){
         CompanyService.save($scope.company, function(){
-          //$state.go('root.companies');
-          $scope.companies = CompanyService.query();
+          $state.go('root.companies');
+          //$scope.companies = CompanyService.query();
         });
       };
     $scope.deleteCompany = function(id){

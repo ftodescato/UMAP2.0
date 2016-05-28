@@ -15,8 +15,3 @@ section(id="companiesList")
           button(class="btn btn-warning" ui-sref="updateCompany({id:company.companyID})") Modifica
           form(ng-submit="deleteCompany(company.companyID)")
             button(class="btn btn-danger" type='submit') Elimina 
-  article(ng-repeat="company in companies")
-    p {{company.companyName}}
-    a(ui-sref="updateCompany({id:company.companyID})") Modifica
-    form(ng-submit="deleteCompany(company.companyID)")
-      button(type='submit') Elimina
