@@ -29,8 +29,8 @@ trait UserDAO {
 
   def update(userID: UUID, user2: User): Future[User]
 
-  def remove(userID: UUID): Future[Boolean]
+  def remove(userID: UUID): Future[List[User]]
 
-  def removeByCompany(companyID: UUID): Future[Boolean]
+  def removeByCompany(companyID: UUID): Future[List[User]]
 
 }

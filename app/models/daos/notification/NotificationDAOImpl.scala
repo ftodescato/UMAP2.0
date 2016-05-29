@@ -23,13 +23,6 @@ class NotificationDAOImpl @Inject() (db : DB) extends NotificationDAO {
 
   def collection: JSONCollection = db.collection[JSONCollection]("notification")
 
-  /**
-   * Finds a notification by model ID.
-   *
-   * @param thingTypeID The ID of the model to find.
-   * @return The found notification or None if no notification for the given modelID could be found.
-   */
-
   def findNotificationOfThingType(thingTypeID: UUID): Future[Option[Notification]] = {
     collection.find(Json.obj("thingTypeID" -> thingTypeID)).one[Notification]
   }
@@ -38,22 +31,10 @@ class NotificationDAOImpl @Inject() (db : DB) extends NotificationDAO {
     collection.find(Json.obj()).cursor[Notification]().collect[List]()
   }
 
-  /**
-   * Finds a notification by its chart ID.
-   *
-   * @param notificationID The ID of the notification to find.
-   * @return The found notification or None if no notification for the given ID could be found.
-   */
   def find(notificationID: UUID) : Future[Option[Notification]] = {
     collection.find(Json.obj("notificationID" -> notificationID)).one[Notification]
   }
 
-  /**
-   * Saves a notification.
-   *
-   * @param notification The notification to save.
-   * @return The saved notification.
-   */
   def save(notification: Notification) = {
     collection.insert(notification)
     Future.successful(notification)

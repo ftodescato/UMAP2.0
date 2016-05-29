@@ -21,9 +21,9 @@ class AccountController @Inject() (
 
 
 
-  //  def editProfile = SecuredAction.async { implicit request =>
-  //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))
-  //  }
+   def show = SecuredAction.async { implicit request =>
+     Future.successful(Ok(Json.toJson(request.identity)))
+   }
   //
   //  def editProfilePost = SecuredAction.async { implicit request =>
   //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))

@@ -23,6 +23,6 @@ trait CompanyDAO {
 
   def update(companyID: UUID, company2: Company): Future[Company]
 
-  def remove(companyID: UUID):  Future[Boolean]
+  def remove(companyID: UUID):  Future[List[Company]]
 
 }

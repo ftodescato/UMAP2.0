@@ -41,8 +41,8 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
     collection.update(Json.obj("thingTypeID" -> thingTypeID), thingType2)
   }
 
-  def remove(thingTypeID: UUID): Future[Boolean] = {
+  def remove(thingTypeID: UUID): Future[List[ThingType]] = {
     collection.remove(Json.obj("thingTypeID" -> thingTypeID))
-    Future.successful(true)
+    collection.find(Json.obj()).cursor[ThingType]().collect[List]()
   }
 }

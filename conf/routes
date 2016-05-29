@@ -9,14 +9,20 @@ GET         /signOut                           controllers.ApplicationController
 POST        /test                              controllers.ApplicationController.test
 POST        /signIn                            controllers.shared.AuthController.authenticate
 
+GET         /api/accounts                      controllers.shared.account.AccountController.show
+
 GET         /api/usersA/:id                    controllers.admin.UserController.showUsers(id: java.util.UUID)
 POST        /api/usersA/:id                    controllers.admin.UserController.addUser(id: java.util.UUID)
-#PUT         /api/usersA/:id                   controllers.admin.UserController.updateUser(id: java.util.UUID)
+PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
 
-POST        /api/usersSA                       controllers.superAdmin.ThingController.addThing
-PUT         /api/usersSA/:id                   controllers.superAdmin.ThingController.updateThing(id: java.util.UUID)
-DELETE      /api/usersSA/:id                   controllers.superAdmin.ThingController.delete(id: java.util.UUID)
+POST        /api/thingsSA                      controllers.superAdmin.ThingController.addThing
+PUT         /api/thingsSA/:id                  controllers.superAdmin.ThingController.updateThing(id: java.util.UUID)
+DELETE      /api/thingsSA/:id                  controllers.superAdmin.ThingController.delete(id: java.util.UUID)
 
+GET         /api/thingTypesSA                  controllers.superAdmin.ThingTypeController.showThingType
+POST        /api/thingTypesSA                  controllers.superAdmin.ThingTypeController.addThingType
+#PUT        /api/thingsTypesSA/:id             controllers.superAdmin.ThingTypeController.updateThing(id: java.util.UUID)
+#DELETE     /api/thingTypesSA/:id              controllers.superAdmin.ThingTypeController.delete(id: java.util.UUID)
 
 GET         /api/usersSA                       controllers.superAdmin.UserController.showUsers
 POST        /api/usersSA                       controllers.superAdmin.UserController.addUser

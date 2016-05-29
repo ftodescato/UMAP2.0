@@ -16,8 +16,8 @@ object AddThingType {
     mapping(
       "thingTypeName" -> nonEmptyText,
       "company" -> uuid,
-      "numberOfParameters" -> number,
-      "nameOfParameters" -> list(nonEmptyText)
+      "numberOfParameters" -> number
+      //"nameOfParameters" -> list(nonEmptyText)
     )(Data.apply)(Data.unapply)
   )
 
@@ -25,8 +25,8 @@ object AddThingType {
   case class Data(
     thingTypeName: String,
     company: UUID,
-    numberOfParameters: Int,
-    nameOfParameters: List[String]
+    numberOfParameters: Int
+    //nameOfParameters: List[String]
     )
 
 

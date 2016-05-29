@@ -84,7 +84,7 @@ class UserController @Inject() (
             }
      }
 
-     //lato fronted bisogna fare la aggiungere la company dell'admin (nascosta nella form)
+     //lato fronted bisogna fare aggiungere la company dell'admin (nascosta nella form)
     def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
       request.body.validate[EditUser.Data].map { data =>
         val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)

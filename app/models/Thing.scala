@@ -12,6 +12,7 @@ case class Thing(
   description: String,
   thingTypeID: UUID,
   companyID: UUID
+  //data: List[Data]
 )
 
 

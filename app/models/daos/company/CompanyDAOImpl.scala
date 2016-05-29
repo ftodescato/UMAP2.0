@@ -50,8 +50,8 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
       Future.successful(company2)
   }
 
-  def remove(companyID: UUID) = {
+  def remove(companyID: UUID): Future[List[Company]] = {
     collection.remove(Json.obj("companyID" -> companyID))
-    Future.successful(true)
+    collection.find(Json.obj()).cursor[Company]().collect[List]()
   }
 }

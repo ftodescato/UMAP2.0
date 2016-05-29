@@ -53,8 +53,8 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     Future.successful(thing2)
   }
 
-  def remove(thingID: UUID): Future[Boolean] = {
+  def remove(thingID: UUID): Future[List[Thing]] = {
     collection.remove(Json.obj("thingID" -> thingID))
-    Future.successful(true)
+    collection.find(Json.obj()).cursor[Thing]().collect[List]()
   }
 }

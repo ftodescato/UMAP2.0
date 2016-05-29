@@ -34,14 +34,14 @@ class ThingTypeController @Inject() (
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
-  // def showCompanies = Action.async{ implicit request =>
-  //   val companies = companyDao.findAll()
-  //   companies.flatMap{
-  //     companies =>
-  //       Future.successful(Ok(Json.toJson(companies)))
-  //   }
-  // }
-  //
+  def showThingType = Action.async{ implicit request =>
+   val thingType = thingTypeDao.findAll()
+   thingType.flatMap{
+    thingType =>
+     Future.successful(Ok(Json.toJson(thingType)))
+   }
+  }
+
   // def showCompanyDetails(companyID: UUID) = Action.async{ implicit request =>
   //   val company = companyDao.findByID(companyID)
   //   company.flatMap{
@@ -111,11 +111,11 @@ extends Silhouette[User, JWTAuthenticator] {
             val thingType = ThingType(
               thingTypeID = UUID.randomUUID(),
               thingTypeName = data.thingTypeName,
-              companyID = companyIDList,
-              valuesInt = null,
-              valuesString = null,
-              valuesFloat = null,
-              valuesDouble = null
+              companyID = companyIDList
+              // valuesInt = null,
+              // valuesString = null,
+              // valuesFloat = null,
+              // valuesDouble = null
             )
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
