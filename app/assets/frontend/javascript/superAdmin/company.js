@@ -2,8 +2,8 @@
   'use strict';
   var umap = angular.module('umap.company',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
-    $stateProvider.state('root.addCompanies', {
-      url: '/superAdmin/addCompany',
+    $stateProvider.state('root.superAdmin.addCompanies', {
+      url: '/addCompany',
       views: {
             'content@': {
               templateUrl: 'assets/html/superAdmin/companies/addCompany.html',
@@ -11,8 +11,8 @@
             }
         }
   });
-  $stateProvider.state('root.companies', {
-    url: '/superAdmin/companies',
+  $stateProvider.state('root.superAdmin.companies', {
+    url: '/companies',
     views: {
           'content@': {
             templateUrl: 'assets/html/superAdmin/companies/index.html',
@@ -20,8 +20,8 @@
           }
       }
   });
-  $stateProvider.state('root.updateCompany', {
-    url: '/superAdmin/companies/:id',
+  $stateProvider.state('root.superAdmin.updateCompany', {
+    url: '/companies/:id',
     views: {
           'content@': {
             templateUrl: 'assets/html/superAdmin/companies/updateCompany.html',
@@ -44,19 +44,22 @@
   });
 
 
-  umap.controller('CompanyController',['$scope','CompanyService','$stateParams','$state', function($scope, CompanyService, $stateParams,$state) {
+  umap.controller('CompanyController',['$scope','CompanyService','$stateParams','$state','$window', function($scope, CompanyService, $stateParams,$state,$window) {
     $scope.companies = CompanyService.query();
-     $scope.company = {'companyName':''};
-      $scope.addCompany = function(){
-        CompanyService.save($scope.company, function(){
-          $state.go('root.companies');
-          //$scope.companies = CompanyService.query();
-        });
-      };
-    $scope.deleteCompany = function(id){
-      CompanyService.delete({id:  id}, function(){
-        $state.go('root.companies')
+    $scope.company = {'companyName':''};
+    $scope.addCompany = function(){
+      CompanyService.save($scope.company, function(){
+        $state.go('root.superAdmin.companies');
+        //$scope.companies = CompanyService.query();
       });
+    };
+    $scope.deleteCompany = function(id){
+      var deleteUser = $window.confirm('Sei sicuro ?');
+      if(deleteUser){
+        CompanyService.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
     };
   }]);
 
@@ -64,7 +67,7 @@
     $scope.company = CompanyService.get({ id:  $stateParams.id });
     $scope.editCompany = function(){
       CompanyService.update({id:  $stateParams.id}, $scope.company, function(){
-        $state.go('root.companies')
+        $state.go('root.superAdmin.companies')
       });
     }
   }]);

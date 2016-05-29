@@ -37172,17 +37172,340 @@ angular.module('ngResource', ['ng']).
 
 })(window, window.angular);
 
+/**
+ * @license AngularJS v1.5.6
+ * (c) 2010-2016 Google, Inc. http://angularjs.org
+ * License: MIT
+ */
+(function(window, angular) {'use strict';
+
+/**
+ * @ngdoc module
+ * @name ngCookies
+ * @description
+ *
+ * # ngCookies
+ *
+ * The `ngCookies` module provides a convenient wrapper for reading and writing browser cookies.
+ *
+ *
+ * <div doc-module-components="ngCookies"></div>
+ *
+ * See {@link ngCookies.$cookies `$cookies`} for usage.
+ */
+
+
+angular.module('ngCookies', ['ng']).
+  /**
+   * @ngdoc provider
+   * @name $cookiesProvider
+   * @description
+   * Use `$cookiesProvider` to change the default behavior of the {@link ngCookies.$cookies $cookies} service.
+   * */
+   provider('$cookies', [function $CookiesProvider() {
+    /**
+     * @ngdoc property
+     * @name $cookiesProvider#defaults
+     * @description
+     *
+     * Object containing default options to pass when setting cookies.
+     *
+     * The object may have following properties:
+     *
+     * - **path** - `{string}` - The cookie will be available only for this path and its
+     *   sub-paths. By default, this is the URL that appears in your `<base>` tag.
+     * - **domain** - `{string}` - The cookie will be available only for this domain and
+     *   its sub-domains. For security reasons the user agent will not accept the cookie
+     *   if the current domain is not a sub-domain of this domain or equal to it.
+     * - **expires** - `{string|Date}` - String of the form "Wdy, DD Mon YYYY HH:MM:SS GMT"
+     *   or a Date object indicating the exact date/time this cookie will expire.
+     * - **secure** - `{boolean}` - If `true`, then the cookie will only be available through a
+     *   secured connection.
+     *
+     * Note: By default, the address that appears in your `<base>` tag will be used as the path.
+     * This is important so that cookies will be visible for all routes when html5mode is enabled.
+     *
+     **/
+    var defaults = this.defaults = {};
+
+    function calcOptions(options) {
+      return options ? angular.extend({}, defaults, options) : defaults;
+    }
+
+    /**
+     * @ngdoc service
+     * @name $cookies
+     *
+     * @description
+     * Provides read/write access to browser's cookies.
+     *
+     * <div class="alert alert-info">
+     * Up until Angular 1.3, `$cookies` exposed properties that represented the
+     * current browser cookie values. In version 1.4, this behavior has changed, and
+     * `$cookies` now provides a standard api of getters, setters etc.
+     * </div>
+     *
+     * Requires the {@link ngCookies `ngCookies`} module to be installed.
+     *
+     * @example
+     *
+     * ```js
+     * angular.module('cookiesExample', ['ngCookies'])
+     *   .controller('ExampleController', ['$cookies', function($cookies) {
+     *     // Retrieving a cookie
+     *     var favoriteCookie = $cookies.get('myFavorite');
+     *     // Setting a cookie
+     *     $cookies.put('myFavorite', 'oatmeal');
+     *   }]);
+     * ```
+     */
+    this.$get = ['$$cookieReader', '$$cookieWriter', function($$cookieReader, $$cookieWriter) {
+      return {
+        /**
+         * @ngdoc method
+         * @name $cookies#get
+         *
+         * @description
+         * Returns the value of given cookie key
+         *
+         * @param {string} key Id to use for lookup.
+         * @returns {string} Raw cookie value.
+         */
+        get: function(key) {
+          return $$cookieReader()[key];
+        },
+
+        /**
+         * @ngdoc method
+         * @name $cookies#getObject
+         *
+         * @description
+         * Returns the deserialized value of given cookie key
+         *
+         * @param {string} key Id to use for lookup.
+         * @returns {Object} Deserialized cookie value.
+         */
+        getObject: function(key) {
+          var value = this.get(key);
+          return value ? angular.fromJson(value) : value;
+        },
+
+        /**
+         * @ngdoc method
+         * @name $cookies#getAll
+         *
+         * @description
+         * Returns a key value object with all the cookies
+         *
+         * @returns {Object} All cookies
+         */
+        getAll: function() {
+          return $$cookieReader();
+        },
+
+        /**
+         * @ngdoc method
+         * @name $cookies#put
+         *
+         * @description
+         * Sets a value for given cookie key
+         *
+         * @param {string} key Id for the `value`.
+         * @param {string} value Raw value to be stored.
+         * @param {Object=} options Options object.
+         *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
+         */
+        put: function(key, value, options) {
+          $$cookieWriter(key, value, calcOptions(options));
+        },
+
+        /**
+         * @ngdoc method
+         * @name $cookies#putObject
+         *
+         * @description
+         * Serializes and sets a value for given cookie key
+         *
+         * @param {string} key Id for the `value`.
+         * @param {Object} value Value to be stored.
+         * @param {Object=} options Options object.
+         *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
+         */
+        putObject: function(key, value, options) {
+          this.put(key, angular.toJson(value), options);
+        },
+
+        /**
+         * @ngdoc method
+         * @name $cookies#remove
+         *
+         * @description
+         * Remove given cookie
+         *
+         * @param {string} key Id of the key-value pair to delete.
+         * @param {Object=} options Options object.
+         *    See {@link ngCookies.$cookiesProvider#defaults $cookiesProvider.defaults}
+         */
+        remove: function(key, options) {
+          $$cookieWriter(key, undefined, calcOptions(options));
+        }
+      };
+    }];
+  }]);
+
+angular.module('ngCookies').
+/**
+ * @ngdoc service
+ * @name $cookieStore
+ * @deprecated
+ * @requires $cookies
+ *
+ * @description
+ * Provides a key-value (string-object) storage, that is backed by session cookies.
+ * Objects put or retrieved from this storage are automatically serialized or
+ * deserialized by angular's toJson/fromJson.
+ *
+ * Requires the {@link ngCookies `ngCookies`} module to be installed.
+ *
+ * <div class="alert alert-danger">
+ * **Note:** The $cookieStore service is **deprecated**.
+ * Please use the {@link ngCookies.$cookies `$cookies`} service instead.
+ * </div>
+ *
+ * @example
+ *
+ * ```js
+ * angular.module('cookieStoreExample', ['ngCookies'])
+ *   .controller('ExampleController', ['$cookieStore', function($cookieStore) {
+ *     // Put cookie
+ *     $cookieStore.put('myFavorite','oatmeal');
+ *     // Get cookie
+ *     var favoriteCookie = $cookieStore.get('myFavorite');
+ *     // Removing a cookie
+ *     $cookieStore.remove('myFavorite');
+ *   }]);
+ * ```
+ */
+ factory('$cookieStore', ['$cookies', function($cookies) {
+
+    return {
+      /**
+       * @ngdoc method
+       * @name $cookieStore#get
+       *
+       * @description
+       * Returns the value of given cookie key
+       *
+       * @param {string} key Id to use for lookup.
+       * @returns {Object} Deserialized cookie value, undefined if the cookie does not exist.
+       */
+      get: function(key) {
+        return $cookies.getObject(key);
+      },
+
+      /**
+       * @ngdoc method
+       * @name $cookieStore#put
+       *
+       * @description
+       * Sets a value for given cookie key
+       *
+       * @param {string} key Id for the `value`.
+       * @param {Object} value Value to be stored.
+       */
+      put: function(key, value) {
+        $cookies.putObject(key, value);
+      },
+
+      /**
+       * @ngdoc method
+       * @name $cookieStore#remove
+       *
+       * @description
+       * Remove given cookie
+       *
+       * @param {string} key Id of the key-value pair to delete.
+       */
+      remove: function(key) {
+        $cookies.remove(key);
+      }
+    };
+
+  }]);
+
+/**
+ * @name $$cookieWriter
+ * @requires $document
+ *
+ * @description
+ * This is a private service for writing cookies
+ *
+ * @param {string} name Cookie name
+ * @param {string=} value Cookie value (if undefined, cookie will be deleted)
+ * @param {Object=} options Object with options that need to be stored for the cookie.
+ */
+function $$CookieWriter($document, $log, $browser) {
+  var cookiePath = $browser.baseHref();
+  var rawDocument = $document[0];
+
+  function buildCookieString(name, value, options) {
+    var path, expires;
+    options = options || {};
+    expires = options.expires;
+    path = angular.isDefined(options.path) ? options.path : cookiePath;
+    if (angular.isUndefined(value)) {
+      expires = 'Thu, 01 Jan 1970 00:00:00 GMT';
+      value = '';
+    }
+    if (angular.isString(expires)) {
+      expires = new Date(expires);
+    }
+
+    var str = encodeURIComponent(name) + '=' + encodeURIComponent(value);
+    str += path ? ';path=' + path : '';
+    str += options.domain ? ';domain=' + options.domain : '';
+    str += expires ? ';expires=' + expires.toUTCString() : '';
+    str += options.secure ? ';secure' : '';
+
+    // per http://www.ietf.org/rfc/rfc2109.txt browser must allow at minimum:
+    // - 300 cookies
+    // - 20 cookies per unique domain
+    // - 4096 bytes per cookie
+    var cookieLength = str.length + 1;
+    if (cookieLength > 4096) {
+      $log.warn("Cookie '" + name +
+        "' possibly not set or overflowed because it was too large (" +
+        cookieLength + " > 4096 bytes)!");
+    }
+
+    return str;
+  }
+
+  return function(name, value, options) {
+    rawDocument.cookie = buildCookieString(name, value, options);
+  };
+}
+
+$$CookieWriter.$inject = ['$document', '$log', '$browser'];
+
+angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterProvider() {
+  this.$get = $$CookieWriter;
+});
+
+
+})(window, window.angular);
+
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','umap.company','umap.user']);
+  var umap = angular.module('umap', ['ui.router','ngCookies','umap.superAdminHome','umap.company','umap.user','umap.login']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
-  //  $urlRouterProvider.otherwise('/');
+  //$urlRouterProvider.otherwise('/');
 
     $stateProvider.state('root', {
-    //  url: '/',
-      abstract:true,
+      url: '/',
+      //abstract:true,
       views: {
             'header': {
               templateUrl: 'assets/html/shared/header.html',
@@ -37197,38 +37520,66 @@ angular.module('ngResource', ['ng']).
             }
     }
   });
-  $httpProvider.interceptors.push(function($q, $injector) {
-    return {
-      request: function(request) {
-        // Add auth token for Silhouette if user is authenticated
-
-          request.headers['Content-Type'] = 'application/json';
-          request.headers['Csrf-Token'] = 'nocheck';
-
-
-        return request;
-      },
-
-      responseError: function(rejection) {
-        /*
-        if (rejection.status === 401) {
-          $injector.get('$state').go('signIn');
-        }
-        return $q.reject(rejection);*/
-      }
-    };
-  });
+  $httpProvider.interceptors.push('InjectHeadersService');
   }]);
-umap.controller('HeaderController',['$scope',function($scope) {
 
-}]);
+  umap.run(['$rootScope','$state','$cookies',function($rootScope,$state,$cookies){
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
+      var token = $cookies.get('X-Auth-Token');
+      var role = $cookies.get('Role');
+
+      if( token === undefined && toState.name !== 'root.login'){
+        event.preventDefault();
+        $state.go('root.login');
+        return;
+      }
+      if( role === undefined && toState.name !== 'root.login' ){
+        event.preventDefault();
+        $cookies.remove('X-Auth-Token');
+        $cookies.remove('Role');
+        $state.go('root.login');
+        return;
+      }
+      if(toState.name === 'root'){
+        switch (role) {
+          case 'superAdmin':
+            event.preventDefault();
+            $state.go('root.superAdmin');
+            break;
+          default:
+
+        }
+      }
+    })
+  }]);
+
+  umap.factory('InjectHeadersService',['$q','$cookies','$injector' ,function($q, $cookies,$injector){
+    return{
+      'request': function(request) {
+        request.headers['Content-Type'] = 'application/json';
+        request.headers['Csrf-Token'] = 'nocheck';
+        var token = $cookies.get('X-Auth-Token');
+        if( token  !== null)
+          request.headers['X-Auth-Token'] = token;
+        return request;
+      },/*
+      responseError: function(rejection){
+        if(rejection.status === '401'){
+          $injector.get('$state').go('root.unauthorized');
+        }
+      }*/
+    };
+  }]);
+  umap.controller('HeaderController',['$scope','$cookies',function($scope,$cookies) {
+    //if()
+  }]);
 
 
 })();
 
 (function(){
   'use strict';
-  var umap = angular.module('umap.login',['ui.router','ngResource']);
+  var umap = angular.module('umap.login',['ui.router','ngResource','ngCookies']);
 
   umap.config(['$stateProvider',function($stateProvider){
     $stateProvider.state('root.login',{
@@ -37240,85 +37591,41 @@ umap.controller('HeaderController',['$scope',function($scope) {
             }
         }
     });
-  }]);
-  umap.factory('Login',['$resource',function($resource){
-    return{
-      Login: $resource('/api/usersSA/:id',{})
-    }
-  }]);
-  umap.controller('LoginController',['Login',function(Login){
-
-  }]);
-})();
-
-(function(){
-  'use strict';
-  var umap = angular.module('umap.user',['ui.router','ngResource']);
-  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
-    $stateProvider.state('root.addUser', {
-      url: '/superAdmin/addUser',
+    $stateProvider.state('root.unauthorized',{
+      url: '/unauthorized',
       views: {
             'content@': {
-              templateUrl: 'assets/html/superAdmin/user/addUser.html',
-              controller:  'UserController'
+              templateUrl: 'assets/html/shared/401.html',
+              //controller:  'UnauthorizedController'
             }
         }
-  });
-  $stateProvider.state('root.users', {
-    url: '/superAdmin/users',
-    views: {
-          'content@': {
-            templateUrl: 'assets/html/superAdmin/users/index.html',
-            controller:  'UserController'
-          }
-      }
-});
-$stateProvider.state('root.updateUser', {
-  url: '/superAdmin/users/:id',
-  views: {
-        'content@': {
-          templateUrl: 'assets/html/superAdmin/users/updateCompany.html',
-          controller:  'UserControllerDetails'
-        }
-    }
-});
-
-     //$locationProvider.html5Mode(true);
-  }]);
-
-    umap.factory('UserService', function($resource) {
-      return $resource('/api/users/:id',{id: "@id"},{
-        update: {
-          method: 'PUT' // this method issues a PUT request
-        }
-      });
     });
-
-
-  umap.controller('UserController',['$scope','UserService','$http','$stateParams','$location', function($scope, UserService,$http, $stateParams,$location) {
-     $scope.user = {
-       'email':'',
-       'role': 'superAdmin'};
-      $scope.addUser = function(){
-        UserService.save($scope.user, function(){
-          $location.path('/superAdmin/users')
-        });
-      };
-    $scope.users = UserService.query();
-    $scope.deleteUser = function(param){
-      UserService.delete({id:  param}, function(){
-        $location.path('/superAdmin/users')
-      });
-    };
   }]);
-
-  umap.controller('UserControllerDetails',['$scope','UserService','$http','$stateParams', function($scope, UserService,$http,$stateParams) {
-    $scope.user = CompanyService.get({ id:  $stateParams.id });
-    $scope.editUser = function(){
-      UserService.update({id:  $stateParams.id}, $scope.user, function(){
-        $location.path('/superAdmin/users')
-      });
+  umap.factory('LoginService',['$resource',function($resource){
+    return {
+      Login: $resource('/signIn'),
+      Role: $resource('/api/getrole')
     }
+  }]);
+  umap.controller('LoginController',['LoginService','$scope','LoginService','$cookies','$state',function(Login,$scope,LoginService,$cookies,$state){
+    $scope.credentials = {'email':'','password':'','rememberMe':false};
+    $scope.login = function (){
+      LoginService.Login.save({},$scope.credentials,
+        function(success){
+          $cookies.put('X-Auth-Token', success.token);
+          LoginService.Role.get({}, function(success){
+            if(success !== null)
+              $cookies.put('Role', success.role);
+              if(success.role === 'superAdmin')
+                $state.go('root.superAdmin');
+              else if (success.role === 'admin') {
+                  //  $state.go('root.adminHome');
+              }
+          });
+
+          //$state.go('root.home');
+        });
+    };
   }]);
 })();
 
@@ -37326,8 +37633,8 @@ $stateProvider.state('root.updateUser', {
   'use strict';
   var umap = angular.module('umap.company',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
-    $stateProvider.state('root.addCompanies', {
-      url: '/superAdmin/addCompany',
+    $stateProvider.state('root.superAdmin.addCompanies', {
+      url: '/addCompany',
       views: {
             'content@': {
               templateUrl: 'assets/html/superAdmin/companies/addCompany.html',
@@ -37335,8 +37642,8 @@ $stateProvider.state('root.updateUser', {
             }
         }
   });
-  $stateProvider.state('root.companies', {
-    url: '/superAdmin/companies',
+  $stateProvider.state('root.superAdmin.companies', {
+    url: '/companies',
     views: {
           'content@': {
             templateUrl: 'assets/html/superAdmin/companies/index.html',
@@ -37344,8 +37651,8 @@ $stateProvider.state('root.updateUser', {
           }
       }
   });
-  $stateProvider.state('root.updateCompany', {
-    url: '/superAdmin/companies/:id',
+  $stateProvider.state('root.superAdmin.updateCompany', {
+    url: '/companies/:id',
     views: {
           'content@': {
             templateUrl: 'assets/html/superAdmin/companies/updateCompany.html',
@@ -37368,19 +37675,22 @@ $stateProvider.state('root.updateUser', {
   });
 
 
-  umap.controller('CompanyController',['$scope','CompanyService','$stateParams','$state', function($scope, CompanyService, $stateParams,$state) {
+  umap.controller('CompanyController',['$scope','CompanyService','$stateParams','$state','$window', function($scope, CompanyService, $stateParams,$state,$window) {
     $scope.companies = CompanyService.query();
-     $scope.company = {'companyName':''};
-      $scope.addCompany = function(){
-        CompanyService.save($scope.company, function(){
-          $state.go('root.companies');
-          //$scope.companies = CompanyService.query();
-        });
-      };
-    $scope.deleteCompany = function(id){
-      CompanyService.delete({id:  id}, function(){
-        $state.go('root.companies')
+    $scope.company = {'companyName':''};
+    $scope.addCompany = function(){
+      CompanyService.save($scope.company, function(){
+        $state.go('root.superAdmin.companies');
+        //$scope.companies = CompanyService.query();
       });
+    };
+    $scope.deleteCompany = function(id){
+      var deleteUser = $window.confirm('Sei sicuro ?');
+      if(deleteUser){
+        CompanyService.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
     };
   }]);
 
@@ -37388,7 +37698,108 @@ $stateProvider.state('root.updateUser', {
     $scope.company = CompanyService.get({ id:  $stateParams.id });
     $scope.editCompany = function(){
       CompanyService.update({id:  $stateParams.id}, $scope.company, function(){
-        $state.go('root.companies')
+        $state.go('root.superAdmin.companies')
+      });
+    }
+  }]);
+})();
+
+(function(){
+  'use strict';
+
+  var umap = angular.module('umap.superAdminHome',['ui.router']);
+  umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    $stateProvider.state('root.superAdmin',{
+      url: 'superAdmin',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/home.html',
+              controller:  'SuperAdminController'
+            }
+        }
+    });
+  }]);
+
+  umap.controller('SuperAdminController',['$scope',function($scope){
+
+  }]);
+})();
+
+(function(){
+  'use strict';
+  var umap = angular.module('umap.user',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.superAdmin.addUsers', {
+      url: '/addUsers',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/users/addUser.html',
+              controller:  'UserController'
+            }
+        }
+  });
+  $stateProvider.state('root.superAdmin.users', {
+    url: '/users',
+    views: {
+          'content@': {
+            templateUrl: 'assets/html/superAdmin/users/index.html',
+            controller:  'UserController'
+          }
+      }
+  });
+  $stateProvider.state('root.updateUser', {
+    url: '/users/:id',
+    views: {
+          'content@': {
+            templateUrl: 'assets/html/superAdmin/users/updateUser.html',
+            controller:  'UserControllerDetails'
+          }
+      }
+  });
+     //$locationProvider.html5Mode(true);
+  }]);
+
+    umap.factory('UserService', function($resource) {
+      return $resource('/api/usersSA/:id',{id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      });
+    });
+
+// TODO: rifare come per insert user su update
+  umap.controller('UserController',['$scope','UserService','CompanyService','$stateParams','$state', function($scope, UserService,CompanyService, $stateParams,$state) {
+    $scope.companies = CompanyService.query();
+     $scope.user = {
+       'name': '',
+       'surname':'',
+       'email':'',
+       'password':'',
+       'company':'',
+       'role': ''
+     };
+
+      $scope.addUser = function(){
+        UserService.save($scope.user, function(){
+          $state.go('root.superAdmin.users')
+        });
+      };
+    $scope.users = UserService.query();
+    $scope.deleteUser = function(param){
+      var deleteUser = $window.confirm('Sei sicuro ?');
+      if(deleteUser){
+        UserService.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
+    };
+  }]);
+
+  umap.controller('UserControllerDetails',['$scope','UserService','$state','$stateParams', function($scope, UserService,$state,$stateParams) {
+    $scope.user = UserService.get({ id:  $stateParams.id });
+    $scope.editUser = function(){
+      UserService.update({id:  $stateParams.id}, $scope.user, function(){
+        $state.go('root.superAdmin.users')
       });
     }
   }]);

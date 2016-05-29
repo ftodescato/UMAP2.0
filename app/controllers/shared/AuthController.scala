@@ -89,4 +89,8 @@ class AuthController @Inject() (
         Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.credentials"))))
     }
   }
+
+  def getRole = SecuredAction.async{ implicit request =>
+    Future.successful(Ok(Json.obj("role"-> request.identity.role)))
+  }
 }

@@ -8,14 +8,16 @@ GET         /user                              controllers.ApplicationController
 GET         /signOut                           controllers.ApplicationController.signOut
 POST        /test                              controllers.ApplicationController.test
 POST        /signIn                            controllers.shared.AuthController.authenticate
+GET         /api/getrole                       controllers.shared.AuthController.getRole
+
 
 GET         /api/usersA/:id                    controllers.admin.UserController.showUsers(id: java.util.UUID)
 POST        /api/usersA/:id                    controllers.admin.UserController.addUser(id: java.util.UUID)
 #PUT         /api/usersA/:id                   controllers.admin.UserController.updateUser(id: java.util.UUID)
 
-POST        /api/usersSA                       controllers.superAdmin.ThingController.addThing
-PUT         /api/usersSA/:id                   controllers.superAdmin.ThingController.updateThing(id: java.util.UUID)
-DELETE      /api/usersSA/:id                   controllers.superAdmin.ThingController.delete(id: java.util.UUID)
+#POST        /api/usersSA                       controllers.superAdmin.ThingController.addThing
+#PUT         /api/usersSA/:id                   controllers.superAdmin.ThingController.updateThing(id: java.util.UUID)
+#DELETE      /api/usersSA/:id                   controllers.superAdmin.ThingController.delete(id: java.util.UUID)
 
 
 GET         /api/usersSA                       controllers.superAdmin.UserController.showUsers
