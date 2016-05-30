@@ -87,7 +87,7 @@ class UserController @Inject() (
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
               user <- userDao.update(userID,user2)
-              authInfo <- authInfoRepository.add(loginInfo, authInfo)
+              authInfo <- authInfoRepository.update(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               token <- env.authenticatorService.init(authenticator)
             } yield {
