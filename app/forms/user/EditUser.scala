@@ -17,6 +17,7 @@ object EditUser {
     mapping(
       "name" -> nonEmptyText,
       "surname" -> nonEmptyText,
+      "olEmail" -> email,
       "email" -> email,
       "password" -> nonEmptyText,
       "company" -> uuid,
@@ -31,6 +32,7 @@ object EditUser {
   case class Data(
     name: String,
     surname: String,
+    oldEmail: String,
     email: String,
     password: String,
     company: UUID,

@@ -67,7 +67,7 @@ class UserController @Inject() (
 
     def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
       request.body.validate[EditUser.Data].map { data =>
-        val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
+        val loginInfo = LoginInfo(CredentialsProvider.ID, data.oldEmail)
         userService.retrieve(loginInfo).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
           case Some(user) =>
@@ -89,7 +89,7 @@ class UserController @Inject() (
               user <- userDao.update(userID,user2)
               authInfo <- authInfoRepository.update(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
-            //  token <- env.authenticatorService.init(authenticator)
+              token <- env.authenticatorService.init(authenticator)
             } yield {
             //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
