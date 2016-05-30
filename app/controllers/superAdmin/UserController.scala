@@ -75,6 +75,7 @@ class UserController @Inject() (
           companyDao.findByID(companyInfo).flatMap{
           case Some(companyToAssign) =>
             val authInfo = passwordHasher.hash(data.password)
+            val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
             val user2 = User(
               userID = user.userID,
               name = data.name,
