@@ -8,8 +8,10 @@ import play.api.libs.json.Json
 case class ThingType(
   thingTypeID: UUID,
   thingTypeName: String,
-  companyID: List[UUID]
-   )
+  companyID: List[UUID],
+  intValue: Data
+  //stringValue: Option[Map[Int,List[MeasurementsString]]]
+)
 
 
 /**
