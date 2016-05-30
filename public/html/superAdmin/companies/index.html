@@ -1,7 +1,11 @@
 
 <section id="companiesList">
-  <h1>Lista delle company presenti</h1>
-  <button ui-sref="root.addCompanies()" class="btn btn-success">Nuova</button>
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.superAdmin()">Home</a></li>
+    <li class="active">Gestione Companies</li>
+  </ul>
+  <h1 class="page-header text-center">Lista delle company presenti</h1>
+  <button ui-sref="root.superAdmin.addCompanies()" class="btn btn-success">Nuova</button>
   <table class="table">
     <thead>
       <th>Id Company</th>
@@ -13,7 +17,7 @@
         <td>{{company.companyID}}</td>
         <td>{{company.companyName}}</td>
         <td>
-          <button ui-sref="updateCompany({id:company.companyID})" class="btn btn-warning">Modifica</button>
+          <button ui-sref="root.superAdmin.updateCompany({id:company.companyID})" class="btn btn-warning">Modifica</button>
           <form ng-submit="deleteCompany(company.companyID)">
             <button type="submit" class="btn btn-danger">Elimina </button>
           </form>

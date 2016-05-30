@@ -1,6 +1,29 @@
 section(id="users")
-  h1 {{user.email}}
-  form(ng-submit="addCompany()")
-    input(type="text" ng-model="user.email" placeholder="email")
-    input(type="text" ng-model="user.role" placeholder="ruolo")
-    button(type='submit') Aggiungi
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li
+      a(ui-sref="root.superAdmin.users()") Gestione Utenti
+    li(class="active") Nuovo utente
+  div(class="container-fluid")
+    div(class="row ")
+      form(ng-submit="addUser()" class="col-xs-6 col-xs-offset-3")
+        label(for="userNameInput" ) Nome dell'utente            
+        input(type="text" id="userNameInput" class="form-control" ng-model="user.name" placeholder="nome")
+        br
+        label(for="userSurnameInput" ) Cognome dell'utente                    
+        input(type="text" id="userSurnameInput" class="form-control" ng-model="user.surname" placeholder="cognome")
+        br
+        input(type="text" class="form-control" ng-model="user.email" placeholder="email")
+        br
+        input(type="password" class="form-control" ng-model="user.password" placeholder="password")
+        br
+        select( class="form-control" ng-model="user.company")
+          option(ng-repeat="company in companies"  value="{{company.companyID}}") {{company.companyName}}
+        br
+        select( class="form-control" ng-model="user.role")
+          option(value="user") User
+          option(value="admin") Admin
+          option(value="superAdmin") SuperAdmin
+        br
+        button(type='submit' class="btn btn-success") Aggiungi

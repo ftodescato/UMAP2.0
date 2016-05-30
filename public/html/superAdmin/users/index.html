@@ -1,10 +1,32 @@
 
 <section id="userList">
-  <h1>Lista degli user presenti</h1>
-  <article ng-repeat="company in companies">
-    <p>{{user.email}}</p><a ui-sref="updateUser({id:user.userID})">Modifica</a>
-    <form ng-submit="deleteUser(user.userID)">
-      <button type="submit">Elimina</button>
-    </form>
-  </article>
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.superAdmin()">Home</a></li>
+    <li class="active">Gestione Utenti</li>
+  </ul>
+  <h1 class="text-center">Lista degli utenti presenti</h1>
+  <button ui-sref="root.superAdmin.addUsers()" class="btn btn-success">Nuovo</button>
+  <table class="table">
+    <thead>
+      <th>Nome</th>
+      <th>Cognome</th>
+      <th>Email</th>
+      <th>Company</th>
+      <th>Ruolo</th>
+    </thead>
+    <tbody>
+      <tr ng-repeat="user in users">
+        <td>{{user.name}}</td>
+        <td>{{user.surname}}</td>
+        <td>{{user.email}}</td>
+        <td>{{user.role}}</td>
+        <td> 
+          <button ui-sref="root.superAdmin.updateUser({id:user.userID})" class="btn btn-warning">Modifica</button>
+          <form ng-submit="deleteUser(user.userID)">
+            <button type="submit" class="btn btn-danger">Elimina </button>
+          </form>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </section>

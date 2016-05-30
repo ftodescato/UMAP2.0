@@ -1,8 +1,18 @@
 
 <section id="companies">
-  <h1>{{company.companyName}}</h1>
-  <form ng-submit="addCompany()">
-    <input type="text" ng-model="company.companyName" placeholder="company name"/>
-    <button type="submit">Aggiungi</button>
-  </form>
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.superAdmin()">Home</a></li>
+    <li><a ui-sref="root.superAdmin.companies()">Gestione Companies</a></li>
+    <li class="active">Nuova company</li>
+  </ul>
+  <h1 class="page-header text-center">Inserisci una nuova compagnia</h1>
+  <div class="container-fluid">
+    <div class="row">
+      <form ng-submit="addCompany()" class="col-xs-6 col-xs-offset-3">
+        <label for="companyNameInput">Nome della company      </label>
+        <input type="text" id="companyNameInput" ng-model="company.companyName" placeholder="company name" class="form-control"/><br/>
+        <button type="submit" class="btn btn-success">Aggiungi</button>
+      </form>
+    </div>
+  </div>
 </section>

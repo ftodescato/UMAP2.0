@@ -10,6 +10,7 @@ gulp.task('js', function () {
   'vendor/bower_components/angular-ui-router/release/angular-ui-router.js',
   'vendor/bower_components/satellizer/satellizer.js',
   'vendor/bower_components/angular-resource/angular-resource.js',
+  'vendor/bower_components/angular-cookies/angular-cookies.js',
   'app/assets/frontend/javascript/**/*.js'])
     .pipe(concat('public/js/main.js'))
     .pipe(gulp.dest('.'))
