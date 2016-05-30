@@ -4,7 +4,7 @@
 
   umap.config(['$stateProvider',function($stateProvider){
     $stateProvider.state('root.login',{
-      url: '/login',
+      url: 'login',
       views: {
             'content@': {
               templateUrl: 'assets/html/shared/index.html',
@@ -13,7 +13,7 @@
         }
     });
     $stateProvider.state('root.unauthorized',{
-      url: '/unauthorized',
+      url: 'unauthorized',
       views: {
             'content@': {
               templateUrl: 'assets/html/shared/401.html',

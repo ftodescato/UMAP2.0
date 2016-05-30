@@ -11,8 +11,8 @@
       //abstract:true,
       views: {
             'header': {
-              templateUrl: 'assets/html/shared/header.html',
-              controller: 'HeaderController'
+              templateUrl: 'assets/html/shared/header.html'
+              //controller: 'HeaderController'
             },
             'content': {
 
@@ -27,6 +27,17 @@
   }]);
 
   umap.run(['$rootScope','$state','$cookies',function($rootScope,$state,$cookies){
+    $rootScope.isLoggedIn = function (){
+      var token = $cookies.get('X-Auth-Token');
+      if(token === undefined)
+        return false;
+      else
+        return true;
+    };
+    $rootScope.logOut = function (){
+      $cookies.remove('X-Auth-Token');
+      $cookies.remove('Role');
+    }
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
       var token = $cookies.get('X-Auth-Token');
       var role = $cookies.get('Role');
@@ -36,7 +47,7 @@
         $state.go('root.login');
         return;
       }
-      if( role === undefined && toState.name !== 'root.login' ){
+      if( role === undefined && toState.name !== 'root.login'){
         event.preventDefault();
         $cookies.remove('X-Auth-Token');
         $cookies.remove('Role');
@@ -72,10 +83,13 @@
         }
       }*/
     };
+  }]);/*
+  umap.factory('AuthService',['$cookies',function($cookies){
+
   }]);
   umap.controller('HeaderController',['$scope','$cookies',function($scope,$cookies) {
-    //if()
-  }]);
+
+  }]);*/
 
 
 })();

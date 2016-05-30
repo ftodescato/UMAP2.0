@@ -37508,8 +37508,8 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
       //abstract:true,
       views: {
             'header': {
-              templateUrl: 'assets/html/shared/header.html',
-              controller: 'HeaderController'
+              templateUrl: 'assets/html/shared/header.html'
+              //controller: 'HeaderController'
             },
             'content': {
 
@@ -37524,6 +37524,17 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
   }]);
 
   umap.run(['$rootScope','$state','$cookies',function($rootScope,$state,$cookies){
+    $rootScope.isLoggedIn = function (){
+      var token = $cookies.get('X-Auth-Token');
+      if(token === undefined)
+        return false;
+      else
+        return true;
+    };
+    $rootScope.logOut = function (){
+      $cookies.remove('X-Auth-Token');
+      $cookies.remove('Role');
+    }
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
       var token = $cookies.get('X-Auth-Token');
       var role = $cookies.get('Role');
@@ -37533,7 +37544,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         $state.go('root.login');
         return;
       }
-      if( role === undefined && toState.name !== 'root.login' ){
+      if( role === undefined && toState.name !== 'root.login'){
         event.preventDefault();
         $cookies.remove('X-Auth-Token');
         $cookies.remove('Role');
@@ -37569,10 +37580,13 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         }
       }*/
     };
+  }]);/*
+  umap.factory('AuthService',['$cookies',function($cookies){
+
   }]);
   umap.controller('HeaderController',['$scope','$cookies',function($scope,$cookies) {
-    //if()
-  }]);
+
+  }]);*/
 
 
 })();
@@ -37583,7 +37597,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
   umap.config(['$stateProvider',function($stateProvider){
     $stateProvider.state('root.login',{
-      url: '/login',
+      url: 'login',
       views: {
             'content@': {
               templateUrl: 'assets/html/shared/index.html',
@@ -37592,7 +37606,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         }
     });
     $stateProvider.state('root.unauthorized',{
-      url: '/unauthorized',
+      url: 'unauthorized',
       views: {
             'content@': {
               templateUrl: 'assets/html/shared/401.html',
@@ -37715,6 +37729,9 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             'content@': {
               templateUrl: 'assets/html/superAdmin/home.html',
               controller:  'SuperAdminController'
+            },
+            'header@':{
+              templateUrl: 'assets/html/superAdmin/header.html'
             }
         }
     });
