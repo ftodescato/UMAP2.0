@@ -80,7 +80,7 @@ class UserController @Inject() (
               name = data.name,
               surname = data.surname,
               loginInfo = loginInfo,
-              email = Some(data.email),
+              email = data.email,
               company = data.company,
               role = data.role
             )
@@ -121,7 +121,7 @@ class UserController @Inject() (
               name = data.name,
               surname = data.surname,
               loginInfo = loginInfo,
-              email = Some(data.email),
+              email = data.email,
               company = data.company,
               role = data.role
             )

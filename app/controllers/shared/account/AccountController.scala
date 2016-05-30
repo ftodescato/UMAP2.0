@@ -21,7 +21,7 @@ class AccountController @Inject() (
 
 
 
-   def show = SecuredAction.async { implicit request =>
+   def getInfo = SecuredAction.async { implicit request =>
      Future.successful(Ok(Json.toJson(request.identity)))
    }
   //

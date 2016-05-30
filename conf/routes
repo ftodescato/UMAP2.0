@@ -11,7 +11,7 @@ POST        /signIn                            controllers.shared.AuthController
 GET         /api/getrole                       controllers.shared.AuthController.getRole
 
 
-GET         /api/accounts                      controllers.shared.account.AccountController.show
+GET         /api/account                      controllers.shared.account.AccountController.getInfo
 
 GET         /api/usersA/:id                    controllers.admin.UserController.showUsers(id: java.util.UUID)
 POST        /api/usersA/:id                    controllers.admin.UserController.addUser(id: java.util.UUID)
