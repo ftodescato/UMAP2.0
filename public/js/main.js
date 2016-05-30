@@ -37681,7 +37681,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         $state.go('root.superAdmin.users')
       });
     };
-    //$scope.users = UserService.Users.query({id: $scope.company.CompanyID});
+    $scope.users = UserService.Users.query();
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){
