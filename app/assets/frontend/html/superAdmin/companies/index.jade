@@ -1,6 +1,11 @@
 section(id="companiesList")
-  h1 Lista delle company presenti
-  button(class="btn btn-success" ui-sref="root.addCompanies()") Nuova
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li(class="active") Gestione Companies
+  h1(class="page-header text-center") Lista delle company presenti
+    
+  button(class="btn btn-success" ui-sref="root.superAdmin.addCompanies()") Nuova
   
   table(class="table")
     thead
@@ -12,6 +17,6 @@ section(id="companiesList")
         td {{company.companyID}}
         td {{company.companyName}}
         td
-          button(class="btn btn-warning" ui-sref="updateCompany({id:company.companyID})") Modifica
+          button(class="btn btn-warning" ui-sref="root.superAdmin.updateCompany({id:company.companyID})") Modifica
           form(ng-submit="deleteCompany(company.companyID)")
             button(class="btn btn-danger" type='submit') Elimina 

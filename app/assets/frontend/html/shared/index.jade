@@ -1,2 +1,14 @@
 section(id="index")
-  h1 HomePage progetto umap
+  ul(class="breadcrumb")
+    li(class="active") Login
+  h1(class="page-header text-center") Autenticazione
+  div(class="container-fluid")
+    div(class="row")
+    form(ng-submit="login()" class="col-xs-6 col-xs-offset-3")
+      label(for="emailInput") Indirizzo email
+      input(type="text" id="emailInput" class="form-control" ng-model="credentials.email" placeholder="email")
+      br
+      label(for="passwordInput")  Password
+      input(type="password" id="PasswordInput" class="form-control" ng-model="credentials.password" placeholder="password")
+      br
+      button(type='submit' class="btn btn-success") Log in

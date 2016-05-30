@@ -13,4 +13,9 @@ nav(class="navbar navbar-default")
           a(href="#" ng-click="logOut()") Log Out
         li(ng-if="!isLoggedIn()")
           a(ui-sref="root.login") Log In
+        li
+          a(ui-sref="root.superAdmin.companies()") Companies
+        li
+          a(ui-sref="root.superAdmin.users()") Users
+        
             

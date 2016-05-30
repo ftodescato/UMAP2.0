@@ -1,5 +1,15 @@
 section(id="updateCompany")
-  article(class="company")
-    form(ng-submit="editCompany()")
-      input(type="text" ng-model="company.companyName" placeholder="company name" value="{{company.companyName}}")
-      button(type='submit') Modifica
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li
+      a(ui-sref="root.superAdmin.companies()") Gestione Companies
+    li(class="active") Modifica company
+  h1(class="page-header text-center") Modifica di una company
+  div(class="container-fluid")
+    div(class="row")
+      form(ng-submit="editCompany()" class="col-xs-6 col-xs-offset-3")
+        label(for="companyNameInput") Nome della company
+        input(type="text" id="companyNameInput" class="form-control" ng-model="company.companyName" placeholder="company name" value="{{company.companyName}}")
+        br
+        button(type='submit' class="btn btn-success") Modifica
