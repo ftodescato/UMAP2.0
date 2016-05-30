@@ -60,6 +60,9 @@
       });
     };
     $scope.users = UserService.Users.query();
+    //$scope.user.name = userOriginal.name;
+    //$scope.user.surname = userOriginal.surname;
+    //$scope.user.email = userOriginal.loginInfo.providerKey;
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){
@@ -72,6 +75,7 @@
 
   umap.controller('UserControllerDetails',['$scope','UserService','$state','$stateParams', function($scope, UserService,$state,$stateParams) {
     $scope.user = UserService.Users.get({ id:  $stateParams.id });
+    $scope.oldEmail = $scope.user.email;
     $scope.editUser = function(){
       UserService.Users.update({id:  $stateParams.id}, $scope.user, function(){
         $state.go('root.superAdmin.users')

@@ -15,4 +15,5 @@ section(id="updateUser")
         label(for="userRoleInput") Ruole dell'Utente      
         input(type="text" id="userRoleInput" class="form-control" ng-model="user.role" placeholder="ruolo" value="{{user.role}}")
         br
+        input(type="hidden" ng-model="user.oldEmail" value="{{oldEmail}}")
         button(type='submit' class="btn btn-success") Modifica
