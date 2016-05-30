@@ -89,11 +89,11 @@ class UserController @Inject() (
               user <- userDao.update(userID,user2)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
-              token <- env.authenticatorService.init(authenticator)
+            //  token <- env.authenticatorService.init(authenticator)
             } yield {
-              env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-              env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> token))
+            //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
+              Ok(Json.obj("token" -> "ok"))
             }
             case None =>
               Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
@@ -130,11 +130,11 @@ class UserController @Inject() (
               user <- userDao.save(user)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
-              token <- env.authenticatorService.init(authenticator)
+            //  token <- env.authenticatorService.init(authenticator)
             } yield {
-              env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-              env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> token))
+            //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
+              Ok(Json.obj("token" -> "ok"))
             }
             case None =>
               Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))

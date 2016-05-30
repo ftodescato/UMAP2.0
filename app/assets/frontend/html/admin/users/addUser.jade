@@ -1,0 +1,29 @@
+section(id="users")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.admin()") Home
+    li
+      a(ui-sref="root.admin.users()") Gestione Utenti
+    li(class="active") Nuovo utente
+  div(class="container-fluid")
+    div(class="row ")
+      form(ng-submit="addUser()" class="col-xs-6 col-xs-offset-3")
+        label(for="userNameInput" ) Nome dell'utente            
+        input(type="text" id="userNameInput" class="form-control" ng-model="user.name" placeholder="nome")
+        br
+        label(for="userSurnameInput" ) Cognome dell'utente                    
+        input(type="text" id="userSurnameInput" class="form-control" ng-model="user.surname" placeholder="cognome")
+        br
+        input(type="text" class="form-control" ng-model="user.email" placeholder="email")
+        br
+        input(type="password" class="form-control" ng-model="user.password" placeholder="password")
+        br
+        input(type="hidden" ng-model="user.company" value="company")
+        select( class="form-control" ng-model="user.company")
+          option(ng-repeat="company in companies"  value="{{company.companyID}}") {{company.companyName}}
+        br
+        select( class="form-control" ng-model="user.role")
+          option(value="user") User
+          option(value="admin") Admin
+        br
+        button(type='submit' class="btn btn-success") Aggiungi

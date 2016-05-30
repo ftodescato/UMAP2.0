@@ -106,12 +106,12 @@ class UserController @Inject() (
               //user <- userService.save(user.copy(avatarURL = avatar))
               user <- userDao.update(userID,user2)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
-              authenticator <- env.authenticatorService.create(loginInfo)
-              token <- env.authenticatorService.init(authenticator)
+            //  authenticator <- env.authenticatorService.create(loginInfo)
+            //  token <- env.authenticatorService.init(authenticator)
             } yield {
-              env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-              env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> token))
+            //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
+              Ok(Json.obj("token" -> "ok"))
             }
         }
       }.recoverTotal {
@@ -142,11 +142,11 @@ class UserController @Inject() (
               user <- userDao.save(user)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
-              token <- env.authenticatorService.init(authenticator)
+            //  token <- env.authenticatorService.init(authenticator)
             } yield {
-              env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-              env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> token))
+            //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
+              Ok(Json.obj("token" -> "ok"))
             }
       }
   }.recoverTotal {

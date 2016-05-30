@@ -1,0 +1,20 @@
+
+<section id="updateUser">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.superAdmin()">Home</a></li>
+    <li><a ui-sref="root.superAdmin.users()">Gestione Utenti</a></li>
+    <li class="active">Modifica Utente</li>
+  </ul>
+  <h1 class="text-center">Modifica un profilo utente    </h1>
+  <div class="container-fluid">
+    <div class="row">   
+      <form ng-submit="editUser()" class="col-sm-6 col-sm-offset-3">
+        <label for="userEmailInput">Email dell'Utente</label>
+        <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" value="{{user.email}}" class="form-control"/><br/>
+        <label for="userRoleInput">Ruole dell'Utente      </label>
+        <input type="text" id="userRoleInput" ng-model="user.role" placeholder="ruolo" value="{{user.role}}" class="form-control"/><br/>
+        <button type="submit" class="btn btn-success">Modifica</button>
+      </form>
+    </div>
+  </div>
+</section>

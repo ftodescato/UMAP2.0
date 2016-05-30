@@ -37,10 +37,15 @@
           LoginService.Role.get({}, function(success){
             if(success !== null)
               $cookies.put('Role', success.role);
-              if(success.role === 'superAdmin')
-                $state.go('root.superAdmin');
-              else if (success.role === 'admin') {
-                  //  $state.go('root.adminHome');
+              switch (success.role) {
+                case 'superAdmin':
+                  $state.go('root.superAdmin');
+                  break;
+                case 'admin':
+                  $state.go('root.admin');
+                  break;
+                default:
+                  console.log('errore nel redirect dopo login');
               }
           });
 
