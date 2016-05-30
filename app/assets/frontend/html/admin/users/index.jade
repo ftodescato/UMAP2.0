@@ -1,26 +1,26 @@
 section(id="userList" )
   ul(class="breadcrumb")
     li
-      a(ui-sref="root.superAdmin()") Home
+      a(ui-sref="root.admin()") Home
     li(class="active") Gestione Utenti
   h1(class="text-center") Lista degli utenti presenti
-  button(class="btn btn-success" ui-sref="root.superAdmin.addUsers()") Nuovo
+  button(class="btn btn-success" ui-sref="root.admin.addUsers()") Nuovo
   
   table(class="table")
     thead
       th Nome
       th Cognome
       th Email
-      th Company
       th Ruolo
+      th Company
     tbody
       tr(ng-repeat="user in users")
         td {{user.name}}
         td {{user.surname}}
         td {{user.email}}
-        td {{user.companyID}}
         td {{user.role}}
+        td {{company}}
         td 
-          button(class="btn btn-warning" ui-sref="root.superAdmin.updateUser({id:user.userID})") Modifica
+          button(class="btn btn-warning" ui-sref="root.admin.updateUser({id:user.userID})") Modifica
           form(ng-submit="deleteUser(user.userID)")
             button(class="btn btn-danger" type='submit') Elimina 

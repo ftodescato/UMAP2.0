@@ -37498,7 +37498,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','ngCookies','umap.superAdminHome','umap.company','umap.user','umap.login']);
+  var umap = angular.module('umap', ['ui.router','ngCookies','umap.superAdmin','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   //$urlRouterProvider.otherwise('/');
@@ -37592,6 +37592,117 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 })();
 
 (function(){
+  var umap = angular.module('umap.account',['ui.router']);
+  
+})();
+
+(function(){
+  'use strict';
+
+  var umap = angular.module('umap.admin',['ui.router']);
+  umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    $stateProvider.state('root.admin',{
+      url: 'admin',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/home.html',
+              controller:  'AdminController'
+            },
+            'header@':{
+              templateUrl: 'assets/html/admin/header.html'
+            }
+        }
+    });
+  }]);
+
+  umap.controller('AdminController',['$scope',function($scope){
+
+  }]);
+})();
+
+(function(){
+  'use strict';
+  var umap = angular.module('umap.admin.user',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.addUsers', {
+      url: '/addUsers',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/users/addUser.html',
+              controller:  'UserController'
+            }
+        }
+  });
+  $stateProvider.state('root.admin.users', {
+    url: '/users',
+    views: {
+          'content@': {
+            templateUrl: 'assets/html/admin/users/index.html',
+            controller:  'UserController'
+          }
+      }
+  });
+  $stateProvider.state('root.admin.updateUser', {
+    url: '/users/:id',
+    views: {
+          'content@': {
+            templateUrl: 'assets/html/admin/users/updateUser.html',
+            controller:  'UserControllerDetails'
+          }
+      }
+  });
+     //$locationProvider.html5Mode(true);
+  }]);
+
+    umap.factory('UserService', function($resource) {
+      return{
+        Users: $resource('/api/usersSA/:id',{id: "@id"},{
+          update: {
+            method: 'PUT' // this method issues a PUT request
+          }
+        }),
+        Identity: $resource('/api/getrole')
+      }
+    });
+
+  umap.controller('UserController',['$scope','UserService','CompanyService','$stateParams','$state','$window', function($scope, UserService,CompanyService, $stateParams,$state,$window) {
+    $scope.companies = CompanyService.query();
+     $scope.user = {
+       'name': '',
+       'surname':'',
+       'email':'',
+       'password':'',
+       'company':'',
+       'role': ''
+     };
+    //$scope.company = UserService.Identity.get();
+    $scope.addUser = function(){
+      UserService.Users.save($scope.user, function(){
+        $state.go('root.superAdmin.users')
+      });
+    };
+    //$scope.users = UserService.Users.query({id: $scope.company.CompanyID});
+    $scope.deleteUser = function(id){
+      var deleteUser = $window.confirm('Sei sicuro ?');
+      if(deleteUser){
+        UserService.Users.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
+    };
+  }]);
+
+  umap.controller('UserControllerDetails',['$scope','UserService','$state','$stateParams', function($scope, UserService,$state,$stateParams) {
+    $scope.user = UserService.Users.get({ id:  $stateParams.id });
+    $scope.editUser = function(){
+      UserService.Users.update({id:  $stateParams.id}, $scope.user, function(){
+        $state.go('root.superAdmin.users')
+      });
+    }
+  }]);
+})();
+
+(function(){
   'use strict';
   var umap = angular.module('umap.login',['ui.router','ngResource','ngCookies']);
 
@@ -37630,10 +37741,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
           LoginService.Role.get({}, function(success){
             if(success !== null)
               $cookies.put('Role', success.role);
-              if(success.role === 'superAdmin')
-                $state.go('root.superAdmin');
-              else if (success.role === 'admin') {
-                  //  $state.go('root.adminHome');
+              switch (success.role) {
+                case 'superAdmin':
+                  $state.go('root.superAdmin');
+                  break;
+                case 'admin':
+                  $state.go('root.admin');
+                  break;
+                default:
+                  console.log('errore nel redirect dopo login');
               }
           });
 
@@ -37645,7 +37761,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
 (function(){
   'use strict';
-  var umap = angular.module('umap.company',['ui.router','ngResource']);
+  var umap = angular.module('umap.superAdmin.company',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
     $stateProvider.state('root.superAdmin.addCompanies', {
       url: '/addCompany',
@@ -37721,7 +37837,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 (function(){
   'use strict';
 
-  var umap = angular.module('umap.superAdminHome',['ui.router']);
+  var umap = angular.module('umap.superAdmin',['ui.router']);
   umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
     $stateProvider.state('root.superAdmin',{
       url: 'superAdmin',
@@ -37744,7 +37860,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
 (function(){
   'use strict';
-  var umap = angular.module('umap.user',['ui.router','ngResource']);
+  var umap = angular.module('umap.superAdmin.user',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
     $stateProvider.state('root.superAdmin.addUsers', {
       url: '/addUsers',
@@ -37764,7 +37880,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
           }
       }
   });
-  $stateProvider.state('root.updateUser', {
+  $stateProvider.state('root.superAdmin.updateUser', {
     url: '/users/:id',
     views: {
           'content@': {
@@ -37785,7 +37901,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     });
 
 // TODO: rifare come per insert user su update
-  umap.controller('UserController',['$scope','UserService','CompanyService','$stateParams','$state', function($scope, UserService,CompanyService, $stateParams,$state) {
+  umap.controller('UserController',['$scope','UserService','CompanyService','$stateParams','$state','$window', function($scope, UserService,CompanyService, $stateParams,$state,$window) {
     $scope.companies = CompanyService.query();
      $scope.user = {
        'name': '',
@@ -37802,7 +37918,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         });
       };
     $scope.users = UserService.query();
-    $scope.deleteUser = function(param){
+    $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){
         UserService.delete({id:  id}, function(){

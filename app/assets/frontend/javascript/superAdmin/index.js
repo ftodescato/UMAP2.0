@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  var umap = angular.module('umap.superAdminHome',['ui.router']);
+  var umap = angular.module('umap.superAdmin',['ui.router']);
   umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
     $stateProvider.state('root.superAdmin',{
       url: 'superAdmin',

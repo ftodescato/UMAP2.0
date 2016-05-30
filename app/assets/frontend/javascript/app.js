@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','ngCookies','umap.superAdminHome','umap.company','umap.user','umap.login']);
+  var umap = angular.module('umap', ['ui.router','ngCookies','umap.superAdmin','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   //$urlRouterProvider.otherwise('/');

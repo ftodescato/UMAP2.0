@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  var umap = angular.module('umap.company',['ui.router','ngResource']);
+  var umap = angular.module('umap.superAdmin.company',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
     $stateProvider.state('root.superAdmin.addCompanies', {
       url: '/addCompany',

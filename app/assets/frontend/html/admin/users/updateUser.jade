@@ -1,0 +1,18 @@
+section(id="updateUser")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li
+      a(ui-sref="root.superAdmin.users()") Gestione Utenti
+    li(class="active") Modifica Utente
+  h1(class="text-center") Modifica un profilo utente    
+  div(class="container-fluid")
+    div(class="row")    
+      form(ng-submit="editUser()" class="col-sm-6 col-sm-offset-3")
+        label(for="userEmailInput") Email dell'Utente
+        input(type="text" id="userEmailInput" class="form-control" ng-model="user.email" placeholder="email" value="{{user.email}}")
+        br
+        label(for="userRoleInput") Ruole dell'Utente      
+        input(type="text" id="userRoleInput" class="form-control" ng-model="user.role" placeholder="ruolo" value="{{user.role}}")
+        br
+        button(type='submit' class="btn btn-success") Modifica
