@@ -29,6 +29,7 @@ POST        /api/thingTypesSA                  controllers.superAdmin.ThingTypeC
 #PUT        /api/thingsTypesSA/:id             controllers.superAdmin.ThingTypeController.updateThing(id: java.util.UUID)
 #DELETE     /api/thingTypesSA/:id              controllers.superAdmin.ThingTypeController.delete(id: java.util.UUID)
 
+GET         /api/usersSA/:id                   controllers.superAdmin.UserController.showUserDetails(id: java.util.UUID)
 GET         /api/usersSA                       controllers.superAdmin.UserController.showUsers
 POST        /api/usersSA                       controllers.superAdmin.UserController.addUser
 PUT         /api/usersSA/:id                   controllers.superAdmin.UserController.updateUser(id: java.util.UUID)
