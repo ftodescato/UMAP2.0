@@ -78,7 +78,7 @@ class UserController @Inject() (
           val companyInfo = data.company
           companyDao.findByID(companyInfo).flatMap{
           case Some(companyToAssign) =>
-            val authInfo = passwordHasher.hash(data.password)
+            //val authInfo = passwordHasher.hash(data.password)
             val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
             val user2 = User(
               userID = user.userID,
@@ -92,13 +92,13 @@ class UserController @Inject() (
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
               user <- userDao.update(userID,user2)
-              authInfo <- passwordInfoDao.update(loginInfo,authInfo)
+              //authInfo <- passwordInfoDao.update(loginInfo,authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               token <- env.authenticatorService.init(authenticator)
             } yield {
             //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> data.password))
+              Ok(Json.obj("token" -> "ok"))
             }
             case None =>
               Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))

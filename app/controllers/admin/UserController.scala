@@ -36,8 +36,10 @@ class UserController @Inject() (
   passwordHasher: PasswordHasher)
   extends Silhouette[User, JWTAuthenticator] {
 
-  def showUsers(companyID: UUID) = Action.async{ implicit request =>
-   val users = userDao.findByIDCompany(companyID)
+
+
+  def showUsers = SecuredAction.async{ implicit request =>
+   val users = userDao.findByIDCompany(request.identity.company)
    users.flatMap{
     users =>
      Future.successful(Ok(Json.toJson(users)))
@@ -96,7 +98,7 @@ class UserController @Inject() (
           case Some(user) =>
           val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
             val companyInfo = companyDao.findByIDUser(userID)
-            val authInfo = passwordHasher.hash(data.password)
+            //val authInfo = passwordHasher.hash(data.password)
             val user2 = User(
               userID = user.userID,
               name = data.name,
@@ -109,7 +111,7 @@ class UserController @Inject() (
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
               user <- userDao.update(userID,user2)
-              authInfo <- passwordInfoDao.update(loginInfo,authInfo)
+              //authInfo <- passwordInfoDao.update(loginInfo,authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               token <- env.authenticatorService.init(authenticator)
             } yield {
@@ -146,7 +148,7 @@ class UserController @Inject() (
               user <- userDao.save(user)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
-            //  token <- env.authenticatorService.init(authenticator)
+              token <- env.authenticatorService.init(authenticator)
             } yield {
             //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //  env.eventBus.publish(LoginEvent(user, request, request2Messages))

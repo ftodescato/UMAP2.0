@@ -1,27 +1,32 @@
-package forms.company
+package forms.password
 
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
 
 
-object EditCompany {
+object EditPassword {
 
   /**
    * A play framework form.
    */
   val form = Form(
     mapping(
-      "companyName" -> nonEmptyText
+      "newPassword" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
+  /**
+   * The form data.
 
+   */
   case class Data(
-    companyName: String
+    newPassword: String
   )
 
-
+  /**
+  * The companion object.
+  */
   object Data {
 
   /**
