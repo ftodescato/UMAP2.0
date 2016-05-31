@@ -10,6 +10,7 @@ import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import scala.concurrent.Future
+import org.apache.spark.mllib.linalg._
 
 /**
  * The basic application controller.
@@ -40,6 +41,12 @@ def engine = Action.async { implicit request =>
   val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
   val e = new Engine
   val aux: Double = e.getCorrelation(a,b)
+  Future.successful(Ok(Json.obj("coeff"->aux)))
+}
+def bayesengine = Action.async { implicit request =>
+  val data = Vectors.dense(1.0, 0.0, 3.0)
+  val e = new Engine
+  val aux = e.getBayes(data)
   Future.successful(Ok(Json.obj("coeff"->aux)))
 }
 def index = UserAwareAction.async { implicit request =>

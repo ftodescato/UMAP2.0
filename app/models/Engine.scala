@@ -20,4 +20,15 @@ class Engine{
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
     correlation
   }
+  def getBayes(arg: Vector) : Vector = {
+    val conf = new SparkConf().setAppName("NaiveBayesExample")
+    val sc = new SparkContext(conf)
+
+    val Array(training, test) = data.randomSplit(Array(0.6, 0.4))
+
+    val model = NaiveBayes.train(training, lambda = 1.0, modelType = "multinomial")
+
+    val prediction = model.predict(test)
+    prediction
+  }
 }
