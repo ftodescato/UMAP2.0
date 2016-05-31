@@ -34,7 +34,7 @@
 
     umap.factory('UserServiceA', function($resource) {
       return{
-        Users: $resource('/api/usersSA/:id',{id: "@id"},{
+        Users: $resource('/api/usersA/:id',{id: "@id"},{
           update: {
             method: 'PUT' // this method issues a PUT request
           }
