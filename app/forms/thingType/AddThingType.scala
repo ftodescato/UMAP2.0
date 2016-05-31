@@ -3,8 +3,8 @@ package forms.thingType
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
-import java.util.UUID
 
+import java.util.UUID
 
 
 object AddThingType {
@@ -16,8 +16,9 @@ object AddThingType {
     mapping(
       "thingTypeName" -> nonEmptyText,
       "company" -> uuid,
-      "numberOfParameters" -> number
-      //"nameOfParameters" -> list(nonEmptyText)
+      //array with number of parameters for each listIntValue and listStringValue and listDoubleValue
+      "listQty" -> list(number),
+      "listIntValue" -> list(text)
     )(Data.apply)(Data.unapply)
   )
 
@@ -25,8 +26,8 @@ object AddThingType {
   case class Data(
     thingTypeName: String,
     company: UUID,
-    numberOfParameters: Int
-    //nameOfParameters: List[String]
+    listQty: List[Int],
+    listIntValue: List[String]
     )
 
 

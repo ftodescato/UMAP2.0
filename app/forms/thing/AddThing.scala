@@ -18,9 +18,8 @@ object AddThing {
       "serialNumber" -> nonEmptyText,
       "description" -> nonEmptyText,
       "thingTypeID" -> uuid,
-      "password" -> nonEmptyText,
       "company" -> uuid
-    )(Data.apply)(Data.unapply)
+        )(Data.apply)(Data.unapply)
   )
 
 
@@ -29,8 +28,8 @@ object AddThing {
     serialNumber: String,
     description: String,
     thingTypeID: UUID,
-    password: String,
-    company: UUID)
+    company: UUID
+  )
 
 
   /**
