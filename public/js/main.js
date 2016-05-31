@@ -37939,18 +37939,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
   }]);
 
   umap.controller('UserControllerDetailsSA',['$scope','UserServiceSA','$state','$stateParams', function($scope, UserServiceSA,$state,$stateParams) {
-    $scope.user = UserServiceSA.get({ id:  $stateParams.id });    
-    $scope.userCustom = {
-    'name': user.name,
-    'surname':user.surname,
-    'email':user.email,
-    'password':user.password,
-    'company':user.company,
-    'role': user.role,
-    'oldEmail': user.email
-    }
+    $scope.user = UserServiceSA.get({ id:  $stateParams.id });
+
     $scope.editUser = function(){
-      UserServiceSA.update({id:  $stateParams.id}, $scope.userCustom, function(){
+      UserServiceSA.update({id:  $stateParams.id}, $scope.user, function(){
         $state.go('root.superAdmin.users')
       });
     }
