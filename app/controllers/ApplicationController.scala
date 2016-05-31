@@ -46,8 +46,9 @@ def engine = Action.async { implicit request =>
 def bayesengine = Action.async { implicit request =>
   val data = Vectors.dense(1.0, 0.0, 3.0)
   val e = new Engine
-  val aux = e.getBayes(data)
-  Future.successful(Ok(Json.obj("coeff"->aux)))
+  val aux: Vector = e.getBayes(data)
+  val temp: Array[Double] =aux.toArray
+  Future.successful(Ok(Json.obj("coeff"->temp)))
 }
 def index = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"contenuto")))

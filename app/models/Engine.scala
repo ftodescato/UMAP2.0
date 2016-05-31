@@ -7,6 +7,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SQLContext._
+import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 
 class Engine{
   def getCorrelation(a: List[Double], b: List[Double]) : Double = {
@@ -20,15 +21,13 @@ class Engine{
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
     correlation
   }
-  def getBayes(arg: Vector) : Vector = {
+  def getBayes(data: Vector) : Vector = {
     val conf = new SparkConf().setAppName("NaiveBayesExample")
     val sc = new SparkContext(conf)
 
-    val Array(training, test) = data.randomSplit(Array(0.6, 0.4))
+    val model = NaiveBayes.train(data, lambda = 1.0, modelType = "multinomial")
 
-    val model = NaiveBayes.train(training, lambda = 1.0, modelType = "multinomial")
-
-    val prediction = model.predict(test)
+    val prediction:Vector = model.predict(data)
     prediction
   }
 }
