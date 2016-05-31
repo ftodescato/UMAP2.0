@@ -53,11 +53,13 @@ class UserController @Inject() (
 
 
     def delete(userID: UUID) = Action.async{ implicit request =>
-      userDao.findByID(userID).flatMap{
+        userDao.findByID(userID).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
           case Some (user) =>
+          val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
             for{
               user <- userDao.remove(userID)
+              authInfo <- passwordInfoDao.remove(loginInfo)
             }yield {
                 //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
                 //env.eventBus.publish(LoginEvent(user, request, request2Messages))
