@@ -18,7 +18,6 @@ object EditThing {
       "serialNumber" -> nonEmptyText,
       "description" -> nonEmptyText,
       "thingTypeID" -> uuid,
-      "password" -> nonEmptyText,
       "company" -> uuid
     )(Data.apply)(Data.unapply)
   )
@@ -29,8 +28,8 @@ object EditThing {
     serialNumber: String,
     description: String,
     thingTypeID: UUID,
-    password: String,
-    company: UUID)
+    company: UUID
+    )
 
 
   /**

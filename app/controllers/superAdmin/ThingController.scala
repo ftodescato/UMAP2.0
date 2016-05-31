@@ -8,6 +8,8 @@ import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.thing._
 import models.Thing
 import models.User
+import models.Detection
+import models.Measurements
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
@@ -73,13 +75,25 @@ extends Silhouette[User, JWTAuthenticator] {
           val thingTypeInfo = data.thingTypeID
           thingTypeDao.findByID(thingTypeInfo).flatMap{
             case Some(thingTypeToAssign) =>
+              // var detectionInitial = Detection(
+              //     sensor = "",
+              //     value = 0
+              // )
+              // var listDetectionInitial = List(detectionInitial)
+              // var datasInitial = Measurements(
+              //   dataTime = null,
+              //   sensors = listDetectionInitial,
+              //   healty = false
+              // )
+              // var listMeasurements = List(datasInitial)
               val thing2 = Thing(
                   thingID = UUID.randomUUID(),
                   name = data.thingName,
                   serialNumber = data.serialNumber,
                   description = data.description,
                   thingTypeID = data.thingTypeID,
-                  companyID = data.company
+                  companyID = data.company,
+                  datas = null
               )
               for{
                 thing <- thingDao.update(thingID,thing2)
@@ -115,7 +129,8 @@ extends Silhouette[User, JWTAuthenticator] {
                   serialNumber = data.serialNumber,
                   description = data.description,
                   thingTypeID = data.thingTypeID,
-                  companyID = data.company
+                  companyID = data.company,
+                  datas = null
               )
               for{
                 thing <- thingDao.save(thing)

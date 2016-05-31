@@ -2,6 +2,7 @@ package controllers.superAdmin
 
 import java.util.UUID
 import javax.inject.Inject
+import models.Data
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
@@ -14,6 +15,7 @@ import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
+import scala.collection.mutable.ListBuffer
 
 //import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 //import com.mohiva.play.silhouette.api.services.AvatarService
@@ -108,11 +110,23 @@ extends Silhouette[User, JWTAuthenticator] {
             case Some(companyToAssign) =>
             //val authInfo = passwordHasher.hash(data.password)
             val companyIDList = List(data.company)
+            var dataInt: Data = null
+            if (data.listQty(0) > 0){
+              var aux = new ListBuffer[String]()
+              for( names <- data.listIntValue ){
+                 aux+=names
+              }
+                dataInt = Data(
+                inUse = true,
+                valuee = aux.toList
+              )
+
+            }
             val thingType = ThingType(
               thingTypeID = UUID.randomUUID(),
               thingTypeName = data.thingTypeName,
-              companyID = companyIDList
-              // valuesInt = null,
+              companyID = companyIDList,
+              intValue = dataInt
               // valuesString = null,
               // valuesFloat = null,
               // valuesDouble = null
