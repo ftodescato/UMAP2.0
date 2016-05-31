@@ -13,6 +13,7 @@ import forms.user._
 import models.User
 import models.services._
 import models.daos.user._
+import models.daos.password._
 import models.daos.company._
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -28,6 +29,7 @@ class UserController @Inject() (
   userService: UserService,
   userDao: UserDAO,
   companyDao: CompanyDAO,
+  passwordInfoDao: PasswordInfoDAO,
   authInfoRepository: AuthInfoRepository,
   avatarService: AvatarService,
   passwordHasher: PasswordHasher)
@@ -88,13 +90,13 @@ class UserController @Inject() (
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
               user <- userDao.update(userID,user2)
-              authInfo <- authInfoRepository.update(loginInfo, authInfo)
+              authInfo <- passwordInfoDao.update(loginInfo,authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               token <- env.authenticatorService.init(authenticator)
             } yield {
             //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> "ok"))
+              Ok(Json.obj("token" -> data.password))
             }
             case None =>
               Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
@@ -108,7 +110,7 @@ class UserController @Inject() (
 
   def addUser = Action.async(parse.json) { implicit request =>
     request.body.validate[SignUp.Data].map { data =>
-      val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
+      var loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userDao.find(loginInfo).flatMap {
         case Some(user) =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("user.exists"))))
@@ -116,7 +118,7 @@ class UserController @Inject() (
             val companyInfo = data.company
             companyDao.findByID(companyInfo).flatMap{
             case Some(companyToAssign) =>
-            val authInfo = passwordHasher.hash(data.password)
+            var authInfo = passwordHasher.hash(data.password)
             val user = User(
               userID = UUID.randomUUID(),
               name = data.name,
@@ -128,14 +130,14 @@ class UserController @Inject() (
             )
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
-              user <- userDao.save(user)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
+              user <- userDao.save(user)
             //  token <- env.authenticatorService.init(authenticator)
             } yield {
             //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> "ok"))
+              Ok(Json.obj("token" -> data.password))
             }
             case None =>
               Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
