@@ -17,6 +17,8 @@ import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
+import scala.collection.mutable.ListBuffer
+
 
 //import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 //import com.mohiva.play.silhouette.api.services.AvatarService
@@ -93,7 +95,7 @@ extends Silhouette[User, JWTAuthenticator] {
                   description = data.description,
                   thingTypeID = data.thingTypeID,
                   companyID = data.company,
-                  datas = null
+                  datas = new ListBuffer[Measurements]
               )
               for{
                 thing <- thingDao.update(thingID,thing2)
@@ -130,7 +132,7 @@ extends Silhouette[User, JWTAuthenticator] {
                   description = data.description,
                   thingTypeID = data.thingTypeID,
                   companyID = data.company,
-                  datas = null
+                  datas = new ListBuffer[Measurements]
               )
               for{
                 thing <- thingDao.save(thing)
