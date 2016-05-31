@@ -37633,7 +37633,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
       views: {
             'content@': {
               templateUrl: 'assets/html/admin/users/addUser.html',
-              controller:  'UserController'
+              controller:  'UserControllerA'
             }
         }
   });
@@ -37642,7 +37642,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     views: {
           'content@': {
             templateUrl: 'assets/html/admin/users/index.html',
-            controller:  'UserController'
+            controller:  'UserControllerA'
           }
       }
   });
@@ -37651,14 +37651,14 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     views: {
           'content@': {
             templateUrl: 'assets/html/admin/users/updateUser.html',
-            controller:  'UserControllerDetails'
+            controller:  'UserControllerDetailsA'
           }
       }
   });
      //$locationProvider.html5Mode(true);
   }]);
 
-    umap.factory('UserService', function($resource) {
+    umap.factory('UserServiceA', function($resource) {
       return{
         Users: $resource('/api/usersSA/:id',{id: "@id"},{
           update: {
@@ -37669,7 +37669,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
       }
     });
 
-  umap.controller('UserController',['$scope','UserService','CompanyService','$stateParams','$state','$window', function($scope, UserService,CompanyService, $stateParams,$state,$window) {
+  umap.controller('UserControllerA',['$scope','UserServiceA','CompanyService','$stateParams','$state','$window', function($scope, UserServiceA,CompanyService, $stateParams,$state,$window) {
     $scope.companies = CompanyService.query();
      $scope.user = {
        'name': '',
@@ -37681,31 +37681,31 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
      };
     //$scope.company = UserService.Identity.get();
     $scope.addUser = function(){
-      UserService.Users.save($scope.user, function(){
+      UserServiceA.Users.save($scope.user, function(){
         $state.go('root.superAdmin.users')
       });
     };
-    $scope.users = UserService.Users.query();
+    $scope.users = UserServiceA.Users.query();
     //$scope.user.name = userOriginal.name;
     //$scope.user.surname = userOriginal.surname;
     //$scope.user.email = userOriginal.loginInfo.providerKey;
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){
-        UserService.Users.delete({id:  id}, function(){
+        UserServiceA.Users.delete({id:  id}, function(){
           $state.go($state.current, {}, {reload: true});
         });
       }
     };
   }]);
 
-  umap.controller('UserControllerDetails',['$scope','UserService','$state','$stateParams', function($scope, UserService,$state,$stateParams) {
-    $scope.user = UserService.Users.get({ id:  $stateParams.id });
+  umap.controller('UserControllerDetailsA',['$scope','UserServiceA','$state','$stateParams', function($scope, UserServiceA,$state,$stateParams) {
+    $scope.user = UserServiceA.Users.get({ id:  $stateParams.id });
     $scope.user.oldEmail = '';
     $scope.oldEmail = $scope.user.email;
     $scope.editUser = function(){
       console.log($scope.user);
-      UserService.Users.update({id:  $stateParams.id}, $scope.user, function(){
+      UserServiceA.Users.update({id:  $stateParams.id}, $scope.user, function(){
         $state.go('root.superAdmin.users')
       });
     }
@@ -37877,7 +37877,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
       views: {
             'content@': {
               templateUrl: 'assets/html/superAdmin/users/addUser.html',
-              controller:  'UserController'
+              controller:  'UserControllerSA'
             }
         }
   });
@@ -37886,7 +37886,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     views: {
           'content@': {
             templateUrl: 'assets/html/superAdmin/users/index.html',
-            controller:  'UserController'
+            controller:  'UserControllerSA'
           }
       }
   });
@@ -37895,14 +37895,14 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     views: {
           'content@': {
             templateUrl: 'assets/html/superAdmin/users/updateUser.html',
-            controller:  'UserControllerDetails'
+            controller:  'UserControllerDetailsSA'
           }
       }
   });
      //$locationProvider.html5Mode(true);
   }]);
 
-    umap.factory('UserService', function($resource) {
+    umap.factory('UserServiceSA', function($resource) {
       return $resource('/api/usersSA/:id',{id: "@id"},{
         update: {
           method: 'PUT' // this method issues a PUT request
@@ -37911,7 +37911,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     });
 
 // TODO: rifare come per insert user su update
-  umap.controller('UserController',['$scope','UserService','CompanyService','$stateParams','$state','$window', function($scope, UserService,CompanyService, $stateParams,$state,$window) {
+  umap.controller('UserControllerSA',['$scope','UserServiceSA','CompanyService','$stateParams','$state','$window', function($scope, UserServiceSA,CompanyService, $stateParams,$state,$window) {
     $scope.companies = CompanyService.query();
      $scope.user = {
        'name': '',
@@ -37923,23 +37923,23 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
      };
 
       $scope.addUser = function(){
-        UserService.save($scope.user, function(){
+        UserServiceSA.save($scope.user, function(){
           $state.go('root.superAdmin.users')
         });
       };
-    $scope.users = UserService.query();
+    $scope.users = UserServiceSA.query();
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){
-        UserService.delete({id:  id}, function(){
+        UserServiceSA.delete({id:  id}, function(){
           $state.go($state.current, {}, {reload: true});
         });
       }
     };
   }]);
 
-  umap.controller('UserControllerDetails',['$scope','UserService','$state','$stateParams', function($scope, UserService,$state,$stateParams) {
-    $scope.user = UserService.get({ id:  $stateParams.id });
+  umap.controller('UserControllerDetailsSA',['$scope','UserServiceSA','$state','$stateParams', function($scope, UserServiceSA,$state,$stateParams) {
+    $scope.user = UserServiceSA.get({ id:  $stateParams.id });    
     $scope.userCustom = {
     'name': user.name,
     'surname':user.surname,
@@ -37950,7 +37950,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     'oldEmail': user.email
     }
     $scope.editUser = function(){
-      UserService.update({id:  $stateParams.id}, $scope.userCustom, function(){
+      UserServiceSA.update({id:  $stateParams.id}, $scope.userCustom, function(){
         $state.go('root.superAdmin.users')
       });
     }

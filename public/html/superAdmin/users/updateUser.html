@@ -9,8 +9,14 @@
   <div class="container-fluid">
     <div class="row">   
       <form ng-submit="editUser()" class="col-sm-6 col-sm-offset-3">
+        <label for="userNameInput">Nome dell'Utente</label>
+        <input type="text" id="userNameInput" ng-model="userCustom.name" placeholder="nome" value="{{userCustom.name}}" class="form-control"/><br/>
+        <label for="userSurnameInput">Cognome dell'Utente</label>
+        <input type="text" id="userSurnameInput" ng-model="userCustom.surname" placeholder="cognome" value="{{userCustom.surname}}" class="form-control"/><br/>
         <label for="userEmailInput">Email dell'Utente</label>
         <input type="text" id="userEmailInput" ng-model="userCustom.email" placeholder="email" value="{{userCustom.email}}" class="form-control"/><br/>
+        <label for="userPasswordInput">Password dell'Utente</label>
+        <input type="password" id="userPasswordInput" ng-model="userCustom.password" placeholder="password" value="{{userCustom.password}}" class="form-control"/><br/>
         <label for="userRoleInput">Ruole dell'Utente      </label>
         <input type="text" id="userRoleInput" ng-model="userCustom.role" placeholder="ruolo" value="{{userCustom.role}}" class="form-control"/><br/>
         <button type="submit" class="btn btn-success">Modifica</button>

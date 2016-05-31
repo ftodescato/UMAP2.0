@@ -7,7 +7,7 @@
       views: {
             'content@': {
               templateUrl: 'assets/html/admin/users/addUser.html',
-              controller:  'UserController'
+              controller:  'UserControllerA'
             }
         }
   });
@@ -16,7 +16,7 @@
     views: {
           'content@': {
             templateUrl: 'assets/html/admin/users/index.html',
-            controller:  'UserController'
+            controller:  'UserControllerA'
           }
       }
   });
@@ -25,14 +25,14 @@
     views: {
           'content@': {
             templateUrl: 'assets/html/admin/users/updateUser.html',
-            controller:  'UserControllerDetails'
+            controller:  'UserControllerDetailsA'
           }
       }
   });
      //$locationProvider.html5Mode(true);
   }]);
 
-    umap.factory('UserService', function($resource) {
+    umap.factory('UserServiceA', function($resource) {
       return{
         Users: $resource('/api/usersSA/:id',{id: "@id"},{
           update: {
@@ -43,7 +43,7 @@
       }
     });
 
-  umap.controller('UserController',['$scope','UserService','CompanyService','$stateParams','$state','$window', function($scope, UserService,CompanyService, $stateParams,$state,$window) {
+  umap.controller('UserControllerA',['$scope','UserServiceA','CompanyService','$stateParams','$state','$window', function($scope, UserServiceA,CompanyService, $stateParams,$state,$window) {
     $scope.companies = CompanyService.query();
      $scope.user = {
        'name': '',
@@ -55,31 +55,31 @@
      };
     //$scope.company = UserService.Identity.get();
     $scope.addUser = function(){
-      UserService.Users.save($scope.user, function(){
+      UserServiceA.Users.save($scope.user, function(){
         $state.go('root.superAdmin.users')
       });
     };
-    $scope.users = UserService.Users.query();
+    $scope.users = UserServiceA.Users.query();
     //$scope.user.name = userOriginal.name;
     //$scope.user.surname = userOriginal.surname;
     //$scope.user.email = userOriginal.loginInfo.providerKey;
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){
-        UserService.Users.delete({id:  id}, function(){
+        UserServiceA.Users.delete({id:  id}, function(){
           $state.go($state.current, {}, {reload: true});
         });
       }
     };
   }]);
 
-  umap.controller('UserControllerDetails',['$scope','UserService','$state','$stateParams', function($scope, UserService,$state,$stateParams) {
-    $scope.user = UserService.Users.get({ id:  $stateParams.id });
+  umap.controller('UserControllerDetailsA',['$scope','UserServiceA','$state','$stateParams', function($scope, UserServiceA,$state,$stateParams) {
+    $scope.user = UserServiceA.Users.get({ id:  $stateParams.id });
     $scope.user.oldEmail = '';
     $scope.oldEmail = $scope.user.email;
     $scope.editUser = function(){
       console.log($scope.user);
-      UserService.Users.update({id:  $stateParams.id}, $scope.user, function(){
+      UserServiceA.Users.update({id:  $stateParams.id}, $scope.user, function(){
         $state.go('root.superAdmin.users')
       });
     }

@@ -9,8 +9,17 @@ section(id="updateUser")
   div(class="container-fluid")
     div(class="row")    
       form(ng-submit="editUser()" class="col-sm-6 col-sm-offset-3")
+        label(for="userNameInput") Nome dell'Utente
+        input(type="text" id="userNameInput" class="form-control" ng-model="userCustom.name" placeholder="nome" value="{{userCustom.name}}")
+        br
+        label(for="userSurnameInput") Cognome dell'Utente
+        input(type="text" id="userSurnameInput" class="form-control" ng-model="userCustom.surname" placeholder="cognome" value="{{userCustom.surname}}")
+        br
         label(for="userEmailInput") Email dell'Utente
         input(type="text" id="userEmailInput" class="form-control" ng-model="userCustom.email" placeholder="email" value="{{userCustom.email}}")
+        br
+        label(for="userPasswordInput") Password dell'Utente
+        input(type="password" id="userPasswordInput" class="form-control" ng-model="userCustom.password" placeholder="password" value="{{userCustom.password}}")
         br
         label(for="userRoleInput") Ruole dell'Utente      
         input(type="text" id="userRoleInput" class="form-control" ng-model="userCustom.role" placeholder="ruolo" value="{{userCustom.role}}")
