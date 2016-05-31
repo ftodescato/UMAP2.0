@@ -10,10 +10,9 @@ section(id="updateUser")
     div(class="row")    
       form(ng-submit="editUser()" class="col-sm-6 col-sm-offset-3")
         label(for="userEmailInput") Email dell'Utente
-        input(type="text" id="userEmailInput" class="form-control" ng-model="user.email" placeholder="email" value="{{user.email}}")
+        input(type="text" id="userEmailInput" class="form-control" ng-model="userCustom.email" placeholder="email" value="{{userCustom.email}}")
         br
         label(for="userRoleInput") Ruole dell'Utente      
-        input(type="text" id="userRoleInput" class="form-control" ng-model="user.role" placeholder="ruolo" value="{{user.role}}")
+        input(type="text" id="userRoleInput" class="form-control" ng-model="userCustom.role" placeholder="ruolo" value="{{userCustom.role}}")
         br
-        input(type="hidden" ng-model="user.oldEmail" value="{{oldEmail}}")
         button(type='submit' class="btn btn-success") Modifica

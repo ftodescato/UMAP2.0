@@ -60,6 +60,10 @@
             event.preventDefault();
             $state.go('root.superAdmin');
             break;
+          case 'admin':
+            event.preventDefault();
+            $state.go('root.admin');
+            break;
           default:
 
         }

@@ -37557,6 +37557,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             event.preventDefault();
             $state.go('root.superAdmin');
             break;
+          case 'admin':
+            event.preventDefault();
+            $state.go('root.admin');
+            break;
           default:
 
         }
@@ -37936,8 +37940,17 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
   umap.controller('UserControllerDetails',['$scope','UserService','$state','$stateParams', function($scope, UserService,$state,$stateParams) {
     $scope.user = UserService.get({ id:  $stateParams.id });
+    $scope.userCustom = {
+    'name': user.name,
+    'surname':user.surname,
+    'email':user.email,
+    'password':user.password,
+    'company':user.company,
+    'role': user.role,
+    'oldEmail': user.email
+    }
     $scope.editUser = function(){
-      UserService.update({id:  $stateParams.id}, $scope.user, function(){
+      UserService.update({id:  $stateParams.id}, $scope.userCustom, function(){
         $state.go('root.superAdmin.users')
       });
     }

@@ -10,10 +10,9 @@
     <div class="row">   
       <form ng-submit="editUser()" class="col-sm-6 col-sm-offset-3">
         <label for="userEmailInput">Email dell'Utente</label>
-        <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" value="{{user.email}}" class="form-control"/><br/>
+        <input type="text" id="userEmailInput" ng-model="userCustom.email" placeholder="email" value="{{userCustom.email}}" class="form-control"/><br/>
         <label for="userRoleInput">Ruole dell'Utente      </label>
-        <input type="text" id="userRoleInput" ng-model="user.role" placeholder="ruolo" value="{{user.role}}" class="form-control"/><br/>
-        <input type="hidden" ng-model="user.oldEmail" value="{{oldEmail}}"/>
+        <input type="text" id="userRoleInput" ng-model="userCustom.role" placeholder="ruolo" value="{{userCustom.role}}" class="form-control"/><br/>
         <button type="submit" class="btn btn-success">Modifica</button>
       </form>
     </div>

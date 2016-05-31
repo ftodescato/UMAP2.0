@@ -70,8 +70,17 @@
 
   umap.controller('UserControllerDetails',['$scope','UserService','$state','$stateParams', function($scope, UserService,$state,$stateParams) {
     $scope.user = UserService.get({ id:  $stateParams.id });
+    $scope.userCustom = {
+    'name': user.name,
+    'surname':user.surname,
+    'email':user.email,
+    'password':user.password,
+    'company':user.company,
+    'role': user.role,
+    'oldEmail': user.email
+    }
     $scope.editUser = function(){
-      UserService.update({id:  $stateParams.id}, $scope.user, function(){
+      UserService.update({id:  $stateParams.id}, $scope.userCustom, function(){
         $state.go('root.superAdmin.users')
       });
     }
