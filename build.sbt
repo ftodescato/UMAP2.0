@@ -15,6 +15,10 @@ resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
 resolvers += Resolver.sonatypeRepo("snapshots")
 
 libraryDependencies ++= Seq(
+  "org.apache.spark" % "spark-core_2.11" % "1.6.1",
+  "org.apache.spark" % "spark-mllib_2.11" % "1.6.1",
+  "org.apache.spark" % "spark-streaming_2.11" % "1.6.1",
+
   "com.mohiva" %% "play-silhouette" % "3.0.0",
   "org.webjars" %% "webjars-play" % "2.4.0",
   "net.codingwell" %% "scala-guice" % "4.0.0",
@@ -23,6 +27,9 @@ libraryDependencies ++= Seq(
   cache,
   filters
 )
+dependencyOverrides ++= Set(
+"com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"
+) 
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
