@@ -43,7 +43,7 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     collection.find(Json.obj("serialNumber" -> serialNumber)).one[Thing]
   }
 
-  def save(thing: Thing) = {
+  def save(thing: Thing): Future[Thing] = {
     collection.insert(thing)
     Future.successful(thing)
   }

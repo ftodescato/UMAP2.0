@@ -71,10 +71,10 @@ class UserController @Inject() (
 
     def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
       request.body.validate[EditUser.Data].map { data =>
-        val loginInfo = LoginInfo(CredentialsProvider.ID, data.oldEmail)
-        userService.retrieve(loginInfo).flatMap {
+        userDao.findByID(userID).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
           case Some(user) =>
+          val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
           val companyInfo = data.company
           companyDao.findByID(companyInfo).flatMap{
           case Some(companyToAssign) =>
