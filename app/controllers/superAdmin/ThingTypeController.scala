@@ -109,7 +109,8 @@ extends Silhouette[User, JWTAuthenticator] {
           Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
             case Some(companyToAssign) =>
             //val authInfo = passwordHasher.hash(data.password)
-            val companyIDList = List(data.company)
+            val companyIDList = new ListBuffer[UUID]
+            companyIDList += data.company
             var dataInt: Data = null
             if (data.listQty(0) > 0){
               var aux = new ListBuffer[String]()
@@ -118,7 +119,7 @@ extends Silhouette[User, JWTAuthenticator] {
               }
                 dataInt = Data(
                 inUse = true,
-                valuee = aux.toList
+                valuee = aux
               )
 
             }

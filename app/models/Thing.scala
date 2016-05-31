@@ -5,7 +5,7 @@ import play.api.libs.json.Json
 import play.api.libs.json._
 import play.api.libs.json.OWrites
 import play.api.libs.functional.syntax._
-
+import scala.collection.mutable.ListBuffer
 
 
 case class Thing(
@@ -15,7 +15,7 @@ case class Thing(
   description: String,
   thingTypeID: UUID,
   companyID: UUID,
-  datas: List[Measurements]
+  datas: ListBuffer[Measurements]
 )
 object Thing {
 

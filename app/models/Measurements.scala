@@ -5,11 +5,13 @@ import play.api.libs.json._
 import java.util.{Date, Locale}
 import java.text.DateFormat
 import java.text.DateFormat._
+import scala.collection.mutable.ListBuffer
+
 
 
 case class Measurements(
   dataTime: Date,
-  sensors: List[Detection],
+  sensors: ListBuffer[Detection],
   healty: Boolean
 )
 
