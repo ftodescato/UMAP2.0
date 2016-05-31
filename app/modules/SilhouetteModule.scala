@@ -20,6 +20,7 @@ import com.mohiva.play.silhouette.impl.util._
 import models.User
 import models.daos._
 import models.daos.user._
+import models.daos.password._
 import models.daos.company._
 import models.daos.thing._
 import models.daos.thingType._

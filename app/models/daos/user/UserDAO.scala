@@ -31,6 +31,8 @@ trait UserDAO {
 
   def remove(userID: UUID): Future[List[User]]
 
+  def removeByEmail(email: String): Future[List[User]]
+
   def removeByCompany(companyID: UUID): Future[List[User]]
 
 }

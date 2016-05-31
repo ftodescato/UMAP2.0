@@ -14,6 +14,7 @@ import models.User
 import models.Company
 import models.services._
 import models.daos.user._
+import models.daos.password._
 import models.daos.company._
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -29,6 +30,7 @@ class UserController @Inject() (
   userService: UserService,
   userDao: UserDAO,
   companyDao: CompanyDAO,
+  passwordInfoDao: PasswordInfoDAO,
   authInfoRepository: AuthInfoRepository,
   avatarService: AvatarService,
   passwordHasher: PasswordHasher)
@@ -74,8 +76,10 @@ class UserController @Inject() (
       userDao.findByID(userID).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
           case Some (user) =>
+          val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
             for{
               user <- userDao.remove(userID)
+              authInfo <- passwordInfoDao.remove(loginInfo)
             }yield {
                 //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
                 //env.eventBus.publish(LoginEvent(user, request, request2Messages))
@@ -98,16 +102,16 @@ class UserController @Inject() (
               name = data.name,
               surname = data.surname,
               loginInfo = loginInfo,
-              email = Some(data.email),
+              email = data.email,
               company = data.company,
               role = data.role
             )
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
               user <- userDao.update(userID,user2)
-              authInfo <- authInfoRepository.add(loginInfo, authInfo)
-            //  authenticator <- env.authenticatorService.create(loginInfo)
-            //  token <- env.authenticatorService.init(authenticator)
+              authInfo <- passwordInfoDao.update(loginInfo,authInfo)
+              authenticator <- env.authenticatorService.create(loginInfo)
+              token <- env.authenticatorService.init(authenticator)
             } yield {
             //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
@@ -133,7 +137,7 @@ class UserController @Inject() (
               name = data.name,
               surname = data.surname,
               loginInfo = loginInfo,
-              email = Some(data.email),
+              email = data.email,
               company = companyID,
               role = data.role
             )

@@ -66,6 +66,11 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
     collection.find(Json.obj()).cursor[User]().collect[List]()
   }
 
+  def removeByEmail(email: String): Future[List[User]] = {
+    collection.remove(Json.obj("email" -> email))
+    collection.find(Json.obj()).cursor[User]().collect[List]()
+  }
+
   def removeByCompany(companyID: UUID): Future[List[User]] = {
     collection.remove(Json.obj("company" -> companyID))
     collection.find(Json.obj()).cursor[User]().collect[List]()

@@ -1,9 +1,10 @@
-package models.daos
+package models.daos.password
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.api.util.PasswordInfo
 import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
 import play.api.libs.concurrent.Execution.Implicits._
+import java.util.UUID
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -16,18 +17,15 @@ import reactivemongo.api._
 
 import play.modules.reactivemongo.json._
 import play.modules.reactivemongo.json.collection._
+import models.PersistentPasswordInfo
 
-case class PersistentPasswordInfo(loginInfo: LoginInfo, authInfo: PasswordInfo)
 
-/**
-  * The DAO to store the password information.
-  */
+
 class PasswordInfoDAO @Inject() (db : DB) extends DelegableAuthInfoDAO[PasswordInfo] {
 
-  implicit val passwordInfoFormat = Json.format[PasswordInfo]
-  implicit val persistentPasswordInfoFormat = Json.format[PersistentPasswordInfo]
-
   def collection: JSONCollection = db.collection[JSONCollection]("password")
+
+  implicit val passwordInfoFormat = Json.format[PasswordInfo]
 
   /**
     * Finds the auth info which is linked with the specified login info.
@@ -70,6 +68,8 @@ class PasswordInfoDAO @Inject() (db : DB) extends DelegableAuthInfoDAO[PasswordI
     * @return The updated auth info.
     */
   def update(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = {
+    val newPersistentPasswordInfo = PersistentPasswordInfo(loginInfo, authInfo)
+    collection.update(Json.obj("loginInfo" -> loginInfo),newPersistentPasswordInfo)
     Future.successful(authInfo)
   }
 
@@ -97,6 +97,7 @@ class PasswordInfoDAO @Inject() (db : DB) extends DelegableAuthInfoDAO[PasswordI
     * @return A future to wait for the process to be completed.
     */
   def remove(loginInfo: LoginInfo): Future[Unit] = {
+    collection.remove(Json.obj("loginInfo" -> loginInfo))
     Future.successful(())
   }
 }

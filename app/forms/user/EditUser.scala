@@ -17,7 +17,7 @@ object EditUser {
     mapping(
       "name" -> nonEmptyText,
       "surname" -> nonEmptyText,
-      "olEmail" -> email,
+      "oldEmail" -> email,
       "email" -> email,
       "password" -> nonEmptyText,
       "company" -> uuid,

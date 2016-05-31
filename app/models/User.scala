@@ -11,7 +11,7 @@ case class User(
   name: String,
   surname: String,
   loginInfo: LoginInfo,
-  email: Option[String],
+  email: String,
   company: UUID,
   role: String) extends Identity
 
