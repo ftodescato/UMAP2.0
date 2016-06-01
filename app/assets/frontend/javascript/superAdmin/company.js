@@ -61,9 +61,15 @@
         });
       }
     };
+    $scope.predicate = 'companyID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
   }]);
 
-  umap.controller('CompanyControllerDetails',['$scope','CompanyService','$stateParams', function($scope, CompanyService,$stateParams) {
+  umap.controller('CompanyControllerDetails',['$scope','CompanyService','$stateParams','$state', function($scope, CompanyService,$stateParams,$state) {
     $scope.company = CompanyService.get({ id:  $stateParams.id });
     $scope.editCompany = function(){
       CompanyService.update({id:  $stateParams.id}, $scope.company, function(){

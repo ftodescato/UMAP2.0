@@ -1,26 +1,41 @@
-section(id="userList" )
+section(id="userList" class="container-fluid" )
   ul(class="breadcrumb")
     li
       a(ui-sref="root.admin()") Home
     li(class="active") Gestione Utenti
-  h1(class="text-center") Lista degli utenti presenti
-  button(class="btn btn-success" ui-sref="root.admin.addUsers()") Nuovo
-  
-  table(class="table")
-    thead
-      th Nome
-      th Cognome
-      th Email
-      th Ruolo
-      th Company
-    tbody
-      tr(ng-repeat="user in users")
-        td {{user.name}}
-        td {{user.surname}}
-        td {{user.email}}
-        td {{user.role}}
-        td {{company}}
-        td 
-          button(class="btn btn-warning" ui-sref="root.admin.updateUser({id:user.userID})") Modifica
-          form(ng-submit="deleteUser(user.userID)")
-            button(class="btn btn-danger" type='submit') Elimina 
+  h1(class="text-center page-header") Lista degli utenti presenti
+  div(class="row")
+    div(class="col-xs-4 col-xs-offset-1")
+      button(class="btn btn-success" ui-sref="root.superAdmin.addUsers()") Nuovo
+  div(class="row")
+    div(class="col-xs-12")
+      input(class="form-control" ng-model="search.$" placeholder="cerca con qualsiasi valore")
+  div(class="table-responsive")  
+    table(class="table")
+      thead
+        th 
+          a(class="btn" ng-click="order('name')") 
+            strong Nome
+        th 
+          a(class="btn" ng-click="order('surname')") 
+            strong Cognome        
+        th 
+          a(class="btn" ng-click="order('email')") 
+            strong Email      
+        th 
+          a(class="btn" ng-click="order('company')") 
+            strong Company           
+        th 
+          a(class="btn" ng-click="order('role')")
+            strong  Ruolo  
+      tbody
+        tr(ng-repeat="user in users |  orderBy:predicate:reverse | filter:search:strict track by $index")
+          td {{user.name}}
+          td {{user.surname}}
+          td {{user.email}}
+          td {{user.role}}
+          td {{hash[user.company]}}
+          td 
+            button(class="btn btn-warning" ui-sref="root.admin.updateUser({id:user.userID})") Modifica
+            form(ng-submit="deleteUser(user.userID)")
+              button(class="btn btn-danger" type='submit') Elimina 

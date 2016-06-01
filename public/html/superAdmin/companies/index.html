@@ -1,28 +1,39 @@
 
-<section id="companiesList">
+<section id="companiesList" class="container-fluid">
   <ul class="breadcrumb">
     <li><a ui-sref="root.superAdmin()">Home</a></li>
     <li class="active">Gestione Companies</li>
   </ul>
   <h1 class="page-header text-center">Lista delle company presenti</h1>
-  <button ui-sref="root.superAdmin.addCompanies()" class="btn btn-success">Nuova</button>
-  <table class="table">
-    <thead>
-      <th>Id Company</th>
-      <th>Nome</th>
-      <th>Azioni</th>
-    </thead>
-    <tbody>
-      <tr ng-repeat="company in companies">
-        <td>{{company.companyID}}</td>
-        <td>{{company.companyName}}</td>
-        <td>
-          <button ui-sref="root.superAdmin.updateCompany({id:company.companyID})" class="btn btn-warning">Modifica</button>
-          <form ng-submit="deleteCompany(company.companyID)">
-            <button type="submit" class="btn btn-danger">Elimina </button>
-          </form>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="row">
+    <div class="col-xs-4 col-xs-offset-1">   
+      <button ui-sref="root.superAdmin.addCompanies()" class="btn btn-success">Nuova</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <input ng-model="search.$" placeholder="cerca con qualsiasi valore" class="form-control"/>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <th> <a ng-click="order('companyID')" class="btn"> <strong>Id Company</strong></a></th>
+        <th> <a ng-click="order('companyName')" class="btn"> <strong>Nome</strong></a></th>
+        <th>Azioni</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="company in companies | orderBy:predicate:reverse | filter:search:strict">
+          <td>{{company.companyID}}</td>
+          <td>{{company.companyName}}</td>
+          <td>
+            <button ui-sref="root.superAdmin.updateCompany({id:company.companyID})" class="btn btn-warning">Modifica</button>
+            <form ng-submit="deleteCompany(company.companyID)">
+              <button type="submit" class="btn btn-danger">Elimina </button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>

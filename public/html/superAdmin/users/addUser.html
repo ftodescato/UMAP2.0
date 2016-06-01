@@ -5,6 +5,7 @@
     <li><a ui-sref="root.superAdmin.users()">Gestione Utenti</a></li>
     <li class="active">Nuovo utente</li>
   </ul>
+  <h1 class="text-center page-header">Aggiungi un nuovo utente</h1>
   <div class="container-fluid">
     <div class="row ">
       <form ng-submit="addUser()" class="col-xs-6 col-xs-offset-3">
@@ -12,12 +13,16 @@
         <input type="text" id="userNameInput" ng-model="user.name" placeholder="nome" class="form-control"/><br/>
         <label for="userSurnameInput">Cognome dell'utente                    </label>
         <input type="text" id="userSurnameInput" ng-model="user.surname" placeholder="cognome" class="form-control"/><br/>
-        <input type="text" ng-model="user.email" placeholder="email" class="form-control"/><br/>
-        <input type="password" ng-model="user.password" placeholder="password" class="form-control"/><br/>
-        <select ng-model="user.company" class="form-control">
+        <label for="userEmailInput">Email dell'utente                    </label>
+        <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" class="form-control"/><br/>
+        <label for="userPswInput">Password dell'utente                    </label>
+        <input type="password" id="userPswInput" ng-model="user.password" placeholder="password" class="form-control"/><br/>
+        <label for="userCompanyInput">Company dell'utente                    </label>
+        <select id="userCompanyInput" ng-model="user.company" class="form-control">
           <option ng-repeat="company in companies" value="{{company.companyID}}">{{company.companyName}}</option>
         </select><br/>
-        <select ng-model="user.role" class="form-control">
+        <label for="userRoleInput">Ruolo dell'utente                    </label>
+        <select id="userRoleInput" ng-model="user.role" class="form-control">
           <option value="user">User</option>
           <option value="admin">Admin</option>
           <option value="superAdmin">SuperAdmin</option>

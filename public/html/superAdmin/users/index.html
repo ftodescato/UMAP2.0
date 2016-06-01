@@ -1,33 +1,44 @@
 
-<section id="userList">
+<section id="userList" class="container-fluid">
   <ul class="breadcrumb">
     <li><a ui-sref="root.superAdmin()">Home</a></li>
     <li class="active">Gestione Utenti</li>
   </ul>
-  <h1 class="text-center">Lista degli utenti presenti</h1>
-  <button ui-sref="root.superAdmin.addUsers()" class="btn btn-success">Nuovo</button>
-  <table class="table">
-    <thead>
-      <th>Nome</th>
-      <th>Cognome</th>
-      <th>Email</th>
-      <th>Company</th>
-      <th>Ruolo</th>
-    </thead>
-    <tbody>
-      <tr ng-repeat="user in users">
-        <td>{{user.name}}</td>
-        <td>{{user.surname}}</td>
-        <td>{{user.email}}</td>
-        <td>{{user.companyID}}</td>
-        <td>{{user.role}}</td>
-        <td> 
-          <button ui-sref="root.superAdmin.updateUser({id:user.userID})" class="btn btn-warning">Modifica</button>
-          <form ng-submit="deleteUser(user.userID)">
-            <button type="submit" class="btn btn-danger">Elimina </button>
-          </form>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <h1 class="text-center page-header">Lista degli utenti presenti</h1>
+  <div class="row">
+    <div class="col-xs-4 col-xs-offset-1">
+      <button ui-sref="root.superAdmin.addUsers()" class="btn btn-success">Nuovo</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <input ng-model="search.$" placeholder="cerca con qualsiasi valore" class="form-control"/>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <th> <a ng-click="order('name')" class="btn"> <strong>Nome</strong></a></th>
+        <th> <a ng-click="order('surname')" class="btn"> <strong>Cognome        </strong></a></th>
+        <th> <a ng-click="order('email')" class="btn"> <strong>Email      </strong></a></th>
+        <th> <a ng-click="order('company')" class="btn"> <strong>Company           </strong></a></th>
+        <th> <a ng-click="order('role')" class="btn"><strong> Ruolo           </strong></a></th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="user in users |  orderBy:predicate:reverse | filter:search:strict track by $index ">
+          <td>{{user.name}}</td>
+          <td>{{user.surname}}</td>
+          <td>{{user.email}}</td>
+          <td>{{hash[user.company]}}</td>
+          <td>{{user.role}}</td>
+          <td> 
+            <button ui-sref="root.superAdmin.updateUser({id:user.userID})" class="btn btn-warning">Modifica</button>
+            <form ng-submit="deleteUser(user.userID)">
+              <button type="submit" class="btn btn-danger">Elimina </button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </section>

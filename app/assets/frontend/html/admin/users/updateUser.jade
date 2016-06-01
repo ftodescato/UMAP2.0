@@ -1,18 +1,28 @@
 section(id="updateUser")
   ul(class="breadcrumb")
     li
-      a(ui-sref="root.superAdmin()") Home
+      a(ui-sref="root.admin()") Home
     li
-      a(ui-sref="root.superAdmin.users()") Gestione Utenti
+      a(ui-sref="root.admin.users()") Gestione Utenti
     li(class="active") Modifica Utente
-  h1(class="text-center") Modifica un profilo utente    
+  h1(class="text-center page-header") Modifica un profilo utente    
   div(class="container-fluid")
     div(class="row")    
       form(ng-submit="editUser()" class="col-sm-6 col-sm-offset-3")
+        label(for="userNameInput") Nome dell'Utente
+        input(type="text" id="userNameInput" class="form-control" ng-model="user.name" placeholder="nome" value="{{user.name}}")
+        br
+        label(for="userSurnameInput") Cognome dell'Utente
+        input(type="text" id="userSurnameInput" class="form-control" ng-model="user.surname" placeholder="cognome" value="{{user.surname}}")
+        br
         label(for="userEmailInput") Email dell'Utente
         input(type="text" id="userEmailInput" class="form-control" ng-model="user.email" placeholder="email" value="{{user.email}}")
         br
-        label(for="userRoleInput") Ruole dell'Utente      
-        input(type="text" id="userRoleInput" class="form-control" ng-model="user.role" placeholder="ruolo" value="{{user.role}}")
+        label(for="userRoleInput" ) Ruolo dell'utente                    
+        select( class="form-control" id="userRoleInput" ng-model="user.role")
+          option(value="user" ) User
+          option(value="admin") Admin
+          option(value="superAdmin") SuperAdmin
         br
         button(type='submit' class="btn btn-success") Modifica
+    a(class="pull-right" ui-sref="root.admin.updateUser.updatePsw(user.userID)") Modifica password

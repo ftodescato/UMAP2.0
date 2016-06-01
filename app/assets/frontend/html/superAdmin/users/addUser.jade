@@ -5,6 +5,7 @@ section(id="users")
     li
       a(ui-sref="root.superAdmin.users()") Gestione Utenti
     li(class="active") Nuovo utente
+  h1(class="text-center page-header") Aggiungi un nuovo utente
   div(class="container-fluid")
     div(class="row ")
       form(ng-submit="addUser()" class="col-xs-6 col-xs-offset-3")
@@ -14,14 +15,18 @@ section(id="users")
         label(for="userSurnameInput" ) Cognome dell'utente                    
         input(type="text" id="userSurnameInput" class="form-control" ng-model="user.surname" placeholder="cognome")
         br
-        input(type="text" class="form-control" ng-model="user.email" placeholder="email")
+        label(for="userEmailInput" ) Email dell'utente                    
+        input(type="text" id="userEmailInput" class="form-control" ng-model="user.email" placeholder="email")
         br
-        input(type="password" class="form-control" ng-model="user.password" placeholder="password")
+        label(for="userPswInput" ) Password dell'utente                    
+        input(type="password" id="userPswInput" class="form-control" ng-model="user.password" placeholder="password")
         br
-        select( class="form-control" ng-model="user.company")
+        label(for="userCompanyInput" ) Company dell'utente                    
+        select( class="form-control" id="userCompanyInput" ng-model="user.company")
           option(ng-repeat="company in companies"  value="{{company.companyID}}") {{company.companyName}}
         br
-        select( class="form-control" ng-model="user.role")
+        label(for="userRoleInput" ) Ruolo dell'utente                    
+        select( class="form-control" id="userRoleInput" ng-model="user.role")
           option(value="user") User
           option(value="admin") Admin
           option(value="superAdmin") SuperAdmin
