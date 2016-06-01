@@ -74,10 +74,12 @@ class UserController @Inject() (
     }
 
     //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
-    def delete(userID: UUID) = Action.async{ implicit request =>
+    def delete(userID: UUID) = SecuredAction.async{ implicit request =>
+    //  userDao.findByIDCompany(request.identity.company)
       userDao.findByID(userID).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
           case Some (user) =>
+
           val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
             for{
               user <- userDao.remove(userID)
