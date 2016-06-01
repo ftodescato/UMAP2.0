@@ -48,7 +48,7 @@
           method: 'PUT' // this method issues a PUT request
         }
       }),
-      password: $resource('/api/usersSA/psw/:id',{id: "@id"},{
+      password: $resource('/api/passwordsSA/:id',{id: "@id"},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -106,15 +106,18 @@
         $state.go('root.superAdmin.users')
       });
     }
-    $scope.newPasswordOne = '';
+    $scope.newPassword = '';
     $scope.newPasswordTwo = '';
     $scope.errore = '';
     $scope.editPsw = function (){
-      if($scope.newPasswordTwo !== $scope.newPasswordOne){
+      if($scope.newPasswordTwo !== $scope.newPassword){
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        // TODO: richiamare UserService.Password come x Profile
+        UserServiceSA.password.update({id: $stateParams.id}, $scope.newPassword, function(){
+          console.log($stateParams.id);
+          $state.go('root.superAdmin.users')
+        });
       }
     }
   }]);
