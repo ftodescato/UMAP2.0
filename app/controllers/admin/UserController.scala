@@ -133,8 +133,8 @@ class UserController @Inject() (
     }
 }
 
-  def addUser(companyID: UUID) = Action.async(parse.json) { implicit request =>
-    request.body.validate[SignUp.Data].map { data =>
+  def addUser = SecuredAction.async(parse.json) { implicit request =>
+    request.body.validate[SignUpAdmin.Data].map { data =>
       val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userDao.find(loginInfo).flatMap {
         case Some(user) =>
@@ -147,7 +147,7 @@ class UserController @Inject() (
               surname = data.surname,
               loginInfo = loginInfo,
               email = data.email,
-              company = companyID,
+              company = request.identity.company,
               role = data.role
             )
             for {
