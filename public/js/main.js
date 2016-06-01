@@ -37596,8 +37596,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 })();
 
 (function(){
-  var umap = angular.module('umap.account',['ui.router']);
-  
+  var umap = angular.module('umap.account',['ui.router','ngResource']);
+  umap.factory('AccountService', function($resource) {
+    return $resource('/api/account')
+  });
 })();
 
 (function(){
@@ -37655,26 +37657,12 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
           }
       }
   });
-  $stateProvider.state('root.admin.updateUser.updatePsw', {
-    url: '/password',
-    views: {
-          'content@': {
-            templateUrl: 'assets/html/admin/users/updateUserPassword.html',
-            controller:  'UserControllerDetailsA'
-          }
-      }
-  });
      //$locationProvider.html5Mode(true);
   }]);
 
   umap.factory('UserServiceA', function($resource) {
     return{
       Profile: $resource('/api/usersA/:id',{id: "@id"},{
-        update: {
-          method: 'PUT' // this method issues a PUT request
-        }
-      }),
-      Password: $resource('/api/usersA/psw/:id',{id: "@id"},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -37705,7 +37693,9 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         $state.go('root.superAdmin.users')
       });
     };
-    $scope.users = UserServiceA.Profile.query();
+    UserServiceA.Profile.query().$promise.then(function(users){
+      $scope.users = users;
+    });
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){
@@ -37935,7 +37925,7 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
           method: 'PUT' // this method issues a PUT request
         }
       }),
-      password: $resource('/api/usersSA/psw/:id',{id: "@id"},{
+      password: $resource('/api/passwordsSA/:id',{id: "@id"},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -37993,15 +37983,18 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         $state.go('root.superAdmin.users')
       });
     }
-    $scope.newPasswordOne = '';
-    $scope.newPasswordTwo = '';
+    $scope.newPassword = {"newPassword":''};
+    $scope.newPasswordTwo = {"newPassword":''};
     $scope.errore = '';
     $scope.editPsw = function (){
-      if($scope.newPasswordTwo !== $scope.newPasswordOne){
+      if($scope.newPasswordTwo.newPassword !== $scope.newPassword.newPassword){
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        // TODO: richiamare UserService.Password come x Profile
+        UserServiceSA.password.update({id: $stateParams.id}, $scope.newPassword, function(){
+          console.log($stateParams.id);
+          $state.go('root.superAdmin.users')
+        });
       }
     }
   }]);

@@ -106,11 +106,11 @@
         $state.go('root.superAdmin.users')
       });
     }
-    $scope.newPassword = '';
-    $scope.newPasswordTwo = '';
+    $scope.newPassword = {"newPassword":''};
+    $scope.newPasswordTwo = {"newPassword":''};
     $scope.errore = '';
     $scope.editPsw = function (){
-      if($scope.newPasswordTwo !== $scope.newPassword){
+      if($scope.newPasswordTwo.newPassword !== $scope.newPassword.newPassword){
         $scope.errore = 'errore ! password differenti';
         return;
       }else{

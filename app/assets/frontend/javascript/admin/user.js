@@ -29,26 +29,12 @@
           }
       }
   });
-  $stateProvider.state('root.admin.updateUser.updatePsw', {
-    url: '/password',
-    views: {
-          'content@': {
-            templateUrl: 'assets/html/admin/users/updateUserPassword.html',
-            controller:  'UserControllerDetailsA'
-          }
-      }
-  });
      //$locationProvider.html5Mode(true);
   }]);
 
   umap.factory('UserServiceA', function($resource) {
     return{
       Profile: $resource('/api/usersA/:id',{id: "@id"},{
-        update: {
-          method: 'PUT' // this method issues a PUT request
-        }
-      }),
-      Password: $resource('/api/usersA/psw/:id',{id: "@id"},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -79,7 +65,9 @@
         $state.go('root.superAdmin.users')
       });
     };
-    $scope.users = UserServiceA.Profile.query();
+    UserServiceA.Profile.query().$promise.then(function(users){
+      $scope.users = users;
+    });
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){
