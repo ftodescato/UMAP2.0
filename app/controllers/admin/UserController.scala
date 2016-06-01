@@ -83,8 +83,6 @@ class UserController @Inject() (
               user <- userDao.remove(userID)
               authInfo <- passwordInfoDao.remove(loginInfo)
             }yield {
-                //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-                //env.eventBus.publish(LoginEvent(user, request, request2Messages))
                 Ok(Json.obj("ok" -> "ok"))
               }
             }
@@ -105,7 +103,6 @@ class UserController @Inject() (
               val authInfo = psw
               for{
                 authInfo <- passwordInfoDao.updateNewLoginInfo(loginInfo, loginInfoNew, authInfo)
-
               }yield {
                 Ok(Json.obj("token" -> "ok"))
                }
@@ -115,20 +112,16 @@ class UserController @Inject() (
               userID = user.userID,
               name = data.name,
               surname = data.surname,
-              loginInfo = loginInfo,
+              loginInfo = loginInfoNew,
               email = data.email,
               company = user.company,
               role = data.role
             )
             for {
-              //user <- userService.save(user.copy(avatarURL = avatar))
               user <- userDao.update(userID,user2)
-              //authInfo <- passwordInfoDao.update(loginInfo,authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               token <- env.authenticatorService.init(authenticator)
             } yield {
-            //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
               Ok(Json.obj("token" -> "ok"))
             }
         }
@@ -156,14 +149,11 @@ class UserController @Inject() (
               role = data.role
             )
             for {
-              //user <- userService.save(user.copy(avatarURL = avatar))
               user <- userDao.save(user)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               token <- env.authenticatorService.init(authenticator)
             } yield {
-            //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
               Ok(Json.obj("token" -> "ok"))
             }
       }
