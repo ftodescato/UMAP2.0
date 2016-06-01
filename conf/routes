@@ -17,7 +17,7 @@ GET         /api/account                       controllers.shared.account.Accoun
 
 GET         /api/usersA/:id                    controllers.admin.UserController.showUserDetails(id: java.util.UUID)
 GET         /api/usersA                        controllers.admin.UserController.showUsers
-POST        /api/usersA/:id                    controllers.admin.UserController.addUser(id: java.util.UUID)
+POST        /api/usersA                        controllers.admin.UserController.addUser
 PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
 DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
 
