@@ -5,7 +5,7 @@
 GET         /                           controllers.Assets.at(path="/public", file="html/layout.html")
 GET         /testDue                           controllers.ApplicationController.index
 GET         /engine                           controllers.ApplicationController.correlation
-GET         /sumstat                           controllers.ApplicationController.sumStatistic
+GET         /sumstat/:mv                           controllers.ApplicationController.sumStatistic(mv:String)
 GET         /user                            controllers.ApplicationController.user
 POST         /test                            controllers.ApplicationController.test
 GET         /signOut                         controllers.ApplicationController.signOut

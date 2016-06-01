@@ -43,11 +43,11 @@ def correlation = Action.async { implicit request =>
   val aux: Double = e.getCorrelation(a,b)
   Future.successful(Ok(Json.obj("coeff"->aux)))
 }
-def sumStatistic = Action.async { implicit request =>
+def sumStatistic(mv: String) = Action.async { implicit request =>
   val obs: List[Double] = List(1.2, 2, 3, 3, 3, 3)
   val obs2: List[Double] = List(0, 1, 0, 3, 3, 3)
   val e = new Engine
-  val aux: Array[Double] = e.sumStatistic(obs, obs2)
+  val aux: Array[Double] = e.sumStatistic(obs, obs2, mv)
   Future.successful(Ok(Json.obj("Array"->aux)))
 }
 

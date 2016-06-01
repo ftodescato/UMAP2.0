@@ -21,7 +21,7 @@ class Engine{
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
     correlation
   }
-  def sumStatistic(obs: List[Double], obs2: List[Double]) : Array[Double] = {
+  def sumStatistic(obs: List[Double], obs2: List[Double], mv: String) : Array[Double] = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
@@ -31,7 +31,12 @@ class Engine{
     val temp2obs2:Vector = Vectors.dense(tempobs2)
     val aux: RDD[Vector] = sc.parallelize(Seq(temp2obs,temp2obs2))
     val result:MultivariateStatisticalSummary = Statistics.colStats(aux)
-    result.variance.toArray
+    mv match{
+      case "Variance" =>
+        result.variance.toArray
+      case "Mean" =>
+        result.mean.toArray
+    }
   }
   //NAIVE BAYES
   // def getBayes(data: Vector) : Vector = {
