@@ -2,12 +2,12 @@ package models
 import play.api.libs.json._
 import org.apache.spark.rdd._
 import org.apache.spark.mllib.linalg._
-import org.apache.spark.mllib.stat.Statistics
+import org.apache.spark.mllib.stat._
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SQLContext._
-import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
+// import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 
 class Engine{
   def getCorrelation(a: List[Double], b: List[Double]) : Double = {
@@ -21,13 +21,27 @@ class Engine{
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
     correlation
   }
-  def getBayes(data: Vector) : Vector = {
-    val conf = new SparkConf().setAppName("NaiveBayesExample")
+  def sumStatistic(obs: List[Double], obs2: List[Double]) : Array[Double] = {
+    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
-
-    val model = NaiveBayes.train(data, lambda = 1.0, modelType = "multinomial")
-
-    val prediction:Vector = model.predict(data)
-    prediction
+    val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    val tempobs = obs.toArray
+    val temp2obs:Vector = Vectors.dense(tempobs)
+    val tempobs2 = obs2.toArray
+    val temp2obs2:Vector = Vectors.dense(tempobs2)
+    val aux: RDD[Vector] = sc.parallelize(Seq(temp2obs,temp2obs2))
+    val result:MultivariateStatisticalSummary = Statistics.colStats(aux)
+    result.variance.toArray
   }
+  //NAIVE BAYES
+  // def getBayes(data: Vector) : Vector = {
+  //   val conf = new SparkConf().setAppName("NaiveBayesExample")
+  //   val sc = new SparkContext(conf)
+  //
+  //   val model = NaiveBayes.train(data, lambda = 1.0, modelType = "multinomial")
+  //
+  //   val prediction:Vector = model.predict(data)
+  //   prediction
+  // }
+
 }

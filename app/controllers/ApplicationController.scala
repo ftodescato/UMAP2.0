@@ -36,20 +36,29 @@ class ApplicationController @Inject() (
 def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
 }
-def engine = Action.async { implicit request =>
+def correlation = Action.async { implicit request =>
   val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
   val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
   val e = new Engine
   val aux: Double = e.getCorrelation(a,b)
   Future.successful(Ok(Json.obj("coeff"->aux)))
 }
-def bayesengine = Action.async { implicit request =>
-  val data = Vectors.dense(1.0, 0.0, 3.0)
+def sumStatistic = Action.async { implicit request =>
+  val obs: List[Double] = List(1.2, 2, 3, 3, 3, 3)
+  val obs2: List[Double] = List(0, 1, 0, 3, 3, 3)
   val e = new Engine
-  val aux: Vector = e.getBayes(data)
-  val temp: Array[Double] =aux.toArray
-  Future.successful(Ok(Json.obj("coeff"->temp)))
+  val aux: Array[Double] = e.sumStatistic(obs, obs2)
+  Future.successful(Ok(Json.obj("Array"->aux)))
 }
+
+//NAIVE BAYES
+// def bayesengine = Action.async { implicit request =>
+//   val data = Vectors.dense(1.0, 0.0, 3.0)
+//   val e = new Engine
+//   val aux: Vector = e.getBayes(data)
+//   val temp: Array[Double] =aux.toArray
+//   Future.successful(Ok(Json.obj("coeff"->temp)))
+// }
 def index = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"contenuto")))
 }
