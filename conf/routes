@@ -20,6 +20,8 @@ PUT         /api/usersA/:id                    controllers.admin.UserController.
 
 #SUPERADMIN
 
+PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
+
 POST        /api/thingsSA                      controllers.superAdmin.ThingController.addThing
 PUT         /api/thingsSA/:id                  controllers.superAdmin.ThingController.updateThing(id: java.util.UUID)
 DELETE      /api/thingsSA/:id                  controllers.superAdmin.ThingController.delete(id: java.util.UUID)
