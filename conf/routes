@@ -13,6 +13,8 @@ GET         /api/getrole                       controllers.shared.AuthController
 
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
 
+#ADMIN
+
 GET         /api/usersA/:id                    controllers.admin.UserController.showUserDetails(id: java.util.UUID)
 GET         /api/usersA                        controllers.admin.UserController.showUsers
 POST        /api/usersA/:id                    controllers.admin.UserController.addUser(id: java.util.UUID)

@@ -37684,13 +37684,12 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
        'surname':'',
        'email':'',
        'password':'',
-       'company':'',
        'role': ''
      };
     //$scope.company = UserService.Identity.get();
     $scope.addUser = function(){
       UserServiceA.Profile.save($scope.user, function(){
-        $state.go('root.superAdmin.users')
+        $state.go('root.admin.users')
       });
     };
     UserServiceA.Profile.query().$promise.then(function(users){
