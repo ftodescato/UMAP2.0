@@ -23,16 +23,10 @@ import models.PersistentPasswordInfo
 
 class PasswordInfoDAO @Inject() (db : DB) extends DelegableAuthInfoDAO[PasswordInfo] {
 
-  def collection: JSONCollection = db.collection[JSONCollection]("password")
-
   implicit val passwordInfoFormat = Json.format[PasswordInfo]
 
-  /**
-    * Finds the auth info which is linked with the specified login info.
-    *
-    * @param loginInfo The linked login info.
-    * @return The retrieved auth info or None if no auth info could be retrieved for the given login info.
-    */
+  def collection: JSONCollection = db.collection[JSONCollection]("password")
+
   def find(loginInfo: LoginInfo) = {
 
     val passwordInfo: Future[Option[PersistentPasswordInfo]] = collection
@@ -45,44 +39,26 @@ class PasswordInfoDAO @Inject() (db : DB) extends DelegableAuthInfoDAO[PasswordI
       case Some(persistentPasswordInfo) =>
         Future(Some(persistentPasswordInfo.authInfo))
     }
-
   }
 
-  /**
-    * Adds new auth info for the given login info.
-    *
-    * @param loginInfo The login info for which the auth info should be added.
-    * @param authInfo The auth info to add.
-    * @return The added auth info.
-    */
   def add(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = {
     collection.insert(PersistentPasswordInfo(loginInfo, authInfo))
     Future.successful(authInfo)
   }
 
-  /**
-    * Updates the auth info for the given login info.
-    *
-    * @param loginInfo The login info for which the auth info should be updated.
-    * @param authInfo The auth info to update.
-    * @return The updated auth info.
-    */
+
   def update(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = {
     val newPersistentPasswordInfo = PersistentPasswordInfo(loginInfo, authInfo)
     collection.update(Json.obj("loginInfo" -> loginInfo),newPersistentPasswordInfo)
     Future.successful(authInfo)
   }
 
-  /**
-    * Saves the auth info for the given login info.
-    *
-    * This method either adds the auth info if it doesn't exists or it updates the auth info
-    * if it already exists.
-    *
-    * @param loginInfo The login info for which the auth info should be saved.
-    * @param authInfo The auth info to save.
-    * @return The saved auth info.
-    */
+  def updateNewLoginInfo(loginInfo: LoginInfo, loginInfoNew: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = {
+    val newPersistentPasswordInfo = PersistentPasswordInfo(loginInfoNew, authInfo)
+    collection.update(Json.obj("loginInfo" -> loginInfo),newPersistentPasswordInfo)
+    Future.successful(authInfo)
+  }
+
   def save(loginInfo: LoginInfo, authInfo: PasswordInfo): Future[PasswordInfo] = {
     find(loginInfo).flatMap {
       case Some(_) => update(loginInfo, authInfo)
@@ -90,12 +66,6 @@ class PasswordInfoDAO @Inject() (db : DB) extends DelegableAuthInfoDAO[PasswordI
     }
   }
 
-  /**
-    * Removes the auth info for the given login info.
-    *
-    * @param loginInfo The login info for which the auth info should be removed.
-    * @return A future to wait for the process to be completed.
-    */
   def remove(loginInfo: LoginInfo): Future[Unit] = {
     collection.remove(Json.obj("loginInfo" -> loginInfo))
     Future.successful(())

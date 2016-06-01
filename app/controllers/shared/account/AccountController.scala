@@ -25,7 +25,8 @@ class AccountController @Inject() (
      Future.successful(Ok(Json.toJson(request.identity)))
    }
   //
-  //  def editProfilePost = SecuredAction.async { implicit request =>
+  //  def editMyCompany = SecuredAction.async { implicit request =>
+  //    var company = request.identity
   //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))
   //  }
   //
