@@ -51,7 +51,7 @@ class PasswordController @Inject() (
               case None =>
                 Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
               case Some(psw) =>
-                val authInfo = psw
+              var authInfo = passwordHasher.hash(data.newPassword)
                 for{
                   authInfo <- passwordInfoDao.update(loginInfo, authInfo)
                 }yield {

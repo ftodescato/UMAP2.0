@@ -33,6 +33,7 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
     collection.find(Json.obj("company" -> companyID)).cursor[User]().collect[List]()
   }
 
+
   def find(loginInfo: LoginInfo) : Future[Option[User]] = {
     collection.find(Json.obj( "loginInfo" -> loginInfo )).one[User]
   }
