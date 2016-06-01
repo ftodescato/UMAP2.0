@@ -17,6 +17,9 @@
   "devDependencies": {
     "angular": "^1.5.5",
     "jquery": "^2.2.4",
-    "angular-ui-router": "^0.3.0"
+    "angular-ui-router": "^0.3.0",
+    "satellizer": "^0.14.0",
+    "angular-resource": "^1.5.5",
+    "jade-bootstrap": "*"
   }
 }

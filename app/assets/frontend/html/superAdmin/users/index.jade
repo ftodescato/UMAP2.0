@@ -1,0 +1,7 @@
+section(id="userList")
+  h1 Lista degli user presenti
+  article(ng-repeat="company in companies")
+    p {{user.email}}
+    a(ui-sref="updateUser({id:user.userID})") Modifica
+    form(ng-submit="deleteUser(user.userID)")
+      button(type='submit') Elimina

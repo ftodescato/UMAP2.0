@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html ng-app="umap">
+  <head>
+    <link href="assets/style/bootstrap.min.css" rel="stylesheet">
+  </head>
   <body>
+    <header ui-view="header"></header>
     <div ui-view="content"></div>
+    <footer ui-view="footer"></footer>
   </body>
+  <script src="assets/js/jquery.min.js"> </script>
   <script src="assets/js/main.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
 </html>
