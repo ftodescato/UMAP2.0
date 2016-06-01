@@ -36,11 +36,9 @@ def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
 }
 def engine = Action.async { implicit request =>
-  val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
-  val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
   val e = new Engine
-  val aux: Double = e.getCorrelation(a,b)
-  Future.successful(Ok(Json.obj("coeff"->aux)))
+  e.getPrediction()
+  Future.successful(Ok(Json.obj()))
 }
 def index = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"contenuto")))
