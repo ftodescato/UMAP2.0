@@ -97,15 +97,27 @@ class UserController @Inject() (
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
           case Some(user) =>
           val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
+          val loginInfoNew = LoginInfo(CredentialsProvider.ID, data.email)
+          passwordInfoDao.find(loginInfo).flatMap{
+            case None =>
+              Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
+            case Some(psw) =>
+              val authInfo = psw
+              for{
+                authInfo <- passwordInfoDao.updateNewLoginInfo(loginInfo, loginInfoNew, authInfo)
+
+              }yield {
+                Ok(Json.obj("token" -> "ok"))
+               }
+          }
             val companyInfo = companyDao.findByIDUser(userID)
-            //val authInfo = passwordHasher.hash(data.password)
             val user2 = User(
               userID = user.userID,
               name = data.name,
               surname = data.surname,
               loginInfo = loginInfo,
               email = data.email,
-              company = data.company,
+              company = user.company,
               role = data.role
             )
             for {

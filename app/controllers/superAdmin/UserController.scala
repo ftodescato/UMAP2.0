@@ -35,13 +35,13 @@ class UserController @Inject() (
   passwordHasher: PasswordHasher)
   extends Silhouette[User, JWTAuthenticator] {
 
-  def showUsers = Action.async{ implicit request =>
-   val users = userDao.findAll()
-   users.flatMap{
-    users =>
-     Future.successful(Ok(Json.toJson(users)))
-   }
-  }
+    def showUsers = Action.async{ implicit request =>
+     val users = userDao.findAll()
+     users.flatMap{
+      users =>
+       Future.successful(Ok(Json.toJson(users)))
+     }
+    }
 
     def showUserDetails(userID: UUID) = Action.async{ implicit request =>
       val user = userDao.findByID(userID)
@@ -61,12 +61,9 @@ class UserController @Inject() (
               user <- userDao.remove(userID)
               authInfo <- passwordInfoDao.remove(loginInfo)
             }yield {
-                //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-                //env.eventBus.publish(LoginEvent(user, request, request2Messages))
                 Ok(Json.obj("ok" -> "ok"))
               }
             }
-
      }
 
     def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
@@ -74,35 +71,42 @@ class UserController @Inject() (
         userDao.findByID(userID).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
           case Some(user) =>
-          val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
-          val companyInfo = data.company
-          companyDao.findByID(companyInfo).flatMap{
-          case Some(companyToAssign) =>
-            //val authInfo = passwordHasher.hash(data.password)
-            val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
-            val user2 = User(
-              userID = user.userID,
-              name = data.name,
-              surname = data.surname,
-              loginInfo = loginInfo,
-              email = data.email,
-              company = data.company,
-              role = data.role
-            )
-            for {
-              //user <- userService.save(user.copy(avatarURL = avatar))
-              user <- userDao.update(userID,user2)
-              //authInfo <- passwordInfoDao.update(loginInfo,authInfo)
-              authenticator <- env.authenticatorService.create(loginInfo)
-              token <- env.authenticatorService.init(authenticator)
-            } yield {
-            //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> "ok"))
+            val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
+            val companyInfo = data.company
+            companyDao.findByID(companyInfo).flatMap{
+              case Some(companyToAssign) =>
+                val loginInfoNew = LoginInfo(CredentialsProvider.ID, data.email)
+                passwordInfoDao.find(loginInfo).flatMap{
+                  case None =>
+                    Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
+                  case Some(psw) =>
+                    val authInfo = psw
+                    for{
+                      authInfo <- passwordInfoDao.updateNewLoginInfo(loginInfo, loginInfoNew, authInfo)
+
+                    }yield {
+                      Ok(Json.obj("token" -> "ok"))
+                     }
+                }
+                val user2 = User(
+                  userID = user.userID,
+                  name = data.name,
+                  surname = data.surname,
+                  loginInfo = loginInfoNew,
+                  email = data.email,
+                  company = data.company,
+                  role = data.role
+                )
+                for {
+                  user <- userDao.update(userID,user2)
+                  authenticator <- env.authenticatorService.create(loginInfo)
+                  token <- env.authenticatorService.init(authenticator)
+                } yield {
+                    Ok(Json.obj("token" -> "ok"))
+                  }
+              case None =>
+                Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
             }
-            case None =>
-              Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-          }
         }
       }.recoverTotal {
         case error =>
