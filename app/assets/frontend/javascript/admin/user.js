@@ -98,10 +98,7 @@
 
   umap.controller('UserControllerDetailsA',['$scope','UserServiceA','$state','$stateParams', function($scope, UserServiceA,$state,$stateParams) {
     $scope.user = UserServiceA.Profile.get({ id:  $stateParams.id });
-    $scope.user.oldEmail = '';
-    $scope.oldEmail = $scope.user.email;
     $scope.editUser = function(){
-      console.log($scope.user);
       UserServiceA.Profile.update({id:  $stateParams.id}, $scope.user, function(){
         $state.go('root.admin.users')
       });

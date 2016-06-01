@@ -108,13 +108,13 @@
     }
     $scope.newPasswordOne = '';
     $scope.newPasswordTwo = '';
-    $scope.errore = false;
+    $scope.errore = '';
     $scope.editPsw = function (){
       if($scope.newPasswordTwo !== $scope.newPasswordOne){
-        $scope.errore = true;
-        return
+        $scope.errore = 'errore ! password differenti';
+        return;
       }else{
-// TODO: richiamare UserService.Password come x Profile
+        // TODO: richiamare UserService.Password come x Profile
       }
     }
   }]);

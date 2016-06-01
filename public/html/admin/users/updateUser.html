@@ -15,11 +15,11 @@
         <input type="text" id="userSurnameInput" ng-model="user.surname" placeholder="cognome" value="{{user.surname}}" class="form-control"/><br/>
         <label for="userEmailInput">Email dell'Utente</label>
         <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" value="{{user.email}}" class="form-control"/><br/>
+        <input type="hidden" ng-model="user.company" value="{{user.company}}" class="form-control"/>
         <label for="userRoleInput">Ruolo dell'utente                    </label>
         <select id="userRoleInput" ng-model="user.role" class="form-control">
           <option value="user">User</option>
           <option value="admin">Admin</option>
-          <option value="superAdmin">SuperAdmin</option>
         </select><br/>
         <button type="submit" class="btn btn-success">Modifica</button>
       </form>

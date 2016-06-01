@@ -14,6 +14,7 @@
         <input type="text" id="userSurnameInput" ng-model="user.surname" placeholder="cognome" class="form-control"/><br/>
         <input type="text" ng-model="user.email" placeholder="email" class="form-control"/><br/>
         <input type="password" ng-model="user.password" placeholder="password" class="form-control"/><br/>
+        <input type="hidden" ng-model="user.company" value="user.company" class="form-control"/><br/>
         <select ng-model="user.role" class="form-control">
           <option value="user">User</option>
           <option value="admin">Admin</option>

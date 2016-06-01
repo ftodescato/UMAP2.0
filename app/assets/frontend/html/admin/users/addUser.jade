@@ -18,6 +18,8 @@ section(id="users")
         br
         input(type="password" class="form-control" ng-model="user.password" placeholder="password")
         br
+        input(type="hidden" class="form-control" ng-model="user.company" value="user.company")
+        br
         select( class="form-control" ng-model="user.role")
           option(value="user") User
           option(value="admin") Admin

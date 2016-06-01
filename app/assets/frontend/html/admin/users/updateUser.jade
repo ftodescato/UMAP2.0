@@ -18,11 +18,12 @@ section(id="updateUser")
         label(for="userEmailInput") Email dell'Utente
         input(type="text" id="userEmailInput" class="form-control" ng-model="user.email" placeholder="email" value="{{user.email}}")
         br
+        input(type="hidden"  class="form-control" ng-model="user.company" value="{{user.company}}")
+        
         label(for="userRoleInput" ) Ruolo dell'utente                    
         select( class="form-control" id="userRoleInput" ng-model="user.role")
           option(value="user" ) User
           option(value="admin") Admin
-          option(value="superAdmin") SuperAdmin
         br
         button(type='submit' class="btn btn-success") Modifica
     a(class="pull-right" ui-sref="root.admin.updateUser.updatePsw(user.userID)") Modifica password
