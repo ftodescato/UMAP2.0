@@ -57,7 +57,7 @@
   });
 
 // TODO: rifare come per insert user su update
-  umap.controller('UserControllerSA',['$scope','UserServiceSA','CompanyService','$stateParams','$state','$window', function($scope, UserServiceSA,CompanyService, $stateParams,$state,$window) {
+  umap.controller('UserControllerSA',['$scope','UserServiceSA','CompanyService','AccountService','$stateParams','$state','$window', function($scope, UserServiceSA,CompanyService,AccountService, $stateParams,$state,$window) {
     CompanyService.query().$promise.then(function(companies){
       $scope.hash = {}
       for (var i = 0; i < companies.length; i++) {
@@ -79,7 +79,18 @@
         $state.go('root.superAdmin.users')
       });
     };
-    $scope.users = UserServiceSA.Profile.query();
+    UserServiceSA.Profile.query().$promise.then(function(users){
+      AccountService.query().$promise.then(function(acc){
+        $scope.me = acc.userID;
+        $scope.users = [];
+        for (var i = 0; i < users.length; i++) {
+          if(users[i].userID != $scope.me){
+            $scope.users.push(users[i])
+          }
+        }
+      });
+      //$scope.users = users;
+    });
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
       if(deleteUser){

@@ -14,11 +14,14 @@ section(id="users")
         label(for="userSurnameInput" ) Cognome dell'utente                    
         input(type="text" id="userSurnameInput" class="form-control" ng-model="user.surname" placeholder="cognome")
         br
-        input(type="text" class="form-control" ng-model="user.email" placeholder="email")
+        label(for="userEmailInput" ) Email dell'utente                    
+        input(type="text" class="form-control" id="userEmailInput" ng-model="user.email" placeholder="email")
         br
-        input(type="password" class="form-control" ng-model="user.password" placeholder="password")
+        label(for="userPswInput" ) Password dell'utente                    
+        input(type="password" id="userPswInput" class="form-control" ng-model="user.password" placeholder="password")
         br
-        select( class="form-control" ng-model="user.role")
+        label(for="userRoleInput" ) Ruolo dell'utente                    
+        select( class="form-control" id="userRoleInput" ng-model="user.role")
           option(value="user") User
           option(value="admin") Admin
         br

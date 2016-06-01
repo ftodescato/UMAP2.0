@@ -42,7 +42,7 @@
     }
   });
 
-  umap.controller('UserControllerA',['$scope','UserServiceA','CompanyService','$stateParams','$state','$window', function($scope, UserServiceA,CompanyService, $stateParams,$state,$window) {
+  umap.controller('UserControllerA',['$scope','UserServiceA','CompanyService','AccountService','$stateParams','$state','$window', function($scope, UserServiceA,CompanyService,AccountService, $stateParams,$state,$window) {
     CompanyService.query().$promise.then(function(companies){
       $scope.hash = {}
       for (var i = 0; i < companies.length; i++) {
@@ -65,7 +65,16 @@
       });
     };
     UserServiceA.Profile.query().$promise.then(function(users){
-      $scope.users = users;
+      AccountService.query().$promise.then(function(acc){
+        $scope.me = acc.userID;
+        $scope.users = [];
+        for (var i = 0; i < users.length; i++) {
+          if(users[i].userID != $scope.me){
+            $scope.users.push(users[i])
+          }
+        }
+      });
+      //$scope.users = users;
     });
     $scope.deleteUser = function(id){
       var deleteUser = $window.confirm('Sei sicuro ?');
@@ -89,6 +98,6 @@
       UserServiceA.Profile.update({id:  $stateParams.id}, $scope.user, function(){
         $state.go('root.admin.users')
       });
-    }
+    };
   }]);
 })();
