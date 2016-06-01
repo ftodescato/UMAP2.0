@@ -1,0 +1,25 @@
+
+<section id="updateUser">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root()">Home      </a></li>
+    <li class="active">Modifica Profilo</li>
+  </ul>
+  <h1 class="text-center page-header">Modifica il tuo profilo personale   </h1>
+  <div class="container-fluid">
+    <div class="row">   
+      <form ng-submit="editUser()" class="col-sm-6 col-sm-offset-3">
+        <label for="userNameInput">Nome </label>
+        <input type="text" id="userNameInput" ng-model="account.name" placeholder="nome" value="{{account.name}}" class="form-control"/><br/>
+        <label for="userSurnameInput">Cognome </label>
+        <input type="text" id="userSurnameInput" ng-model="account.surname" placeholder="cognome" value="{{account.surname}}" class="form-control"/><br/>
+        <label for="userEmailInput">Email </label>
+        <input type="text" id="userEmailInput" ng-model="account.email" placeholder="email" value="{{account.email}}" class="form-control"/><br/>
+        <label>Company dell'utente </label>
+        <p>   {{company}}       </p><br/>
+        <label for="userRoleInput">Ruolo dell'utente                    </label>
+        <p>{{account.role}}</p><br/>
+        <button type="submit" class="btn btn-success">Modifica</button>
+      </form>
+    </div><a ui-sref="root.account.updatePsw(user.userID)" class="pull-right">Modifica password</a>
+  </div>
+</section>

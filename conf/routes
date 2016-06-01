@@ -10,8 +10,10 @@ POST        /test                              controllers.ApplicationController
 POST        /signIn                            controllers.shared.AuthController.authenticate
 GET         /api/getrole                       controllers.shared.AuthController.getRole
 
+#ACCOUNT
 
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
+PUT        /api/account                       controllers.shared.account.AccountController.updateAccount
 
 #ADMIN
 

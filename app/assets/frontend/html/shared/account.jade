@@ -1,0 +1,26 @@
+section(id="updateUser")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root()") Home      
+    li(class="active") Modifica Profilo
+  h1(class="text-center page-header") Modifica il tuo profilo personale   
+  div(class="container-fluid")
+    div(class="row")    
+      form(ng-submit="editUser()" class="col-sm-6 col-sm-offset-3")
+        label(for="userNameInput") Nome 
+        input(type="text" id="userNameInput" class="form-control" ng-model="account.name" placeholder="nome" value="{{account.name}}")
+        br
+        label(for="userSurnameInput") Cognome 
+        input(type="text" id="userSurnameInput" class="form-control" ng-model="account.surname" placeholder="cognome" value="{{account.surname}}")
+        br
+        label(for="userEmailInput") Email 
+        input(type="text" id="userEmailInput" class="form-control" ng-model="account.email" placeholder="email" value="{{account.email}}")
+        br
+        label Company dell'utente 
+        p    {{company}}       
+        br
+        label(for="userRoleInput" ) Ruolo dell'utente                    
+        p {{account.role}}
+        br
+        button(type='submit' class="btn btn-success") Modifica
+    a(class="pull-right" ui-sref="root.account.updatePsw(user.userID)") Modifica password
