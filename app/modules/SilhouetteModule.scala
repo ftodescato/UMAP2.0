@@ -19,10 +19,6 @@ import com.mohiva.play.silhouette.impl.services._
 import com.mohiva.play.silhouette.impl.util._
 import models.User
 import models.daos._
-import models.daos.user._
-import models.daos.company._
-import models.daos.thing._
-import models.daos.thingType._
 import models.services.{ UserService, UserServiceImpl }
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
@@ -59,9 +55,6 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
 
     bind[UserService].to[UserServiceImpl]
     bind[UserDAO].to[UserDAOImpl]
-    bind[CompanyDAO].to[CompanyDAOImpl]
-    bind[ThingDAO].to[ThingDAOImpl]
-    bind[ThingTypeDAO].to[ThingTypeDAOImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]

@@ -5,11 +5,10 @@ var watch = require('gulp-watch');
 
 gulp.task('js', function () {
   gulp.src([
-//  'vendor/bower_components/jquery/dist/jquery.min.js',
+  'vendor/bower_components/jquery/dist/jquery.min.js',
   'vendor/bower_components/angular/angular.js',
   'vendor/bower_components/angular-ui-router/release/angular-ui-router.js',
-  'vendor/bower_components/satellizer/satellizer.js',
-  'vendor/bower_components/angular-resource/angular-resource.js',
+  //'public/frontend/vendor/bower_components/angular-resource/angular-resource.js',
   'app/assets/frontend/javascript/**/*.js'])
     .pipe(concat('public/js/main.js'))
     .pipe(gulp.dest('.'))
