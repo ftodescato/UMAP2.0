@@ -1,0 +1,19 @@
+section(id="updateAccountPassword")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root()") Home
+    li
+      a(ui-sref="root.account()") Modifica Profilo
+    li(class="active") Modifica Password 
+  h1(class="text-center page-header") Modifica la tua password
+  div(class="container-fluid")
+    div(class="row")    
+      h2 {{errore}}
+      form(ng-submit="editPsw()" class="col-sm-6 col-sm-offset-3")
+        label(for="userNewPassInput") Nuova password     
+        input(type="password" id="userNewPassInput" class="form-control" ng-model="newPassword.newPassword"  placeholder="Nuova password")
+        br
+        label(for="userConfPassInput") Conferma password     
+        input(type="password" id="userConfPassInput" class="form-control" ng-model="newPasswordTwo.newPassword" placeholder="Conferma password")
+        br
+        button(type='submit' class="btn btn-success") Modifica

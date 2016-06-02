@@ -143,7 +143,7 @@ class UserController @Inject() (
             } yield {
             //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("token" -> data.password))
+              Ok(Json.obj("token" -> "ok"))
             }
             case None =>
               Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))

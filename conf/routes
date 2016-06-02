@@ -14,6 +14,7 @@ GET         /api/getrole                       controllers.shared.AuthController
 
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
 PUT        /api/account                       controllers.shared.account.AccountController.updateAccount
+PUT        /api/account/psw                       controllers.shared.account.AccountController.updatePassword
 
 #ADMIN
 

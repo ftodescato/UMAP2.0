@@ -11,6 +11,7 @@ import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.user._
+import forms.password._
 import models.User
 import models.services._
 import models.daos.user._
@@ -28,6 +29,7 @@ class AccountController @Inject() (
   userDao: UserDAO,
   companyDao: CompanyDAO,
   passwordInfoDao: PasswordInfoDAO,
+  passwordHasher: PasswordHasher,
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
 
@@ -78,6 +80,29 @@ class AccountController @Inject() (
            Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
      }
    }
+   def updatePassword = SecuredAction.async(parse.json) { implicit request =>
+     request.body.validate[EditPassword.Data].map { data =>
+       userDao.findByID(request.identity.userID).flatMap {
+         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
+         case Some(user) =>
+           val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
+           passwordInfoDao.find(loginInfo).flatMap{
+             case None =>
+               Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
+             case Some(psw) =>
+             var authInfo = passwordHasher.hash(data.newPassword)
+               for{
+                 authInfo <- passwordInfoDao.update(loginInfo, authInfo)
+               }yield {
+                 Ok(Json.obj("token" -> "ok"))
+                }
+           }
+     }
+   }.recoverTotal {
+     case error =>
+       Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+     }
+ }
   //
   //  def editMyCompany = SecuredAction.async { implicit request =>
   //    var company = request.identity
