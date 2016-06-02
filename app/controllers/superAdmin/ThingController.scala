@@ -8,7 +8,7 @@ import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.thing._
 import models.Thing
 import models.User
-import models.Detection
+import models.DetectionDouble
 import models.Measurements
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO

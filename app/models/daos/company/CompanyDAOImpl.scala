@@ -39,7 +39,17 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
   def findByID(companyID: UUID) : Future[Option[Company]] = {
     collection.find(Json.obj("companyID" -> companyID)).one[Company]
   }
-
+  def checkExistence(companyIDs: List[UUID]): Future[Boolean] = {
+    var esiste = true;
+    var inutile = true;
+    for( companyID <- companyIDs ){
+      this.findByID(companyID).flatMap{
+        case None => Future.successful(esiste = false)
+        case Some(company) => Future.successful(inutile = true)
+      }
+    }
+    Future.successful(esiste)
+  }
   def save(company: Company) = {
     collection.insert(company)
     Future.successful(company)

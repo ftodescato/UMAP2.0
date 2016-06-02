@@ -80,7 +80,7 @@
       });
     };
     UserServiceSA.Profile.query().$promise.then(function(users){
-      AccountService.query().$promise.then(function(acc){
+      AccountService.Profile.get().$promise.then(function(acc){
         $scope.me = acc.userID;
         $scope.users = [];
         for (var i = 0; i < users.length; i++) {

@@ -9,6 +9,7 @@ import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.thingType._
 import models.ThingType
 import models.User
+import models.Info
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import play.api.i18n.{ MessagesApi, Messages }
@@ -104,49 +105,51 @@ extends Silhouette[User, JWTAuthenticator] {
   def addThingType = Action.async(parse.json) { implicit request =>
     request.body.validate[AddThingType.Data].map { data =>
       val companyInfo = data.company
-      companyDao.findByID(companyInfo).flatMap {
-        case None =>
+      companyDao.checkExistence(companyInfo).flatMap {
+        case false =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-            case Some(companyToAssign) =>
-            //val authInfo = passwordHasher.hash(data.password)
-            val companyIDList = new ListBuffer[UUID]
-            companyIDList += data.company
-            var dataInt: Data = null
-            if (data.listQty(0) > 0){
-              var aux = new ListBuffer[String]()
-              for( names <- data.listIntValue ){
-                 aux+=names
-              }
-                dataInt = Data(
-                inUse = true,
-                valuee = aux
-              )
-
-            }
-            val thingType = ThingType(
-              thingTypeID = UUID.randomUUID(),
-              thingTypeName = data.thingTypeName,
-              companyID = companyIDList,
-              intValue = dataInt
-              // valuesString = null,
-              // valuesFloat = null,
-              // valuesDouble = null
-            )
-            for {
-              //user <- userService.save(user.copy(avatarURL = avatar))
-              thingType <- thingTypeDao.save(thingType)
-              // authInfo <- authInfoRepository.add(loginInfo, authInfo)
-              // authenticator <- env.authenticatorService.create(loginInfo)
-              // token <- env.authenticatorService.init(authenticator)
-            } yield {
-              //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-              //env.eventBus.publish(LoginEvent(user, request, request2Messages))
-              Ok(Json.obj("ok" -> "ok"))
-            }
+        case true =>
+        //val authInfo = passwordHasher.hash(data.password)
+        val companyIDList = new ListBuffer[UUID]
+        for( companyID <- data.company ){
+          companyIDList += companyID
+        }
+        var dataDouble: Data = null
+        if (data.listQty(0) > 0){
+          var aux = new ListBuffer[Info]()//mettere per Info col bool
+          for( names <- data.listDoubleValue ){
+              aux+= new Info(name = names, visible = true);
           }
-  }.recoverTotal {
-      case error =>
-        Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
-    }
-  }
+            dataDouble = Data(
+            inUse = true,
+            valuee = aux
+          )
+
+        }
+        val thingType = ThingType(
+          thingTypeID = UUID.randomUUID(),
+          thingTypeName = data.thingTypeName,
+          companyID = companyIDList,
+          doubleValue = dataDouble
+          // valuesString = null,
+          // valuesFloat = null,
+          // valuesDouble = null
+        )
+        for {
+          //user <- userService.save(user.copy(avatarURL = avatar))
+          thingType <- thingTypeDao.save(thingType)
+          // authInfo <- authInfoRepository.add(loginInfo, authInfo)
+          // authenticator <- env.authenticatorService.create(loginInfo)
+          // token <- env.authenticatorService.init(authenticator)
+        } yield {
+          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+          Ok(Json.obj("ok" -> "ok"))
+        }
+      }
+}.recoverTotal {
+  case error =>
+    Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+}
+}
 }

@@ -1,0 +1,28 @@
+section(id="addThingType" class="container-fluid")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li
+      a(ui-sref="root.superAdmin.things()") Gestione Oggetti
+    li(class="active") Nuova tipolgia di oggetto
+  h1(class="text-center page-header") Aggiungi un nuovo tipo di oggetto
+  div(class="row ")
+    form(ng-submit="addThingType()" name="myForm" class="col-xs-6 col-xs-offset-3")
+      label(for="thingTypeInput" ) Nome della tipologia            
+      input(type="text" id="thingTypeInput" class="form-control" ng-model="newThingType.thingTypeName" placeholder="nome")
+      br
+      label Company di appartenza
+      button(class="btn" ng-click="addItem('Company')") Aggiungi Company                
+      div(ng-repeat="company in newThingType.company track by $index")                   
+        select( class="form-control"  ng-model="newThingType.company[$index]" required="")
+          option(ng-repeat="company in companies"  value="{{company.companyID}}") {{company.companyName}}
+        button(ng-click="removeItem('Company',$index)") Rimuovi  
+      br
+      label Parametri tipo Intero    
+      button(class="btn" ng-click="addItem('Double')") Aggiungi Double               
+      div(ng-repeat="intInput in newThingType.listDoubleValue track by $index")
+        label(for="int$index") Nome parametro # {{$index}}
+        input(tipe="text"  ng-model="newThingType.listDoubleValue[$index]" required="")
+        button(ng-click="removeItem('Double',$index)") Rimuovi
+      br
+      button(type='submit' class="btn btn-success" ng-disabled="myForm.$invalid") Aggiungi

@@ -23,6 +23,7 @@
         <th> <a ng-click="order('email')" class="btn"> <strong>Email      </strong></a></th>
         <th> <a ng-click="order('company')" class="btn"> <strong>Company           </strong></a></th>
         <th> <a ng-click="order('role')" class="btn"><strong> Ruolo           </strong></a></th>
+        <th>Azioni</th>
       </thead>
       <tbody>
         <tr ng-repeat="user in users |  orderBy:predicate:reverse | filter:search:strict track by $index ">

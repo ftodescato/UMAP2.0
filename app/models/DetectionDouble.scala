@@ -5,17 +5,17 @@ import play.api.libs.json.Json
 import play.api.libs.json._
 
 
- case class Detection(
+ case class DetectionDouble(
   sensor: String,
-  value: Int
+  value: Double
 )
 
-object Detection {
+object DetectionDouble {
 
    /**
     * Converts the [Detection] object to Json and vice versa.
     */
-   implicit val jsonFormatDetection = Json.format[Detection]
+   implicit val jsonFormatDetection = Json.format[DetectionDouble]
 }
 //  object MeasurementsInt {
 // //

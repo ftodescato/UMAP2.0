@@ -17,6 +17,8 @@ trait CompanyDAO {
 
   def findByID(companyID: UUID): Future[Option[Company]]
 
+  def checkExistence(companyIDs: List[UUID]): Future[Boolean]
+
   def findByIDUser(userID: UUID): Future[Option[Company]]
 
   def save(company: Company): Future[Company]

@@ -28,7 +28,7 @@ section(id="userList" class="container-fluid" )
         th 
           a(class="btn" ng-click="order('role')")
             strong  Ruolo           
-        
+        th Azioni
       tbody
         tr(ng-repeat="user in users |  orderBy:predicate:reverse | filter:search:strict track by $index ")
           td {{user.name}}

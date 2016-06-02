@@ -15,19 +15,19 @@ object AddThingType {
   val form = Form(
     mapping(
       "thingTypeName" -> nonEmptyText,
-      "company" -> uuid,
+      "company" -> list(uuid),
       //array with number of parameters for each listIntValue and listStringValue and listDoubleValue
       "listQty" -> list(number),
-      "listIntValue" -> list(text)
+      "listDoubleValue" -> list(text)
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
     thingTypeName: String,
-    company: UUID,
+    company: List[UUID],
     listQty: List[Int],
-    listIntValue: List[String]
+    listDoubleValue: List[String]
     )
 
 

@@ -1,0 +1,31 @@
+section(id="thingsList" class="container-fluid" )
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li(class="active") Gestione Oggetti
+  h1(class="text-center page-header") Lista dei tipi di oggetto presenti
+  div(class="row")
+    div(class="col-xs-4 col-xs-offset-1")
+      button(class="btn btn-success" ui-sref="root.superAdmin.addThingsType()") Nuovo
+  div(class="row")
+    div(class="col-xs-12")
+      input(class="form-control" ng-model="search.$" placeholder="cerca con qualsiasi valore")
+  div(class="table-responsive")
+    table(class="table")
+      thead
+        th 
+          a(class="btn" ng-click="order('thingTypeID')") 
+            strong ID 
+        th 
+          a(class="btn" ng-click="order('thingTypeName')") 
+            strong Nome        
+        th Azioni        
+        
+      tbody
+        tr(ng-repeat="thingType in thingTypes |  orderBy:predicate:reverse | filter:search:strict track by $index ")
+          td {{thingType.thingTypeID}}
+          td {{user.thingTypeName}}
+          td 
+            button(class="btn btn-warning" ui-sref="root.superAdmin.updateThingType({id:thingType.thingTypeID})") Modifica
+            form(ng-submit="deleteThingType(user.thingType.thingTypeID)")
+              button(class="btn btn-danger" type='submit') Elimina 

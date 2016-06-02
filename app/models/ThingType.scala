@@ -10,8 +10,7 @@ case class ThingType(
   thingTypeID: UUID,
   thingTypeName: String,
   companyID: ListBuffer[UUID],
-  intValue: Data
-  //stringValue: Option[Map[Int,List[MeasurementsString]]]
+  doubleValue: Data
 )
 
 

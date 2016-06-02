@@ -1,28 +1,27 @@
 
-<section id="users">
+<section id="users" class="container-fluid">
   <ul class="breadcrumb">
     <li><a ui-sref="root.admin()">Home</a></li>
     <li><a ui-sref="root.admin.users()">Gestione Utenti</a></li>
     <li class="active">Nuovo utente</li>
   </ul>
-  <div class="container-fluid">
-    <div class="row ">
-      <form ng-submit="addUser()" class="col-xs-6 col-xs-offset-3">
-        <label for="userNameInput">Nome dell'utente            </label>
-        <input type="text" id="userNameInput" ng-model="user.name" placeholder="nome" class="form-control"/><br/>
-        <label for="userSurnameInput">Cognome dell'utente                    </label>
-        <input type="text" id="userSurnameInput" ng-model="user.surname" placeholder="cognome" class="form-control"/><br/>
-        <label for="userEmailInput">Email dell'utente                    </label>
-        <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" class="form-control"/><br/>
-        <label for="userPswInput">Password dell'utente                    </label>
-        <input type="password" id="userPswInput" ng-model="user.password" placeholder="password" class="form-control"/><br/>
-        <label for="userRoleInput">Ruolo dell'utente                    </label>
-        <select id="userRoleInput" ng-model="user.role" class="form-control">
-          <option value="user">User</option>
-          <option value="admin">Admin</option>
-        </select><br/>
-        <button type="submit" class="btn btn-success">Aggiungi</button>
-      </form>
-    </div>
+  <h1 class="text-center page-header">Aggiungi un nuovo utente</h1>
+  <div class="row ">
+    <form ng-submit="addUser()" class="col-xs-6 col-xs-offset-3">
+      <label for="userNameInput">Nome dell'utente            </label>
+      <input type="text" id="userNameInput" ng-model="user.name" placeholder="nome" class="form-control"/><br/>
+      <label for="userSurnameInput">Cognome dell'utente                    </label>
+      <input type="text" id="userSurnameInput" ng-model="user.surname" placeholder="cognome" class="form-control"/><br/>
+      <label for="userEmailInput">Email dell'utente                    </label>
+      <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" class="form-control"/><br/>
+      <label for="userPswInput">Password dell'utente                    </label>
+      <input type="password" id="userPswInput" ng-model="user.password" placeholder="password" class="form-control"/><br/>
+      <label for="userRoleInput">Ruolo dell'utente                    </label>
+      <select id="userRoleInput" ng-model="user.role" class="form-control">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select><br/>
+      <button type="submit" class="btn btn-success">Aggiungi</button>
+    </form>
   </div>
 </section>

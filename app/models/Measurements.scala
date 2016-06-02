@@ -11,7 +11,7 @@ import scala.collection.mutable.ListBuffer
 
 case class Measurements(
   dataTime: Date,
-  sensors: ListBuffer[Detection],
+  sensors: ListBuffer[DetectionDouble],
   healty: Boolean
 )
 
