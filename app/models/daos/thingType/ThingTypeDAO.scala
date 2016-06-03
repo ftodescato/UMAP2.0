@@ -18,7 +18,7 @@ trait ThingTypeDAO {
 
   def save(thingType: ThingType): Future[ThingType]
 
-  def update(thingTypeID: UUID, thingType2: ThingType)
+  def update(thingTypeID: UUID, thingType2: ThingType): Future[ThingType]
 
   def remove(thingTypeID: UUID): Future[List[ThingType]]
 }
