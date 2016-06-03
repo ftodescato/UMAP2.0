@@ -26,16 +26,19 @@ DELETE      /api/usersA/:id                    controllers.admin.UserController.
 
 #SUPERADMIN
 
+
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
+
+GET         /api/thingsSA/:id                  controllers.superAdmin.ThingController.showThingDetails(id: java.util.UUID)
+GET         /api/thingsSA                      controllers.superAdmin.ThingController.showThing
 POST        /api/thingsSA                      controllers.superAdmin.ThingController.addThing
 PUT         /api/thingsSA/:id                  controllers.superAdmin.ThingController.updateThing(id: java.util.UUID)
 DELETE      /api/thingsSA/:id                  controllers.superAdmin.ThingController.delete(id: java.util.UUID)
 
-
 GET         /api/thingTypesSA                  controllers.superAdmin.ThingTypeController.showThingType
 POST        /api/thingTypesSA                  controllers.superAdmin.ThingTypeController.addThingType
-#PUT        /api/thingTypesSA/:id             controllers.superAdmin.ThingTypeController.updateThing(id: java.util.UUID)
-#DELETE     /api/thingTypesSA/:id              controllers.superAdmin.ThingTypeController.delete(id: java.util.UUID)
+PUT         /api/thingTypesSA/:id              controllers.superAdmin.ThingTypeController.updateThingType(id: java.util.UUID)
+DELETE      /api/thingTypesSA/:id              controllers.superAdmin.ThingTypeController.delete(id: java.util.UUID)
 
 GET         /api/usersSA/:id                   controllers.superAdmin.UserController.showUserDetails(id: java.util.UUID)
 GET         /api/usersSA                       controllers.superAdmin.UserController.showUsers

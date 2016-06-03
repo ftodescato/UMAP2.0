@@ -27,4 +27,6 @@ trait ThingDAO {
   def update(thingID: UUID, thing2: Thing): Future[Thing]
 
   def remove(thingID: UUID): Future[List[Thing]]
+
+  def removeByThingTypeID(thingTypeID: UUID): Future[List[Thing]]
 }

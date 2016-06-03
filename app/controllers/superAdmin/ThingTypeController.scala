@@ -8,10 +8,12 @@ import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.thingType._
 import models.ThingType
+import models.Thing
 import models.User
 import models.Info
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
+import models.daos.thing.ThingDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -32,7 +34,7 @@ class ThingTypeController @Inject() (
   //passwordHasher: PasswordHasher,
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
-  //thingDao: ThingDAO,
+  thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
@@ -153,6 +155,19 @@ extends Silhouette[User, JWTAuthenticator] {
 }
 
 
+def delete(thingTypeID: UUID) = Action.async{ implicit request =>
+    thingTypeDao.findByID(thingTypeID).flatMap{
+      case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
+      case Some (thingType) =>
+        for{
+          thing <- thingDao.removeByThingTypeID(thingTypeID)
+          thingType <- thingTypeDao.remove(thingTypeID)
+        }yield {
+            Ok(Json.obj("ok" -> "ok"))
+          }
+        }
+ }
+
   def updateThingType(id: UUID) = Action.async(parse.json) { implicit request =>
     request.body.validate[EditThingType.Data].map { data =>
       val companyInfo = data.company
@@ -161,7 +176,7 @@ extends Silhouette[User, JWTAuthenticator] {
           Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
         case true =>
         thingTypeDao.findByID(id).flatMap{
-          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
           case Some(thingType) =>
           //val authInfo = passwordHasher.hash(data.password)
           val companyIDList = new ListBuffer[UUID]
