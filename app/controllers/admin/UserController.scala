@@ -8,6 +8,8 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
+import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
+
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.user._
 import models.User
@@ -156,7 +158,7 @@ class UserController @Inject() (
               authenticator <- env.authenticatorService.create(loginInfo)
               token <- env.authenticatorService.init(authenticator)
             } yield {
-              Ok(Json.obj("token" -> "ok"))
+              Ok(Json.obj("token" -> token))
             }
       }
   }.recoverTotal {

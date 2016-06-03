@@ -4,7 +4,7 @@
   var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
-  //$urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/');
 
     $stateProvider.state('root', {
       url: '/',

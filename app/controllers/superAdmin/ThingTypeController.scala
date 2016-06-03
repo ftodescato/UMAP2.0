@@ -150,7 +150,7 @@ extends Silhouette[User, JWTAuthenticator] {
   case error =>
     Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
 }
-}
+}/*
   def updateThingType(id: UUID) = Action.async(parse.json) { implicit request =>
     request.body.validate[EditThingType.Data].map { data =>
       val companyInfo = data.company
@@ -192,5 +192,5 @@ extends Silhouette[User, JWTAuthenticator] {
   case error =>
     Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
 }
-}
+}*/
 }
