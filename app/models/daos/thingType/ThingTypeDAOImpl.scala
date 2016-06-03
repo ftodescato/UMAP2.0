@@ -37,7 +37,7 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
     Future.successful(thingType)
   }
 
-  def update(thingTypeID: UUID, thingType2: ThingType) = {
+  def update(thingTypeID: UUID, thingType2: ThingType): Future[ThingType] = {
     collection.update(Json.obj("thingTypeID" -> thingTypeID), thingType2)
   }
 

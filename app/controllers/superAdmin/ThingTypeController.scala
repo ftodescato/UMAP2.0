@@ -124,7 +124,6 @@ extends Silhouette[User, JWTAuthenticator] {
             inUse = true,
             valuee = aux
           )
-
         }
         val thingType = ThingType(
           thingTypeID = UUID.randomUUID(),
@@ -146,6 +145,48 @@ extends Silhouette[User, JWTAuthenticator] {
           //env.eventBus.publish(LoginEvent(user, request, request2Messages))
           Ok(Json.obj("ok" -> "ok"))
         }
+      }
+}.recoverTotal {
+  case error =>
+    Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+}
+}
+  def updateThingType(id: UUID) = Action.async(parse.json) { implicit request =>
+    request.body.validate[EditThingType.Data].map { data =>
+      val companyInfo = data.company
+      companyDao.checkExistence(companyInfo).flatMap {
+        case false =>
+          Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+        case true =>
+        thingTypeDao.findByID(id).flatMap{
+          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+          case Some(thingType) =>
+          //val authInfo = passwordHasher.hash(data.password)
+          val companyIDList = new ListBuffer[UUID]
+          for( companyID <- data.company ){
+            companyIDList += companyID
+          }
+          val thingType2 = ThingType(
+            thingTypeID = UUID.randomUUID(),
+            thingTypeName = data.thingTypeName,
+            companyID = companyIDList,
+            doubleValue = thingType.doubleValue
+            // valuesString = null,
+            // valuesFloat = null,
+            // valuesDouble = null
+          )
+          for {
+            //user <- userService.save(user.copy(avatarURL = avatar))
+            thingType <- thingTypeDao.update(id,thingType2)
+            // authInfo <- authInfoRepository.add(loginInfo, authInfo)
+            // authenticator <- env.authenticatorService.create(loginInfo)
+            // token <- env.authenticatorService.init(authenticator)
+          } yield {
+            //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+            Ok(Json.obj("ok" -> "ok"))
+          }
+          }
       }
 }.recoverTotal {
   case error =>

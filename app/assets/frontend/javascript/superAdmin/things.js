@@ -35,13 +35,15 @@
     CompanyService.query().$promise.then(function(companies){
       $scope.companies = companies;
     });
+    ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypes = thingTypes;
+    })
     $scope.newThingType = {
       "company": [],
       "thingTypeName":'',
       "listQty":[0,0,0],
       "listDoubleValue":[]
     };
-
     $scope.addItem = function (stringa){
       switch (stringa) {
         case 'Double':

@@ -1,13 +1,13 @@
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user','umap.superAdmin.things']);
+  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   //$urlRouterProvider.otherwise('/');
 
     $stateProvider.state('root', {
-      url: '',
+      url: '/',
       //abstract:true,
       views: {
             'header': {
