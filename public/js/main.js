@@ -37496,6 +37496,106 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 })(window, window.angular);
 
 (function(){
+  'use strict';
+
+  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
+  function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
+  $urlRouterProvider.otherwise('/');
+
+    $stateProvider.state('root', {
+      url: '/',
+      //abstract:true,
+      views: {
+            'header': {
+              templateUrl: 'assets/html/shared/header.html'
+              //controller: 'HeaderController'
+            },
+            'content': {
+
+            },
+            'footer': {
+              templateUrl: 'assets/html/shared/footer.html'
+            //  controller: 'footer/FooterCtrl'
+            }
+    }
+  });
+  $httpProvider.interceptors.push('InjectHeadersService');
+  }]);
+
+  umap.run(['$rootScope','$state','$cookies',function($rootScope,$state,$cookies){
+    $rootScope.isLoggedIn = function (){
+      var token = $cookies.get('X-Auth-Token');
+      if(token === undefined)
+        return false;
+      else
+        return true;
+    };
+    $rootScope.logOut = function (){
+      $cookies.remove('X-Auth-Token');
+      $cookies.remove('Role');
+    }
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
+      var token = $cookies.get('X-Auth-Token');
+      var role = $cookies.get('Role');
+
+      if( token === undefined && toState.name !== 'root.login'){
+        event.preventDefault();
+        $state.go('root.login');
+        return;
+      }
+      if( role === undefined && toState.name !== 'root.login'){
+        event.preventDefault();
+        $cookies.remove('X-Auth-Token');
+        $cookies.remove('Role');
+        $state.go('root.login');
+        return;
+      }
+      if(toState.name === 'root'){
+        switch (role) {
+          case 'superAdmin':
+            event.preventDefault();
+            $state.go('root.superAdmin');
+            break;
+          case 'admin':
+            event.preventDefault();
+            $state.go('root.admin');
+            break;
+          default:
+
+        }
+      }
+    })
+  }]);
+
+  umap.factory('InjectHeadersService',['$q','$cookies','$injector' ,function($q, $cookies,$injector){
+    return{
+      'request': function(request) {
+        request.headers['Content-Type'] = 'application/json';
+        request.headers['Csrf-Token'] = 'nocheck';
+        var token = $cookies.get('X-Auth-Token');
+        if( token  !== null)
+          request.headers['X-Auth-Token'] = token;
+        return request;
+      },/*
+      responseError: function(rejection){
+        if(rejection.status === '401'){
+          $injector.get('$state').go('root.unauthorized');
+        }
+      }*/
+    };
+  }]);/*
+  umap.factory('AuthService',['$cookies',function($cookies){
+
+  }]);
+  umap.controller('HeaderController',['$scope','$cookies',function($scope,$cookies) {
+
+  }]);*/
+
+
+})();
+
+(function(){
   var umap = angular.module('umap.account',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
     $stateProvider.state('root.account', {
@@ -37862,6 +37962,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             }
         }
     });
+    $stateProvider.state('root.superAdmin.updateThingType', {
+      url: '/things/ThingType/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/things/updateThingType.html',
+              controller:  'ThingTypeDetailsController'
+            }
+        }
+    });
   }]);
 
   umap.factory('ThingTypeService', function($resource){
@@ -37874,13 +37983,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     }
   })
 
-  umap.controller('ThingsTypeController',['$scope','$state','CompanyService','ThingTypeService',function($scope,$state,CompanyService,ThingTypeService){
+  umap.controller('ThingsTypeController',['$scope','$state','$window','CompanyService','ThingTypeService',function($scope,$state,$window,CompanyService,ThingTypeService){
     CompanyService.query().$promise.then(function(companies){
       $scope.companies = companies;
     });
     ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
       $scope.thingTypes = thingTypes;
+      console.log($scope.thingTypes);
     })
+
     $scope.newThingType = {
       "company": [],
       "thingTypeName":'',
@@ -37917,6 +38028,38 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         $state.go('root.superAdmin.things');
       })
       //console.log($scope.newThingType);
+    };
+    $scope.deleteThingType = function(id){
+      var deleteThingType = $window.confirm('Sei sicuro ?');
+      if(deleteThingType){
+        ThingTypeService.ThingType.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
+    }
+  }]);
+  umap.controller('ThingTypeDetailsController',['$scope','$state','$stateParams','CompanyService','ThingTypeService', function($scope,$state,$stateParams,CompanyService,ThingTypeService){
+    ThingTypeService.ThingType.get({id: $stateParams.id}).$promise.then(function(thingType){
+      $scope.thingType = {
+        "company": [] ,
+        "thingTypeName":''
+      }
+      $scope.thingType.company = thingType.companyID;
+      $scope.thingType.thingTypeName = thingType.thingTypeName;
+    });
+    CompanyService.query().$promise.then(function(companies){
+      $scope.companies = companies;
+    });
+    $scope.addItem = function (){
+      $scope.thingType.company.push('');
+    }
+    $scope.removeItem = function (index){
+      $scope.thingType.company.splice(index,1);
+    }
+    $scope.updateThingType = function (){
+      ThingTypeService.ThingType.update({id: $stateParams.id}, $scope.thingType, function(){
+        $state.go('root.superAdmin.things');
+      })
     }
   }]);
 })();
@@ -38055,104 +38198,4 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
       }
     }
   }]);
-})();
-
-(function(){
-  'use strict';
-
-  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
-  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
-  function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
-  $urlRouterProvider.otherwise('/');
-
-    $stateProvider.state('root', {
-      url: '/',
-      //abstract:true,
-      views: {
-            'header': {
-              templateUrl: 'assets/html/shared/header.html'
-              //controller: 'HeaderController'
-            },
-            'content': {
-
-            },
-            'footer': {
-              templateUrl: 'assets/html/shared/footer.html'
-            //  controller: 'footer/FooterCtrl'
-            }
-    }
-  });
-  $httpProvider.interceptors.push('InjectHeadersService');
-  }]);
-
-  umap.run(['$rootScope','$state','$cookies',function($rootScope,$state,$cookies){
-    $rootScope.isLoggedIn = function (){
-      var token = $cookies.get('X-Auth-Token');
-      if(token === undefined)
-        return false;
-      else
-        return true;
-    };
-    $rootScope.logOut = function (){
-      $cookies.remove('X-Auth-Token');
-      $cookies.remove('Role');
-    }
-    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
-      var token = $cookies.get('X-Auth-Token');
-      var role = $cookies.get('Role');
-
-      if( token === undefined && toState.name !== 'root.login'){
-        event.preventDefault();
-        $state.go('root.login');
-        return;
-      }
-      if( role === undefined && toState.name !== 'root.login'){
-        event.preventDefault();
-        $cookies.remove('X-Auth-Token');
-        $cookies.remove('Role');
-        $state.go('root.login');
-        return;
-      }
-      if(toState.name === 'root'){
-        switch (role) {
-          case 'superAdmin':
-            event.preventDefault();
-            $state.go('root.superAdmin');
-            break;
-          case 'admin':
-            event.preventDefault();
-            $state.go('root.admin');
-            break;
-          default:
-
-        }
-      }
-    })
-  }]);
-
-  umap.factory('InjectHeadersService',['$q','$cookies','$injector' ,function($q, $cookies,$injector){
-    return{
-      'request': function(request) {
-        request.headers['Content-Type'] = 'application/json';
-        request.headers['Csrf-Token'] = 'nocheck';
-        var token = $cookies.get('X-Auth-Token');
-        if( token  !== null)
-          request.headers['X-Auth-Token'] = token;
-        return request;
-      },/*
-      responseError: function(rejection){
-        if(rejection.status === '401'){
-          $injector.get('$state').go('root.unauthorized');
-        }
-      }*/
-    };
-  }]);/*
-  umap.factory('AuthService',['$cookies',function($cookies){
-
-  }]);
-  umap.controller('HeaderController',['$scope','$cookies',function($scope,$cookies) {
-
-  }]);*/
-
-
 })();

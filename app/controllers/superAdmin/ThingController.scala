@@ -39,21 +39,21 @@ class ThingController @Inject() (
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
-  // def showCompanies = Action.async{ implicit request =>
-  //   val companies = companyDao.findAll()
-  //   companies.flatMap{
-  //     companies =>
-  //       Future.successful(Ok(Json.toJson(companies)))
-  //   }
-  // }
-  //
-  // def showCompanyDetails(companyID: UUID) = Action.async{ implicit request =>
-  //   val company = companyDao.findByID(companyID)
-  //   company.flatMap{
-  //     company =>
-  //     Future.successful(Ok(Json.toJson(company)))
-  //   }
-  // }
+  def showThing = Action.async{ implicit request =>
+    val things = thingDao.findAll()
+    things.flatMap{
+      things =>
+        Future.successful(Ok(Json.toJson(things)))
+    }
+  }
+
+  def showThingDetails(thingID: UUID) = Action.async{ implicit request =>
+    val thing = thingDao.findByID(thingID)
+    thing.flatMap{
+      thing =>
+      Future.successful(Ok(Json.toJson(thing)))
+    }
+  }
 
   def delete(thingID: UUID) = Action.async{ implicit request =>
     thingDao.findByID(thingID).flatMap{
@@ -62,8 +62,6 @@ extends Silhouette[User, JWTAuthenticator] {
         for{
           thing <- thingDao.remove(thingID)
         }yield{
-          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
           Ok(Json.obj("ok" -> "ok"))
          }
     }

@@ -22,6 +22,9 @@ section(id="thingsList" class="container-fluid" )
         th 
           a(class="btn" ng-click="order('company')") 
             strong Companies        
+        th 
+          a(class="btn" ng-click="order('doubleValue')") 
+            strong Parametri Double       
         th Azioni        
         
       tbody
@@ -31,7 +34,10 @@ section(id="thingsList" class="container-fluid" )
           td 
             ul
               li(ng-repeat="c in thingType.companyID") {{c}}
+          td
+            ul
+              li(ng-repeat="p in thingType.doubleValue.valuee") {{p.name}} (visibile={{p.visible}})
           td 
             button(class="btn btn-warning" ui-sref="root.superAdmin.updateThingType({id:thingType.thingTypeID})") Modifica
-            form(ng-submit="deleteThingType(user.thingType.thingTypeID)")
+            form(ng-submit="deleteThingType(thingType.thingTypeID)")
               button(class="btn btn-danger" type='submit') Elimina 

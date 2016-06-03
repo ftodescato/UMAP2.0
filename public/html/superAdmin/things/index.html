@@ -21,6 +21,7 @@
         <th> <a ng-click="order('thingTypeID')" class="btn"> <strong>ID </strong></a></th>
         <th> <a ng-click="order('thingTypeName')" class="btn"> <strong>Nome        </strong></a></th>
         <th> <a ng-click="order('company')" class="btn"> <strong>Companies        </strong></a></th>
+        <th> <a ng-click="order('doubleValue')" class="btn"> <strong>Parametri Double       </strong></a></th>
         <th>Azioni        </th>
       </thead>
       <tbody>
@@ -32,9 +33,14 @@
               <li ng-repeat="c in thingType.companyID">{{c}}</li>
             </ul>
           </td>
+          <td>
+            <ul>
+              <li ng-repeat="p in thingType.doubleValue.valuee">{{p.name}} (visibile={{p.visible}})</li>
+            </ul>
+          </td>
           <td> 
             <button ui-sref="root.superAdmin.updateThingType({id:thingType.thingTypeID})" class="btn btn-warning">Modifica</button>
-            <form ng-submit="deleteThingType(user.thingType.thingTypeID)">
+            <form ng-submit="deleteThingType(thingType.thingTypeID)">
               <button type="submit" class="btn btn-danger">Elimina </button>
             </form>
           </td>

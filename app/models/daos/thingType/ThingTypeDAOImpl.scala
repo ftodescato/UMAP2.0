@@ -28,8 +28,9 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
     collection.find(Json.obj()).cursor[ThingType]().collect[List]()
   }
 
-  def findByID(thingTypeID: UUID) : Future[Option[ThingType]] = {
+  def findByID(thingTypeID: UUID): Future[Option[ThingType]] = {
     collection.find(Json.obj("thingTypeID" -> thingTypeID)).one[ThingType]
+
   }
 
   def save(thingType: ThingType): Future[ThingType] = {
@@ -39,6 +40,8 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
 
   def update(thingTypeID: UUID, thingType2: ThingType) = {
     collection.update(Json.obj("thingTypeID" -> thingTypeID), thingType2)
+    Future.successful(thingType2)
+
   }
 
   def remove(thingTypeID: UUID): Future[List[ThingType]] = {
