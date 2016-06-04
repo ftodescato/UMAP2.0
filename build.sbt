@@ -2,7 +2,7 @@ import com.tuplejump.sbt.yeoman.Yeoman
 
 import scalariform.formatter.preferences._
 
-name := """play-silhouette-angular-seed"""
+name := """(.Y.)"""
 
 version := "3.0.0"
 
