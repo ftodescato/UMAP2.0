@@ -1,0 +1,20 @@
+section(id="updateThingType" class="container-fluid")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li
+      a(ui-sref="root.superAdmin.things()") Gestione Oggetti
+    li(class="active") Modifica un oggetto
+  h1(class="text-center page-header") Modifica un oggetto
+  div(class="row ")
+    form(ng-submit="updateThing()" name="myForm" class="col-xs-6 col-xs-offset-3")
+      label(for="thingNameInput" ) Nome dell'oggetto            
+      input(type="text" id="thingNameInput" class="form-control" ng-model="thing.name" placeholder="nome" value="{{thing.name}}")
+      br
+      label(for="thingSerialInput" ) Numero di serie dell'oggetto            
+      input(type="text" id="thingSerialInput" class="form-control" ng-model="thing.serialNumber" placeholder="numero di serie" value="{{thing.serialNumber}}")
+      br
+      label(for="thingDescriptionInput" ) Descrizione dell'oggetto            
+      textarea(type="text" id="thingDescriptionInput" class="form-control" ng-model="thing.description" placeholder="descrizione" value="{{thing.description}}")
+      br
+      button(type='submit' class="btn btn-success" ng-disabled="myForm.$invalid") Modifica

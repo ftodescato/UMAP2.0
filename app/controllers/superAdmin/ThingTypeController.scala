@@ -134,7 +134,7 @@ def delete(thingTypeID: UUID) = Action.async{ implicit request =>
             companyIDList += companyID
           }
           val thingType2 = ThingType(
-            thingTypeID = UUID.randomUUID(),
+            thingTypeID = thingType.thingTypeID,
             thingTypeName = data.thingTypeName,
             companyID = companyIDList,
             doubleValue = thingType.doubleValue

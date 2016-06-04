@@ -30,7 +30,7 @@
           <td>{{thingType.thingTypeName}}</td>
           <td> 
             <ul>
-              <li ng-repeat="c in thingType.companyID">{{c}}</li>
+              <li ng-repeat="c in thingType.companyID">{{companiesHash[c]}}</li>
             </ul>
           </td>
           <td>
@@ -64,12 +64,27 @@
       <thead>
         <th> <a ng-click="order('thingTypeID')" class="btn"> <strong>ID </strong></a></th>
         <th> <a ng-click="order('thingTypeName')" class="btn"> <strong>Nome        </strong></a></th>
-        <th> <a ng-click="order('company')" class="btn"> <strong>Companies        </strong></a></th>
-        <th> <a ng-click="order('doubleValue')" class="btn"> <strong>Parametri Double       </strong></a></th>
+        <th> <a ng-click="order('serialNumber')" class="btn"> <strong>Numero di serie   </strong></a></th>
+        <th> <a ng-click="order('description')" class="btn"> <strong>Descrizione   </strong></a></th>
+        <th> <a ng-click="order('thingTypeId')" class="btn"> <strong>Modello                    </strong></a></th>
+        <th> <a ng-click="order('company')" class="btn"> <strong>Company          </strong></a></th>
         <th>Azioni        </th>
       </thead>
       <tbody>
-        <tr ng-repeat="thing in things |  orderBy:predicate:reverse | filter:searchThings:strict track by $index "></tr>
+        <tr ng-repeat="thing in things |  orderBy:predicate:reverse | filter:searchThings:strict track by $index ">
+          <td>{{thing.thingID}}</td>
+          <td>{{thing.name}}</td>
+          <td>{{thing.serialNumber}}</td>
+          <td>{{thing.description}}</td>
+          <td>{{thingTypesHash[thing.thingTypeID]}}</td>
+          <td>{{companiesHash[thing.companyID]}}</td>
+          <td> 
+            <button ui-sref="root.superAdmin.updateThing({id:thing.thingID})" class="btn btn-warning">Modifica</button>
+            <form ng-submit="deleteThing(thing.thingID)">
+              <button type="submit" class="btn btn-danger">Elimina </button>
+            </form>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
