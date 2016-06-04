@@ -19,14 +19,15 @@ import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
-
 import scala.concurrent.Future
 
+import controllers.ApplicationScala
 
 class UserController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
   userService: UserService,
+  applicationScala: ApplicationScala,
   userDao: UserDAO,
   companyDao: CompanyDAO,
   passwordInfoDao: PasswordInfoDAO,
@@ -134,6 +135,7 @@ class UserController @Inject() (
               company = data.company,
               role = data.role
             )
+            applicationScala.send()
             for {
               //user <- userService.save(user.copy(avatarURL = avatar))
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
