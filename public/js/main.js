@@ -37962,6 +37962,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             }
         }
     });
+    $stateProvider.state('root.superAdmin.addThings', {
+      url: '/things/addThing',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/things/addThing.html',
+              controller:  'ThingsController'
+            }
+        }
+    });
     $stateProvider.state('root.superAdmin.updateThingType', {
       url: '/things/ThingType/:id',
       views: {
@@ -37976,6 +37985,11 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
   umap.factory('ThingTypeService', function($resource){
     return{
         ThingType: $resource('/api/thingTypesSA/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+        }),
+        Thing: $resource('/api/thingsSA/:id',{id: "@id"},{
           update:{
             method: 'PUT'
           }
@@ -38058,6 +38072,27 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
     }
     $scope.updateThingType = function (){
       ThingTypeService.ThingType.update({id: $stateParams.id}, $scope.thingType, function(){
+        $state.go('root.superAdmin.things');
+      })
+    }
+  }]);
+
+  umap.controller('ThingsController',['$scope','$state','ThingTypeService','CompanyService',function($scope,$state,ThingTypeService,CompanyService){
+    $scope.newThing = {
+      'thingName':'',
+      'serialNumber':'',
+      'description':'',
+      'thingTypeID':'',
+      'company':''
+    };
+    CompanyService.query().$promise.then(function(companies){
+      $scope.companies = companies;
+    });
+    ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypes = thingTypes;
+    });
+    $scope.addThing = function(){
+      ThingTypeService.Thing.save($scope.newThing, function(result){
         $state.go('root.superAdmin.things');
       })
     }
