@@ -20,6 +20,7 @@ libraryDependencies ++= Seq(
   "net.codingwell" %% "scala-guice" % "4.0.0",
   "net.ceedubs" %% "ficus" % "1.1.2",
   "org.reactivemongo" %% "play2-reactivemongo" % "0.11.5.play24",
+  "com.typesafe.play" %% "play-mailer" % "4.0.0",
   cache,
   filters
 )

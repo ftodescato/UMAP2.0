@@ -2,6 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+
+GET        /send/scala                     controllers.ApplicationScala.send()
+
+GET        /send/scala/customMailer        controllers.ApplicationScala.sendWithCustomMailer()
+
 GET         /                                  controllers.Assets.at(path="/public", file="html/layout.html")
 GET         /testDue                           controllers.ApplicationController.index
 GET         /user                              controllers.ApplicationController.user
