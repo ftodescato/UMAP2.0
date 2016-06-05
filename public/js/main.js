@@ -37569,7 +37569,12 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
         }
       }
-    })
+    });
+    $rootScope.$on('$stateChangeError', function(e, toState, toParams, fromState, fromParams, error){
+    if(error === "Not Authorized"){
+        $state.go("root");
+      }
+    });
   }]);
 
   umap.factory('InjectHeadersService',['$q','$cookies','$injector' ,function($q, $cookies,$injector){
@@ -37670,6 +37675,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
   var umap = angular.module('umap.admin',['ui.router']);
   umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+      $cookies = _$cookies_;
+    }]);
     $stateProvider.state('root.admin',{
       url: 'admin',
       views: {
@@ -37680,7 +37689,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             'header@':{
               templateUrl: 'assets/html/admin/header.html'
             }
-        }
+        },
+        resolve: {
+          security: ['$q', function($q){
+              var role = $cookies.get('Role');
+              if(role != 'admin'){
+                 return $q.reject("Not Authorized");
+              }
+          }]
+       }
     });
   }]);
 
@@ -38045,6 +38062,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
   var umap = angular.module('umap.superAdmin',['ui.router']);
   umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+      $cookies = _$cookies_;
+    }]);
     $stateProvider.state('root.superAdmin',{
       url: 'superAdmin',
       views: {
@@ -38055,7 +38076,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             'header@':{
               templateUrl: 'assets/html/superAdmin/header.html'
             }
-        }
+        },
+        resolve: {
+          security: ['$q', function($q){
+              var role = $cookies.get('Role');
+              if(role != 'superAdmin'){
+                 return $q.reject("Not Authorized");
+              }
+          }]
+       }
     });
   }]);
 
@@ -38401,6 +38430,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
   var umap = angular.module('umap.user',['ui.router']);
   umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+      $cookies = _$cookies_;
+    }]);
     $stateProvider.state('root.user',{
       url: 'user',
       views: {
@@ -38411,7 +38444,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             'header@':{
               templateUrl: 'assets/html/user/header.html'
             }
-        }
+        },
+        resolve: {
+          security: ['$q', function($q){
+              var role = $cookies.get('Role');
+              if(role != 'user'){
+                 return $q.reject("Not Authorized");
+              }
+          }]
+       }
     });
   }]);
 

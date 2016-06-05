@@ -72,7 +72,12 @@
 
         }
       }
-    })
+    });
+    $rootScope.$on('$stateChangeError', function(e, toState, toParams, fromState, fromParams, error){
+    if(error === "Not Authorized"){
+        $state.go("root");
+      }
+    });
   }]);
 
   umap.factory('InjectHeadersService',['$q','$cookies','$injector' ,function($q, $cookies,$injector){
