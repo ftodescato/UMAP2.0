@@ -22,7 +22,6 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import scala.concurrent.Future
-//import controllers.ApplicationScala
 
 class UserController @Inject() (
   val messagesApi: MessagesApi,
@@ -54,7 +53,7 @@ class UserController @Inject() (
     }
 
 
-    def delete(userID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+    def delete(userID: UUID) = Action.async{ implicit request =>
         userDao.findByID(userID).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
           case Some (user) =>
@@ -144,7 +143,7 @@ class UserController @Inject() (
               role = data.role
             )
               val email = Email(
-                "Simple email",
+                "Password d'autenticazione",
                 "LatexeBiscotti <latexebiscotti@gmail.com>",
                 Seq("Miss TO <"+data.email+">"),
                 bodyText = Some("Password per il tuo primo login in UMAP:"+data.password
