@@ -1,0 +1,30 @@
+
+<section id="thingsList" class="container-fluid">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.user()">Home</a></li>
+    <li><a ui-sref="root.admin.thingTypes()">Gestione Modelli Oggetti</a></li>
+    <li class="active">Dettagli Modello Oggetti</li>
+  </ul>
+  <h1 class="text-center page-header">Dettagli del modello di oggetto<small># {{thingType.thingTypeID}}</small></h1>
+  <h2 class="text-center">{{thingType.thingTypeName}}</h2>
+  <h3>Parametri Double</h3>
+  <div class="row">
+    <div class="col-xs-12">
+      <input ng-model="searchThingTypes.$" placeholder="cerca con qualsiasi valore" class="form-control"/>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table">      
+      <thead>
+        <th> <a ng-click="order('doubleValue')" class="btn"> <strong> Nome parametro      </strong></a></th>
+        <th> <a ng-click="order('doubleValue.valuee')" class="btn"> <strong>Visibilità  </strong></a></th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="x in thingType.doubleValue.valuee |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ">
+          <td>{{x.name}}</td>
+          <td>{{x.visible}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

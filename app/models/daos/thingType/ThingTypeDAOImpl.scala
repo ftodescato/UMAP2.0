@@ -27,6 +27,10 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
   def findAll(): Future[List[ThingType]] = {
     collection.find(Json.obj()).cursor[ThingType]().collect[List]()
   }
+  
+  def findByCompany(companyID: UUID): Future[List[ThingType]] = {
+    collection.find(Json.obj("companyID"-> companyID)).cursor[ThingType]().collect[List]()
+  }
 
   def findByID(thingTypeID: UUID): Future[Option[ThingType]] = {
     collection.find(Json.obj("thingTypeID" -> thingTypeID)).one[ThingType]

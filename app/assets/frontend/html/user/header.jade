@@ -6,7 +6,7 @@ nav(class="navbar navbar-default")
       span(class="icon-bar") 
       span(class="icon-bar") 
       span(class="icon-bar") 
-    a(class="navbar-brand" ui-sref="root") UMAP
+    a(class="navbar-brand" ui-sref="root()") UMAP
     div(class="collapse navbar-collapse" id="bs-example-navbar-collapse-1")
       ul(class="nav navbar-nav navbar-left")
         li(ng-if="isLoggedIn()")
@@ -17,10 +17,8 @@ nav(class="navbar navbar-default")
         li
           a(ui-sref="root.account()") Account
         li
-          a(ui-sref="root.admin.users()") Users
+          a(ui-sref="root.user.thingTypes()") Modelli
         li
-          a(ui-sref="root.admin.thingTypes()") Modelli
-        li
-          a(ui-sref="root.admin.things()") Oggetti
+          a(ui-sref="root.user.things()") Oggetti
         
             

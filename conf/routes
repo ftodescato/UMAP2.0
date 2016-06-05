@@ -29,6 +29,13 @@ POST        /api/usersA                        controllers.admin.UserController.
 PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
 DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
 
+# ADMIN+USER
+
+GET /api/thingTypes                            controllers.shared.thingType.ThingTypeController.showThingType
+GET /api/thingTypes/:id                        controllers.shared.thingType.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
+GET /api/things                                controllers.shared.thingType.ThingTypeController.showThings
+GET /api/things/:id                             controllers.shared.thingType.ThingTypeController.showThingDetails(id: java.util.UUID)
+
 #SUPERADMIN
 
 

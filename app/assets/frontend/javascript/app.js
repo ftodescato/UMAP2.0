@@ -1,7 +1,7 @@
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
+  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user','umap.adminUser.thingTypes','umap.adminUser.things','umap.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   $urlRouterProvider.otherwise('/');
@@ -63,6 +63,10 @@
           case 'admin':
             event.preventDefault();
             $state.go('root.admin');
+            break;
+          case 'user':
+            event.preventDefault();
+            $state.go('root.user');
             break;
           default:
 
