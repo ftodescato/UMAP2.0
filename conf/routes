@@ -3,9 +3,9 @@
 # ~~~~
 
 
-GET        /send/scala                     controllers.ApplicationScala.send()
+#GET        /send/scala                         controllers.ApplicationScala.send()
 
-GET        /send/scala/customMailer        controllers.ApplicationScala.sendWithCustomMailer()
+#GET        /send/scala/customMailer            controllers.ApplicationScala.sendWithCustomMailer()
 
 GET         /                                  controllers.Assets.at(path="/public", file="html/layout.html")
 GET         /testDue                           controllers.ApplicationController.index
@@ -18,8 +18,8 @@ GET         /api/getrole                       controllers.shared.AuthController
 #ACCOUNT
 
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
-PUT        /api/account                       controllers.shared.account.AccountController.updateAccount
-PUT        /api/account/psw                       controllers.shared.account.AccountController.updatePassword
+PUT        /api/account                        controllers.shared.account.AccountController.updateAccount
+PUT        /api/account/psw                    controllers.shared.account.AccountController.updatePassword
 
 #ADMIN
 

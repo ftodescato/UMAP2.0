@@ -65,6 +65,8 @@ class AccountController @Inject() (
                loginInfo = loginInfoNew,
                email = data.email,
                company = user.company,
+               mailConfirmed = false,
+               token = "vuoto",
                role = user.role
              )
              for {

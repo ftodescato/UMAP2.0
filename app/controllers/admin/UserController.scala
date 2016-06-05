@@ -117,6 +117,8 @@ class UserController @Inject() (
               loginInfo = loginInfoNew,
               email = data.email,
               company = user.company,
+              mailConfirmed = false,
+              token = "vuoto",
               role = data.role
             )
             for {
@@ -148,6 +150,8 @@ class UserController @Inject() (
               loginInfo = loginInfo,
               email = data.email,
               company = request.identity.company,
+              mailConfirmed = false,
+              token = "vuoto",
               role = data.role
             )
             for {

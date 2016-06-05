@@ -13,6 +13,8 @@ case class User(
   loginInfo: LoginInfo,
   email: String,
   company: UUID,
+  mailConfirmed: Boolean,
+  token: String,
   role: String) extends Identity
 
 /**
