@@ -44,13 +44,7 @@ def correlation = Action.async { implicit request =>
   Future.successful(Ok(Json.obj("coeff"->aux)))
 }
 // SUMSTATISTIC FUNZIONANTE
-// def sumStatistic(mv: String) = Action.async { implicit request =>
-//   val obs: Array[Double] = Array(1.2, 2, 3, 3, 3, 3)
-//   val obs2: Array[Double] = Array(0, 1, 0, 3, 3, 3)
-//   val e = new Engine
-//   val aux: Array[Double] = e.sumStatistic(obs, obs2, mv)
-//   Future.successful(Ok(Json.obj("Array"->aux)))
-// }
+
 def sumStatistic(mv: String) = Action.async { implicit request =>
   val obs: Array[Double] = Array(1.2, 2, 3, 3, 3, 3)
   val obs2: Array[Double] = Array(0, 1, 0, 3, 3, 3)
@@ -60,14 +54,6 @@ def sumStatistic(mv: String) = Action.async { implicit request =>
   Future.successful(Ok(Json.obj("Array"->aux)))
 }
 
-//NAIVE BAYES
-// def bayesengine = Action.async { implicit request =>
-//   val data = Vectors.dense(1.0, 0.0, 3.0)
-//   val e = new Engine
-//   val aux: Vector = e.getBayes(data)
-//   val temp: Array[Double] =aux.toArray
-//   Future.successful(Ok(Json.obj("coeff"->temp)))
-// }
 def index = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"contenuto")))
 }

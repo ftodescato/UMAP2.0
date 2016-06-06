@@ -22,47 +22,23 @@ class Engine{
     correlation
   }
   //SUMSTATISTIC FUNZIONANTE
-  // def sumStatistic(obs: Array[Double], obs2: Array[Double], mv: String) : Array[Double] = {
-  //   val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
-  //   val sc = new SparkContext(conf)
-  //   val sqlContext = new org.apache.spark.sql.SQLContext(sc)
-  //   val temp2obs:Vector = Vectors.dense(obs)
-  //   val temp2obs2:Vector = Vectors.dense(obs2)
-  //   val aux: RDD[Vector] = sc.parallelize(Seq(temp2obs,temp2obs2))
-  //   val result:MultivariateStatisticalSummary = Statistics.colStats(aux)
-  //   mv match{
-  //     case "Variance" =>
-  //       result.variance.toArray
-  //     case "Mean" =>
-  //       result.mean.toArray
-  //   }
-  // }
   def sumStatistic(lista: List[Array[Double]], mv: String) : Array[Double] = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
-    val aux: RDD[Vector] = sc.emptyRDD
-    for(list <- lista){
-      val temp:RDD[Vector] = sc.parallelize(Seq(Vectors.dense(list)))
-      aux.aggregate(temp)_
-    }
+    val toarray = lista.toArray
+    val tovectors = toarray.map(Vectors.dense(_))
+    val aux: RDD[Vector] = sc.parallelize(tovectors)
     val result:MultivariateStatisticalSummary = Statistics.colStats(aux)
     mv match{
       case "Variance" =>
         result.variance.toArray
       case "Mean" =>
         result.mean.toArray
+      case "Max" =>
+        result.max.toArray
+      case "Min" =>
+        result.min.toArray
     }
   }
-  //NAIVE BAYES
-  // def getBayes(data: Vector) : Vector = {
-  //   val conf = new SparkConf().setAppName("NaiveBayesExample")
-  //   val sc = new SparkContext(conf)
-  //
-  //   val model = NaiveBayes.train(data, lambda = 1.0, modelType = "multinomial")
-  //
-  //   val prediction:Vector = model.predict(data)
-  //   prediction
-  // }
-
 }
