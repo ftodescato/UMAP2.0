@@ -2,6 +2,7 @@ package controllers.superAdmin
 
 import java.util.UUID
 import javax.inject.Inject
+import play.api.libs.mailer._
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -11,6 +12,7 @@ import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.user._
 import models.User
+import models._
 import models.services._
 import models.daos.user._
 import models.daos.password._
@@ -21,13 +23,11 @@ import play.api.libs.json.Json
 import play.api.mvc.Action
 import scala.concurrent.Future
 
-import controllers.ApplicationScala
-
 class UserController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
   userService: UserService,
-  applicationScala: ApplicationScala,
+  mailer: MailerClient,
   userDao: UserDAO,
   companyDao: CompanyDAO,
   passwordInfoDao: PasswordInfoDAO,
@@ -89,6 +89,7 @@ class UserController @Inject() (
                       Ok(Json.obj("token" -> "ok"))
                      }
                 }
+
                 val user2 = User(
                   userID = user.userID,
                   name = data.name,
@@ -96,6 +97,8 @@ class UserController @Inject() (
                   loginInfo = loginInfoNew,
                   email = data.email,
                   company = data.company,
+                  mailConfirmed = false,
+                  token = "vuoto",
                   role = data.role
                 )
                 for {
@@ -115,6 +118,8 @@ class UserController @Inject() (
     }
 }
 
+
+
   def addUser = Action.async(parse.json) { implicit request =>
     request.body.validate[SignUp.Data].map { data =>
       var loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
@@ -133,10 +138,20 @@ class UserController @Inject() (
               loginInfo = loginInfo,
               email = data.email,
               company = data.company,
+              mailConfirmed = false,
+              token = "vuoto",
               role = data.role
             )
-            applicationScala.send()
-            for {
+              val email = Email(
+                "Password d'autenticazione",
+                "LatexeBiscotti <latexebiscotti@gmail.com>",
+                Seq("Miss TO <"+data.email+">"),
+                bodyText = Some("Password per il tuo primo login in UMAP:"+data.password
+                )
+              )
+              mailer.send(email)
+
+              for {
               //user <- userService.save(user.copy(avatarURL = avatar))
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)

@@ -2,6 +2,7 @@ package controllers.admin
 
 import java.util.UUID
 import javax.inject.Inject
+import play.api.libs.mailer._
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -12,6 +13,7 @@ import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.user._
+import models._
 import models.User
 import models.Company
 import models.services._
@@ -29,6 +31,7 @@ import scala.concurrent.Future
 class UserController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
+  mailer: MailerClient,
   userService: UserService,
   userDao: UserDAO,
   companyDao: CompanyDAO,
@@ -40,7 +43,7 @@ class UserController @Inject() (
 
 
 
-  def showUsers = SecuredAction.async{ implicit request =>
+  def showUsers = SecuredAction(WithServices("admin", true)).async{ implicit request =>
    val users = userDao.findByIDCompany(request.identity.company)
    users.flatMap{
     users =>
@@ -49,7 +52,7 @@ class UserController @Inject() (
   }
 
   //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
-  def showUsersByName(userName: String) = Action.async{ implicit request =>
+  def showUsersByName(userName: String) = SecuredAction(WithServices("admin", true)).async{ implicit request =>
     val users = userDao.findByName(userName)
     users.flatMap{
      users =>
@@ -58,7 +61,7 @@ class UserController @Inject() (
   }
 
   //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
-  def showUsersBySurname(userSurname: String) = Action.async{ implicit request =>
+  def showUsersBySurname(userSurname: String) = SecuredAction(WithServices("admin", true)).async{ implicit request =>
     val users = userDao.findBySurname(userSurname)
     users.flatMap{
      users =>
@@ -67,7 +70,7 @@ class UserController @Inject() (
   }
 
   //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
- def showUserDetails(userID: UUID) = Action.async{ implicit request =>
+ def showUserDetails(userID: UUID) = SecuredAction(WithServices("admin", true)).async{ implicit request =>
       val user = userDao.findByID(userID)
         user.flatMap{
          user =>
@@ -76,7 +79,7 @@ class UserController @Inject() (
     }
 
     //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
-    def delete(userID: UUID) = SecuredAction.async{ implicit request =>
+    def delete(userID: UUID) = SecuredAction(WithServices("admin", true)).async{ implicit request =>
       userDao.findByID(userID).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
           case Some (user) =>
@@ -119,6 +122,8 @@ class UserController @Inject() (
               loginInfo = loginInfoNew,
               email = data.email,
               company = user.company,
+              mailConfirmed = false,
+              token = "vuoto",
               role = data.role
             )
             for {
@@ -135,7 +140,7 @@ class UserController @Inject() (
     }
 }
 
-  def addUser = SecuredAction.async(parse.json) { implicit request =>
+  def addUser = SecuredAction(WithServices("admin", true)).async(parse.json) { implicit request =>
     request.body.validate[SignUpAdmin.Data].map { data =>
       val loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userDao.find(loginInfo).flatMap {
@@ -150,8 +155,18 @@ class UserController @Inject() (
               loginInfo = loginInfo,
               email = data.email,
               company = request.identity.company,
+              mailConfirmed = false,
+              token = "vuoto",
               role = data.role
             )
+            val email = Email(
+              "Simple email",
+              "LatexeBiscotti <latexebiscotti@gmail.com>",
+              Seq("Miss TO <"+data.email+">"),
+              bodyText = Some("Password per il tuo primo login in UMAP:"+data.password
+              )
+            )
+            mailer.send(email)
             for {
               user <- userDao.save(user)
               authInfo <- authInfoRepository.add(loginInfo, authInfo)

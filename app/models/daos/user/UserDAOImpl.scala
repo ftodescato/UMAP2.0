@@ -17,6 +17,8 @@ import reactivemongo.api._
 import play.modules.reactivemongo.json._
 import play.modules.reactivemongo.json.collection._
 
+
+
 /**
   * Give access to the user object.
   */
@@ -76,4 +78,22 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
     collection.remove(Json.obj("company" -> companyID))
     collection.find(Json.obj()).cursor[User]().collect[List]()
   }
+
+  def confirmedMail(user: User): Future[User] = {
+
+      val user2 = User(
+        userID = user.userID,
+        name = user.name,
+        surname = user.surname,
+        loginInfo = user.loginInfo,
+        email = user.email,
+        company = user.company,
+        mailConfirmed = true,
+        token = "vuoto",
+        role = user.role
+      )
+      collection.update(Json.obj("userID" -> user.userID), user2)
+      Future.successful(user2)
+  }
+
 }

@@ -7,9 +7,7 @@ import models.User
 
 import scala.concurrent.Future
 
-/**
- * Give access to the user object.
- */
+
 trait UserDAO {
 
 
@@ -35,4 +33,5 @@ trait UserDAO {
 
   def removeByCompany(companyID: UUID): Future[List[User]]
 
+def confirmedMail(user: User): Future[User]
 }
