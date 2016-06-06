@@ -21,15 +21,31 @@ class Engine{
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
     correlation
   }
-  def sumStatistic(obs: List[Double], obs2: List[Double], mv: String) : Array[Double] = {
+  //SUMSTATISTIC FUNZIONANTE
+  // def sumStatistic(obs: Array[Double], obs2: Array[Double], mv: String) : Array[Double] = {
+  //   val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+  //   val sc = new SparkContext(conf)
+  //   val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+  //   val temp2obs:Vector = Vectors.dense(obs)
+  //   val temp2obs2:Vector = Vectors.dense(obs2)
+  //   val aux: RDD[Vector] = sc.parallelize(Seq(temp2obs,temp2obs2))
+  //   val result:MultivariateStatisticalSummary = Statistics.colStats(aux)
+  //   mv match{
+  //     case "Variance" =>
+  //       result.variance.toArray
+  //     case "Mean" =>
+  //       result.mean.toArray
+  //   }
+  // }
+  def sumStatistic(lista: List[Array[Double]], mv: String) : Array[Double] = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
-    val tempobs = obs.toArray
-    val temp2obs:Vector = Vectors.dense(tempobs)
-    val tempobs2 = obs2.toArray
-    val temp2obs2:Vector = Vectors.dense(tempobs2)
-    val aux: RDD[Vector] = sc.parallelize(Seq(temp2obs,temp2obs2))
+    val aux: RDD[Vector] = sc.emptyRDD
+    for(list <- lista){
+      val temp:RDD[Vector] = sc.parallelize(Seq(Vectors.dense(list)))
+      aux.aggregate(temp)_
+    }
     val result:MultivariateStatisticalSummary = Statistics.colStats(aux)
     mv match{
       case "Variance" =>
