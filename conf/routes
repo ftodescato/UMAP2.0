@@ -2,14 +2,17 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET         /                           controllers.Assets.at(path="/public", file="html/layout.html")
-GET         /testDue                           controllers.ApplicationController.index
-GET         /engine                           controllers.ApplicationController.engine
-GET         /user                            controllers.ApplicationController.user
-POST         /test                            controllers.ApplicationController.test
-GET         /signOut                         controllers.ApplicationController.signOut
-POST        /signIn                          controllers.shared.AuthController.authenticate
-POST        /signUp                          controllers.SignUpController.signUp
+GET         /                             controllers.Assets.at(path="/public", file="html/layout.html")
+GET         /testDue                        controllers.ApplicationController.index
+GET         /corr                           controllers.ApplicationController.correlation
+GET         /sumstat/:mv                    controllers.ApplicationController.sumStatistic(mv:String)
+GET         /NB                             controllers.ApplicationController.NaiveBayes
+GET         /logreg                         controllers.ApplicationController.getPrediction
+GET         /user                           controllers.ApplicationController.user
+POST         /test                          controllers.ApplicationController.test
+GET         /signOut                        controllers.ApplicationController.signOut
+POST        /signIn                         controllers.shared.AuthController.authenticate
+POST        /signUp                         controllers.SignUpController.signUp
 
 # Dynamic part of the url
 #GET         /views/$template<.+>.html        controllers.ApplicationController.view(template)
