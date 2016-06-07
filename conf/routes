@@ -27,7 +27,7 @@ DELETE      /api/usersA/:id                    controllers.admin.UserController.
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
-POST        /api/detectionDouble/:id           controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
+#POST        /api/detectionDouble/:id           controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
 
 
 GET         /api/thingsSA/:id                  controllers.superAdmin.ThingController.showThingDetails(id: java.util.UUID)

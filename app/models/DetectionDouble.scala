@@ -6,7 +6,7 @@ import play.api.libs.json._
 
 
  case class DetectionDouble(
-  measurementsID: UUID,
+  //measurementsID: UUID,
   sensor: String,
   value: Long
 )

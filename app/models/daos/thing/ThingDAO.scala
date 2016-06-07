@@ -24,7 +24,7 @@ trait ThingDAO {
 
   def find(serialNumber: String): Future[Option[Thing]]
 
-  def findMeasuremets(measurementsID: UUID) : Future[Option[Measurements]]
+  // def findMeasuremets(thing: Thing, measurementsID: UUID) : Future[Measurements]
 
   def save(thing: Thing): Future[Thing]
 
@@ -32,7 +32,7 @@ trait ThingDAO {
 
   def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
 
-  def updateDectentionDouble(thingID:UUID, measurements: Measurements, detectionDouble: DetectionDouble): Future[Thing]
+  // def updateDectentionDouble(thingID:UUID, measurements: Measurements, detectionDouble: DetectionDouble): Future[Thing]
 
   def remove(thingID: UUID): Future[List[Thing]]
 

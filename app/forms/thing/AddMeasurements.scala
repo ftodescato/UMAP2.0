@@ -22,6 +22,8 @@ object AddMeasurement {
     mapping(
       "thingID" -> uuid,
       "dataTime" -> nonEmptyText,
+      "sensor" -> list(text),
+      "value" -> list(longNumber),
       "healty" -> boolean
         )(Data.apply)(Data.unapply)
   )
@@ -31,6 +33,8 @@ object AddMeasurement {
 
     thingID: UUID,
     dataTime: String,
+    sensor: List[String],
+    value: List[Long],
     healty: Boolean
   )
 

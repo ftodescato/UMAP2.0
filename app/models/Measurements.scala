@@ -13,7 +13,7 @@ case class Measurements(
   measurementsID: UUID,
   thingID: UUID,
   dataTime: String,
-  sensors: ListBuffer[DetectionDouble],
+  sensors: List[DetectionDouble],
   healty: Boolean
 )
 
