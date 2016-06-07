@@ -31,7 +31,7 @@ class Engine{
     correlation
   }
 
-  def getPrediction() : Unit = {
+  def getPrediction(labelList: List[Double], measureList: List[Array[Double]]) : Array[Double] = {
 
     //val conf = new SparkConf().setAppName("LogisticRegressionWithLBFGSExample")
     //val configuration = new SparkConf().setMaster("local[4]").setAppName("Your Application Name");
@@ -41,10 +41,37 @@ class Engine{
 
     // $example on$
     // Load training data in LIBSVM format.
-    val data = MLUtils.loadLibSVMFile(sc, "data/sample_libsvm_data.txt")
+
+    // questo funziona val data = MLUtils.loadLibSVMFile(sc, "data/sample_libsvm_data.txt")
+
+
+  /*  val vector1: Vector = Vectors.dense(arr1)
+    val vector2: Vector = Vectors.dense(arr2)
+
+    val data: RDD[Vector] = sc.parallelize(Seq(vector1,vector2)) */
+
+    val measureArray = measureList.toArray
+    val vecMeasureArray = measureArray.map(Vectors.dense(_))
+    val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
+
+    //Trasforma la lista di label in array
+    val labelArray = labelList.toArray
+
+    //Lunghezza degli array
+    val length2 = measureArray.length
+
+    //Creo e riempio Array di LabeledPoint per il training
+    val trainingArray = new Array[LabeledPoint](length2)
+
+    for (i <- 0 to length2-1) {
+      trainingArray(i) = new LabeledPoint(labelArray(i), vecMeasureArray(i))
+    }
+
+    //create RDD
+    val data: RDD[LabeledPoint] = sc.parallelize(trainingArray)
 
     // Split data into training (60%) and test (40%).
-    val splits = data.randomSplit(Array(0.6, 0.24), seed = 11L)
+    val splits = data.randomSplit(Array(0.6, 0.4), seed = 11L)
     val training = splits(0).cache()
     val test = splits(1)
 
@@ -70,17 +97,21 @@ class Engine{
   /*model.save(sc, "target/tmp/scalaLogisticRegressionWithLBFGSModel")
     val sameModel = LogisticRegressionModel.load(sc,
       "target/tmp/scalaLogisticRegressionWithLBFGSModel")*/
-    // $example off$*/
-    val dv = Vectors.dense(24, 15, 34)
-  //  val seriesX = sc.parallelize(dv)
-    val prediction = model.predict(dv)
 
-    println("PREDIZIONEEEEEEEEEEE" + prediction)
+    // $example off$*/
+  //  val dv = Vectors.dense(24, 29, 12)
+
+  //  val seriesX = sc.parallelize(dv)
+
+    val prediction = model.predict(test2)
+
+  //  println("PREDIZIONEEEEEEEEEEE" + prediction)
 
   /*  val yourInputData = MLUtils.loadLibSVMFile(sc, "data/sample_libsvm_data2.txt")
     val res = model.predict(features)
     println("PREDIZIONEEEEEEEEEEEEEEEEE" res)*/
 
-    sc.stop()
+
+    prediction.collect.toArray
   }
 }
