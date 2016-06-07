@@ -1,4 +1,4 @@
-package models.daos.DetectionDouble
+package models.daos.detectionDouble
 
 import java.util.UUID
 

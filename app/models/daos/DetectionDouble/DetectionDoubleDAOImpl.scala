@@ -1,9 +1,9 @@
-package models.daos.DetectionDouble
+package models.daos.detectionDouble
 
 import models.Thing
 import models.Measurements
 import models.DetectionDouble
-import models.daos.DetectionDouble
+import models.daos.detectionDouble
 
 import scala.collection.mutable
 import scala.concurrent.Future

@@ -89,7 +89,7 @@ class CompanyController @Inject() (
       }
   }
 
-  def addCompany = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
+  def addCompany = Action.async(parse.json) { implicit request =>
     request.body.validate[AddCompany.Data].map { data =>
       //val authInfo = passwordHasher.hash(data.password)
       val company = Company(

@@ -40,7 +40,7 @@ class ThingTypeController @Inject() (
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
-  def showThingType = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def showThingType = Action.async{ implicit request =>
    val thingType = thingTypeDao.findAll()
    thingType.flatMap{
     thingType =>
@@ -105,7 +105,7 @@ extends Silhouette[User, JWTAuthenticator] {
   //      }
   // }
 
-  def addThingType = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
+  def addThingType = Action.async(parse.json) { implicit request =>
     request.body.validate[AddThingType.Data].map { data =>
       val companyInfo = data.company
       companyDao.checkExistence(companyInfo).flatMap {

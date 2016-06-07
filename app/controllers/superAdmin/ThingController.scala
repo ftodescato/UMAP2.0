@@ -14,6 +14,7 @@ import models.Measurements
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
+import models.daos.detectionDouble.DetectionDoubleDAO
 import models.daos.measurements.MeasurementsDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -38,6 +39,7 @@ class ThingController @Inject() (
   val env: Environment[User, JWTAuthenticator],
   thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
+  detectionDoubleDao: DetectionDoubleDAO,
   measurementsDao: MeasurementsDAO,
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
@@ -173,6 +175,7 @@ extends Silhouette[User, JWTAuthenticator] {
               for{
 
                 thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                measurements <- measurementsDao.add(measurements)
                 } yield {
                   Ok(Json.obj("ok" -> "ok"))
 
@@ -186,7 +189,7 @@ extends Silhouette[User, JWTAuthenticator] {
       }
   }
 
-  def addDetectionDouble = Action.async(parse.json) { implicit request =>
+  def addDetectionDouble(thingID: UUID) = Action.async(parse.json) { implicit request =>
     request.body.validate[AddDetectionDouble.Data].map { data =>
       val measurementsInfo = data.measurementsID
       measurementsDao.findByID(measurementsInfo).flatMap{
@@ -197,13 +200,15 @@ extends Silhouette[User, JWTAuthenticator] {
                   value = data.value
               )
               for{
-                measurements <- measurementsDao.updateDectentionDouble(measurementsInfo, detectionDouble)
+                thing <- thingDao.updateDectentionDouble(thingID, measurementsToAssign, detectionDouble)
+                measurements <- measurementsDao.updateDectentionDouble(data.measurementsID,detectionDouble)
+
                 } yield {
                   Ok(Json.obj("ok" -> "ok"))
 
                 }
         case None =>
-          Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+          Future.successful(BadRequest(Json.obj("message" -> Messages("measurements.notExists"))))
       }
     }.recoverTotal {
           case error =>
