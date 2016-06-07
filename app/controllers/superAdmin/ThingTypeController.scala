@@ -7,6 +7,7 @@ import models.Data
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.thingType._
+import models._
 import models.ThingType
 import models.Thing
 import models.User
@@ -39,7 +40,7 @@ class ThingTypeController @Inject() (
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
-  def showThingType = Action.async{ implicit request =>
+  def showThingType = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
    val thingType = thingTypeDao.findAll()
    thingType.flatMap{
     thingType =>
@@ -104,7 +105,7 @@ extends Silhouette[User, JWTAuthenticator] {
   //      }
   // }
 
-  def addThingType = Action.async(parse.json) { implicit request =>
+  def addThingType = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
     request.body.validate[AddThingType.Data].map { data =>
       val companyInfo = data.company
       companyDao.checkExistence(companyInfo).flatMap {
@@ -155,7 +156,7 @@ extends Silhouette[User, JWTAuthenticator] {
 }
 
 
-def delete(thingTypeID: UUID) = Action.async{ implicit request =>
+def delete(thingTypeID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
     thingTypeDao.findByID(thingTypeID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
       case Some (thingType) =>
@@ -168,7 +169,7 @@ def delete(thingTypeID: UUID) = Action.async{ implicit request =>
         }
  }
 
-  def updateThingType(id: UUID) = Action.async(parse.json) { implicit request =>
+  def updateThingType(id: UUID) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
     request.body.validate[EditThingType.Data].map { data =>
       val companyInfo = data.company
       companyDao.checkExistence(companyInfo).flatMap {

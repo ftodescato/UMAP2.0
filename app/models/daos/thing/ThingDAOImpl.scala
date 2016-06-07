@@ -3,6 +3,7 @@ package models.daos.thing
 import java.util.UUID
 
 import models.Thing
+import models.Measurements
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -27,7 +28,7 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     collection.find(Json.obj("name" -> thingName)).one[Thing]
   }
 
-  
+
   def findAll(): Future[List[Thing]] = {
     collection.find(Json.obj()).cursor[Thing]().collect[List]()
   }
@@ -52,6 +53,36 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
   def update(thingID: UUID, thing2: Thing): Future[Thing] = {
     collection.update(Json.obj("thingID" -> thingID), thing2)
     Future.successful(thing2)
+  }
+
+  def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing] = {
+    findByID(thingID).flatMap{
+      case Some(thing) =>
+      val newDatas = thing.datas
+      newDatas += measurements
+      val thing2 = Thing(
+        thingID = thingID,
+        name = thing.name,
+        serialNumber = thing.serialNumber,
+        description = thing.description,
+        thingTypeID = thing.thingTypeID,
+        companyID = thing.companyID,
+        datas = newDatas
+      )
+      collection.update(Json.obj("thingID" -> thingID), thing2)
+      Future.successful(thing2)
+      case None =>
+      val thingNull = Thing(
+        thingID = null,
+        name = "",
+        serialNumber = null,
+        description = "",
+        thingTypeID = null,
+        companyID = null,
+        datas = null
+      )
+        Future.successful(thingNull)
+    }
   }
 
   def remove(thingID: UUID): Future[List[Thing]] = {

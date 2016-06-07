@@ -1,8 +1,13 @@
 package controllers.shared.account
 
+import java.io.File
+
+import org.apache.commons.mail.EmailAttachment
+import play.api.libs.mailer._
 
 import java.util.UUID
 import javax.inject.Inject
+import play.api.libs.mailer._
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -12,6 +17,7 @@ import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import forms.user._
 import forms.password._
+import models._
 import models.User
 import models.services._
 import models.daos.user._
@@ -26,6 +32,7 @@ import scala.concurrent.Future
 
 class AccountController @Inject() (
   val messagesApi: MessagesApi,
+  mailer: MailerClient,
   userDao: UserDAO,
   companyDao: CompanyDAO,
   passwordInfoDao: PasswordInfoDAO,
@@ -39,7 +46,7 @@ class AccountController @Inject() (
      Future.successful(Ok(Json.toJson(request.identity)))
    }
 
-   def updateAccount = SecuredAction.async(parse.json) { implicit request =>
+   def updateAccount = SecuredAction(WithServicesMultiple("superAdmin", "admin", true)).async(parse.json) { implicit request =>
        request.body.validate[EditUser.Data].map { data =>
          userDao.findByID(request.identity.userID).flatMap {
            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
@@ -93,6 +100,8 @@ class AccountController @Inject() (
                Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
              case Some(psw) =>
              var authInfo = passwordHasher.hash(data.newPassword)
+             userDao.confirmedMail(user)
+
                for{
                  authInfo <- passwordInfoDao.update(loginInfo, authInfo)
                }yield {
@@ -105,25 +114,45 @@ class AccountController @Inject() (
        Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
      }
  }
-  //
-  //  def editMyCompany = SecuredAction.async { implicit request =>
-  //    var company = request.identity
-  //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))
-  //  }
-  //
-  //  def editPassword = SecuredAction.async { implicit request =>
-  //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))
-  //  }
-  //
-  //  def editPasswordPost = SecuredAction.async { implicit request =>
-  //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))
-  //  }
-  //
-  //  def editEmail = SecuredAction.async { implicit request =>
-  //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))
-  //  }
-  //
-  //  def editEmailPost = SecuredAction.async { implicit request =>
-  //    Future.successful(Ok(views.html.superAdmin.home(request.identity)))
-  //  }
+
+ val random = new scala.util.Random
+
+ def randomString(alphabet: String)(n: Int): String =
+   Stream.continually(random.nextInt(alphabet.size)).map(alphabet).take(n).mkString
+
+ def randomAlphanumericString(n: Int) =
+   randomString("abcdefghijklmnopqrstuvwxyz0123456789")(n)
+
+ def resetPassword = SecuredAction.async(parse.json) { implicit request =>
+   request.body.validate[ResetPassword.Data].map { data =>
+     userDao.findByID(request.identity.userID).flatMap {
+       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notExist"))))
+       case Some(user) =>
+         val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
+         passwordInfoDao.find(loginInfo).flatMap{
+           case None =>
+             Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
+           case Some(psw) =>
+           val password = randomAlphanumericString(7)
+           val authInfo = passwordHasher.hash(password)
+           val email = Email(
+             "Password d'autenticazione",
+             "LatexeBiscotti <latexebiscotti@gmail.com>",
+             Seq("Miss TO <"+user.email+">"),
+             bodyText = Some("Password per il tuo primo login in UMAP:"+password)
+           )
+           mailer.send(email)
+             for{
+               authInfo <- passwordInfoDao.update(loginInfo, authInfo)
+             }yield {
+               Ok(Json.obj("token" -> "ok"))
+              }
+         }
+   }
+ }.recoverTotal {
+   case error =>
+     Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+   }
+}
+
 }

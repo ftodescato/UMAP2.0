@@ -11,6 +11,9 @@ import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.company._
 import forms.password._
+import models._
+import play.api.libs.mailer._
+
 import models.PersistentPasswordInfo
 import models.User
 import models.services._
@@ -41,7 +44,7 @@ class PasswordController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-    def updatePassword(userID: UUID) = Action.async(parse.json) { implicit request =>
+    def updatePassword(userID: UUID) = SecuredAction.async(parse.json) { implicit request =>
       request.body.validate[EditPassword.Data].map { data =>
         userDao.findByID(userID).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))

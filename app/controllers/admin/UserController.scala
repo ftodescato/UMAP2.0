@@ -94,7 +94,7 @@ class UserController @Inject() (
      }
 
      //lato fronted bisogna fare aggiungere la company dell'admin (nascosta nella form)
-    def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
+    def updateUser(userID: UUID) = SecuredAction(WithServices("admin", true)).async(parse.json) { implicit request =>
       request.body.validate[EditUser.Data].map { data =>
         userDao.findByID(userID).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
@@ -158,7 +158,7 @@ class UserController @Inject() (
               role = data.role
             )
             val email = Email(
-              "Simple email",
+              "Password d'autenticazione",
               "LatexeBiscotti <latexebiscotti@gmail.com>",
               Seq("Miss TO <"+data.email+">"),
               bodyText = Some("Password per il tuo primo login in UMAP:"+data.password

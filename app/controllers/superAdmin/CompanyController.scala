@@ -6,6 +6,7 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.company._
+import models._
 import models.Company
 import models.User
 import models.daos.user.UserDAO
@@ -34,7 +35,7 @@ class CompanyController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-  def showCompanies = Action.async{ implicit request =>
+  def showCompanies = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
     val companies = companyDao.findAll()
     companies.flatMap{
       companies =>
@@ -42,7 +43,7 @@ class CompanyController @Inject() (
     }
   }
 
-  def showCompanyDetails(companyID: UUID) = Action.async{ implicit request =>
+  def showCompanyDetails(companyID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
     val company = companyDao.findByID(companyID)
     company.flatMap{
       company =>
@@ -50,7 +51,7 @@ class CompanyController @Inject() (
     }
   }
 
-  def delete(companyID: UUID) = Action.async{ implicit request =>
+  def delete(companyID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
     companyDao.findByID(companyID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
       case Some (company) =>
@@ -65,7 +66,7 @@ class CompanyController @Inject() (
     }
   }
 
-  def updateCompany (companyID : UUID) = Action.async(parse.json) { implicit request =>
+  def updateCompany (companyID : UUID) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
     request.body.validate[EditCompany.Data].map { data =>
       companyDao.findByID(companyID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
@@ -88,7 +89,7 @@ class CompanyController @Inject() (
       }
   }
 
-  def addCompany = Action.async(parse.json) { implicit request =>
+  def addCompany = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
     request.body.validate[AddCompany.Data].map { data =>
       //val authInfo = passwordHasher.hash(data.password)
       val company = Company(

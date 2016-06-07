@@ -3,6 +3,7 @@ package models.daos.thing
 import java.util.UUID
 
 import models.Thing
+import models.Measurements
 
 import scala.concurrent.Future
 
@@ -25,6 +26,8 @@ trait ThingDAO {
   def save(thing: Thing): Future[Thing]
 
   def update(thingID: UUID, thing2: Thing): Future[Thing]
+
+  def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
 
   def remove(thingID: UUID): Future[List[Thing]]
 

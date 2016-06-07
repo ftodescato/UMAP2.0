@@ -6,6 +6,7 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.thing._
+import models._
 import models.Thing
 import models.User
 import models.DetectionDouble
@@ -13,6 +14,7 @@ import models.Measurements
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
+import models.daos.measurements.MeasurementsDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -36,10 +38,11 @@ class ThingController @Inject() (
   val env: Environment[User, JWTAuthenticator],
   thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
+  measurementsDao: MeasurementsDAO,
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
-  def showThing = Action.async{ implicit request =>
+  def showThing = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
     val things = thingDao.findAll()
     things.flatMap{
       things =>
@@ -47,7 +50,7 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def showThingDetails(thingID: UUID) = Action.async{ implicit request =>
+  def showThingDetails(thingID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
     val thing = thingDao.findByID(thingID)
     thing.flatMap{
       thing =>
@@ -55,7 +58,7 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def delete(thingID: UUID) = Action.async{ implicit request =>
+  def delete(thingID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
     thingDao.findByID(thingID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       case Some (thing) =>
@@ -67,7 +70,7 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def updateThing (thingID : UUID) = Action.async(parse.json) { implicit request =>
+  def updateThing (thingID : UUID) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
     request.body.validate[EditThing.Data].map { data =>
       val companyInfo = data.company
       companyDao.findByID(companyInfo).flatMap{
@@ -148,6 +151,59 @@ extends Silhouette[User, JWTAuthenticator] {
           }
         case None =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+      }
+    }.recoverTotal {
+          case error =>
+            Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+      }
+  }
+
+  def addMeasurements = Action.async(parse.json) { implicit request =>
+    request.body.validate[AddMeasurement.Data].map { data =>
+      val thingInfo = data.thingID
+      thingDao.findByID(thingInfo).flatMap{
+        case Some(thingToAssign) =>
+              val measurements = Measurements(
+                  measurementsID = UUID.randomUUID(),
+                  thingID = data.thingID,
+                  dataTime = data.dataTime,
+                  sensors = new ListBuffer[DetectionDouble],
+                  healty = data.healty
+              )
+              for{
+
+                thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                } yield {
+                  Ok(Json.obj("ok" -> "ok"))
+
+                }
+        case None =>
+          Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+      }
+    }.recoverTotal {
+          case error =>
+            Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+      }
+  }
+
+  def addDetectionDouble = Action.async(parse.json) { implicit request =>
+    request.body.validate[AddDetectionDouble.Data].map { data =>
+      val measurementsInfo = data.measurementsID
+      measurementsDao.findByID(measurementsInfo).flatMap{
+        case Some(measurementsToAssign) =>
+              val detectionDouble = DetectionDouble(
+                  measurementsID = data.measurementsID,
+                  sensor = data.sensor,
+                  value = data.value
+              )
+              for{
+                measurements <- measurementsDao.updateDectentionDouble(measurementsInfo, detectionDouble)
+                } yield {
+                  Ok(Json.obj("ok" -> "ok"))
+
+                }
+        case None =>
+          Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       }
     }.recoverTotal {
           case error =>

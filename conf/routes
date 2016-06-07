@@ -3,10 +3,6 @@
 # ~~~~
 
 
-#GET        /send/scala                         controllers.ApplicationScala.send()
-
-#GET        /send/scala/customMailer            controllers.ApplicationScala.sendWithCustomMailer()
-
 GET         /                                  controllers.Assets.at(path="/public", file="html/layout.html")
 GET         /testDue                           controllers.ApplicationController.index
 GET         /user                              controllers.ApplicationController.user
@@ -16,10 +12,9 @@ POST        /signIn                            controllers.shared.AuthController
 GET         /api/getrole                       controllers.shared.AuthController.getRole
 
 #ACCOUNT
-
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
-PUT        /api/account                        controllers.shared.account.AccountController.updateAccount
-PUT        /api/account/psw                    controllers.shared.account.AccountController.updatePassword
+PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
+PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
 
 #ADMIN
 
@@ -30,9 +25,10 @@ PUT         /api/usersA/:id                    controllers.admin.UserController.
 DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
 
 #SUPERADMIN
-
-
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
+POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
+POST        /api/detectionDouble               controllers.superAdmin.ThingController.addDetectionDouble
+
 
 GET         /api/thingsSA/:id                  controllers.superAdmin.ThingController.showThingDetails(id: java.util.UUID)
 GET         /api/thingsSA                      controllers.superAdmin.ThingController.showThing
