@@ -2,6 +2,7 @@ package models
 import play.api.libs.json._
 import org.apache.spark.rdd._
 import org.apache.spark.mllib.linalg._
+import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.mllib.stat._
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
@@ -13,6 +14,17 @@ import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticR
 import org.apache.spark.mllib.evaluation._
 import org.apache.spark.mllib.util._
 //ALTRI ALGORITMI
+class Model(i:Double,nf:Int,nc:Int,w:Vector){
+  val intercept:Double = i
+  val numFeatures:Int = nf
+  val numClasses:Int = nc
+  val  weights:Vector = w
+  def getIntercept: Double ={return intercept}
+  def getNumFeatures: Int ={return numFeatures}
+  def getClasses: Int ={return numClasses}
+  def getWeights: Vector ={return weights}
+}
+
 class Engine{
   def getCorrelation(a: List[Double], b: List[Double]) : Double = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
@@ -70,7 +82,9 @@ class Engine{
     val metrics = new MulticlassMetrics(predictionAndLabels)
     val precision = metrics.precision
     predictionAndLabels.collect().foreach{ point =>  println(point)}
-    val prediction = model.predict(test2)
+    val savedModel:Model = new Model(model.intercept,model.numFeatures,model.numClasses,model.weights)
+    val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(savedModel.getWeights,savedModel.getIntercept,savedModel.getNumFeatures,savedModel.getClasses)
+    val prediction = loadedModel.predict(test2)
     prediction.collect.toArray
     }
 }
@@ -124,7 +138,6 @@ class SparkNaiveBayes {
 
     //Create the model
     val model = NaiveBayes.train(training) //type: NaiveBayesModel
-
     model
   }
 
