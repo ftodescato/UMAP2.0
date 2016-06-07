@@ -39,19 +39,10 @@ class ApplicationController @Inject() (
 def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
 }
-<<<<<<< HEAD
-def engine = Action.async { implicit request =>
-  val obs: Array[Double] = Array(1.2, 2, 3)
-  val obs2: Array[Double] = Array(0, 1, 0)
-  val obs3: Array[Double] = Array(1.2,2,3)
-  val health: List[Double]= List(0.0,1.0,0.0)
-  val lista: List[Array[Double]] = List(obs,obs2,obs3)
 
-=======
 def correlation = Action.async { implicit request =>
   val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
   val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
->>>>>>> refs/remotes/origin/engine
   val e = new Engine
   val predizione = e.getPrediction(health, lista)
   Future.successful(Ok(Json.obj("Array" -> predizione)))
