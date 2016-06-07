@@ -61,12 +61,23 @@ def NaiveBayes = Action.async { implicit request =>
   val obs: Array[Double] = Array(1.2, 2, 3)
   val obs2: Array[Double] = Array(0, 1, 0)
   val obs3: Array[Double] = Array(1.2,2,3)
-  val ealth: List[Double]= List(0.0,1.0,0.0)
+  val health: List[Double]= List(0.0,1.0,0.0)
   val lista: List[Array[Double]] = List(obs,obs2,obs3)
   val e = new SparkNaiveBayes
-  val aux:NaiveBayesModel = e.createModel(ealth,lista)
+  val aux:NaiveBayesModel = e.createModel(health,lista)
   val temp:Array[Double] = e.prediction(lista,aux)
   Future.successful(Ok(Json.obj("Array"->temp)))
+}
+
+def getPrediction = Action.async { implicit request =>
+  val obs: Array[Double] = Array(1.2, 2, 3)
+  val obs2: Array[Double] = Array(0, 1, 0)
+  val obs3: Array[Double] = Array(1.2,2,3)
+  val health: List[Double]= List(0.0,1.0,0.0)
+  val lista: List[Array[Double]] = List(obs,obs2,obs3)
+  val e = new Engine
+  val aux:Array[Double] = e.getPrediction(health,lista)
+  Future.successful(Ok(Json.obj("Array"->aux)))
 }
 
 def index = UserAwareAction.async { implicit request =>

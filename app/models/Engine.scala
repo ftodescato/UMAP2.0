@@ -9,6 +9,9 @@ import org.apache.spark.SparkConf
 import org.apache.spark.sql.SQLContext._
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
+import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
+import org.apache.spark.mllib.evaluation._
+import org.apache.spark.mllib.util._
 //ALTRI ALGORITMI
 class Engine{
   def getCorrelation(a: List[Double], b: List[Double]) : Double = {
@@ -42,6 +45,34 @@ class Engine{
         result.min.toArray
     }
   }
+  def getPrediction(labelList: List[Double], measureList: List[Array[Double]]) : Array[Double] = {
+    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val sc = new SparkContext(configuration)
+    val measureArray = measureList.toArray
+    val vecMeasureArray = measureArray.map(Vectors.dense(_))
+    val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
+    val labelArray = labelList.toArray
+    val length2 = measureArray.length
+    val trainingArray = new Array[LabeledPoint](length2)
+    for (i <- 0 to length2-1) {
+      trainingArray(i) = new LabeledPoint(labelArray(i), vecMeasureArray(i))
+    }
+    val data: RDD[LabeledPoint] = sc.parallelize(trainingArray)
+    val splits = data.randomSplit(Array(0.6, 0.4), seed = 11L)
+    val training = splits(0).cache()
+    val test = splits(1)
+    val model = new LogisticRegressionWithLBFGS()
+      .setNumClasses(10)
+      .run(training)
+    val predictionAndLabels = test.map { case LabeledPoint(label, features) =>
+      val prediction = model.predict(features)
+      (prediction, label)    }
+    val metrics = new MulticlassMetrics(predictionAndLabels)
+    val precision = metrics.precision
+    predictionAndLabels.collect().foreach{ point =>  println(point)}
+    val prediction = model.predict(test2)
+    prediction.collect.toArray
+    }
 }
 //NAIVE BAYES
 class SparkNaiveBayes {
