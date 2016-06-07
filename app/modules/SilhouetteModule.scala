@@ -25,7 +25,6 @@ import models.daos.company._
 import models.daos.thing._
 import models.daos.measurements._
 import models.daos.thingType._
-import models.daos.detectionDouble._
 
 import models.services.{ UserService, UserServiceImpl }
 import net.ceedubs.ficus.Ficus._
@@ -67,7 +66,6 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[ThingDAO].to[ThingDAOImpl]
     bind[ThingTypeDAO].to[ThingTypeDAOImpl]
     bind[MeasurementsDAO].to[MeasurementsDAOImpl]
-    bind[DetectionDoubleDAO].to[DetectionDoubleDAOImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]

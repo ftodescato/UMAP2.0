@@ -14,7 +14,6 @@ import models.Measurements
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
-import models.daos.detectionDouble.DetectionDoubleDAO
 import models.daos.measurements.MeasurementsDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -39,7 +38,6 @@ class ThingController @Inject() (
   val env: Environment[User, JWTAuthenticator],
   thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
-  detectionDoubleDao: DetectionDoubleDAO,
   measurementsDao: MeasurementsDAO,
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
