@@ -44,7 +44,7 @@ def correlation = Action.async { implicit request =>
   val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
   val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
   val e = new Engine
-  val predizione = e.getPrediction(health, lista)
+  val predizione = e.getCorrelation(a, b)
   Future.successful(Ok(Json.obj("Array" -> predizione)))
 }
 // SUMSTATISTIC FUNZIONANTE
