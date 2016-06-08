@@ -6,7 +6,6 @@ import com.mohiva.play.silhouette.api.{ Environment, LogoutEvent, Silhouette }
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import models.User
 import models.Engine
-import models.SparkNaiveBayes
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.Action
@@ -63,7 +62,7 @@ def NaiveBayes = Action.async { implicit request =>
   val obs3: Array[Double] = Array(1.2,2,3)
   val health: List[Double]= List(0.0,1.0,0.0)
   val lista: List[Array[Double]] = List(obs,obs2,obs3)
-  val e = new SparkNaiveBayes
+  val e = new Engine
   val aux:NaiveBayesModel = e.createModel(health,lista)
   val temp:Array[Double] = e.prediction(lista,aux)
   Future.successful(Ok(Json.obj("Array"->temp)))

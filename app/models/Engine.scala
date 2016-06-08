@@ -87,22 +87,7 @@ class Engine{
     val prediction = loadedModel.predict(test2)
     prediction.collect.toArray
     }
-}
 //NAIVE BAYES
-class SparkNaiveBayes {
-
-  // val sc = createContext
-  // def createContext : SparkContext = {
-  //   val conf = new SparkConf(false) // skip loading external settings
-  //     .setMaster("local[4]") // run locally with enough threads
-  //     .setAppName("firstSparkApp")
-  //     .set("spark.logConf", "true")
-  //     .set("spark.driver.host", "localhost")
-  //
-  //   val context = new SparkContext(conf)
-  //
-  //   context
-  // }
   def createModel (labelList: List[Double], measureList: List[Array[Double]]) : NaiveBayesModel ={
     val conf = new SparkConf(false) // skip loading external settings
         .setMaster("local[4]") // run locally with enough threads
