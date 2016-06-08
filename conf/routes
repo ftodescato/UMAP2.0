@@ -8,6 +8,7 @@ GET         /corr                           controllers.ApplicationController.co
 GET         /sumstat/:mv                    controllers.ApplicationController.sumStatistic(mv:String)
 GET         /NB                             controllers.ApplicationController.NaiveBayes
 GET         /logreg                         controllers.ApplicationController.getPrediction
+GET         /grafico                        controllers.ApplicationController.Chart
 GET         /user                           controllers.ApplicationController.user
 POST         /test                          controllers.ApplicationController.test
 GET         /signOut                        controllers.ApplicationController.signOut

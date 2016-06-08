@@ -24,12 +24,15 @@ libraryDependencies ++= Seq(
   "net.codingwell" %% "scala-guice" % "4.0.0",
   "net.ceedubs" %% "ficus" % "1.1.2",
   "org.reactivemongo" %% "play2-reactivemongo" % "0.11.5.play24",
+  "com.github.wookietreiber" %% "scala-chart" % "latest.integration",
+  "com.itextpdf" % "itextpdf" % "5.5.6",
+  "org.jfree" % "jfreesvg" % "3.0",
   cache,
   filters
 )
 dependencyOverrides ++= Set(
 "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"
-) 
+)
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 

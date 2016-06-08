@@ -7,6 +7,7 @@ import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import models.User
 import models.Engine
 import models.SparkNaiveBayes
+import models.MyChartApp
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.Action
@@ -79,6 +80,12 @@ def getPrediction = Action.async { implicit request =>
   val e = new Engine
   val aux:Array[Double] = e.getPrediction(health,lista)
   Future.successful(Ok(Json.obj("Array"->aux)))
+}
+
+def Chart = Action.async { implicit request =>
+  val c = new MyChartApp
+  c.plot()
+  Future.successful(Ok(Json.obj()))
 }
 
 def index = UserAwareAction.async { implicit request =>
