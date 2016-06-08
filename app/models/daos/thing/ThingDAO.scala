@@ -26,14 +26,14 @@ trait ThingDAO {
 
   // def findMeasuremets(thing: Thing, measurementsID: UUID) : Future[Measurements]
 
-  def findListLabel(thing: Thing): Future[List[Double]]
+  def findListLabel(thing: Thing): List[Double]
 
   def save(thing: Thing): Future[Thing]
 
   def update(thingID: UUID, thing2: Thing): Future[Thing]
 
   def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
-  def findListArray(thing: Thing): Future[List[Array[Double]]]
+  def findListArray(thing: Thing): List[Array[Double]]
 
   // def updateDectentionDouble(thingID:UUID, measurements: Measurements, detectionDouble: DetectionDouble): Future[Thing]
 

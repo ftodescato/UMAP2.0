@@ -43,7 +43,7 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     collection.find(Json.obj("thingID" -> thingID)).one[Thing]
   }
 
-  def findListLabel(thing: Thing): Future[List[Double]]={
+  def findListLabel(thing: Thing): List[Double] = {
     var listMeasurements = new ListBuffer[Measurements]
     for (measurements <- thing.datas)
     listMeasurements += measurements
@@ -51,10 +51,10 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     for (meas <- listMeasurements)
     listLabel += meas.label
     var list = listLabel.toList
-    Future.successful(list)
+    list
   }
 
-  def findListArray(thing: Thing): Future[List[Array[Double]]]={
+  def findListArray(thing: Thing): List[Array[Double]] = {
     var listAD = new ListBuffer[Array[Double]]
     for (measurements <- thing.datas)
     {
@@ -67,7 +67,7 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
       listAD += array
     }
     var list = listAD.toList
-    Future.successful(list)
+    list
   }
 
 
