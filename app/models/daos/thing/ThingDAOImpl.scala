@@ -53,7 +53,23 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     var list = listLabel.toList
     Future.successful(list)
   }
-  
+
+  def findListArray(thing: Thing): Future[List[Array[Double]]]={
+    var listAD = new ListBuffer[Array[Double]]
+    for (measurements <- thing.datas)
+    {
+      var listD = new ListBuffer[Double]
+      for (dd <- measurements.sensors)
+      {
+        listD += dd.value
+      }
+      var array = listD.toArray
+      listAD += array
+    }
+    var list = listAD.toList
+    Future.successful(list)
+  }
+
 
   def find(serialNumber: String) : Future[Option[Thing]] = {
     collection.find(Json.obj("serialNumber" -> serialNumber)).one[Thing]

@@ -33,6 +33,7 @@ trait ThingDAO {
   def update(thingID: UUID, thing2: Thing): Future[Thing]
 
   def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
+  def findListArray(thing: Thing): Future[List[Array[Double]]]
 
   // def updateDectentionDouble(thingID:UUID, measurements: Measurements, detectionDouble: DetectionDouble): Future[Thing]
 
