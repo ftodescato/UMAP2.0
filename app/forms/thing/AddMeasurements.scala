@@ -8,7 +8,7 @@ import java.text.DateFormat
 import java.text.DateFormat._
 import models._
 import java.util.UUID
-
+import java.util.Date
 import scala.collection.mutable.ListBuffer
 import play.api.data.format.Formats._
 
@@ -22,7 +22,7 @@ object AddMeasurement {
   val form = Form(
     mapping(
       "thingID" -> uuid,
-      "dataTime" -> nonEmptyText,
+      "dataTime" -> date,
       "sensor" -> list(text),
       "value" -> list(of(doubleFormat)),
       "label" -> of(doubleFormat)
@@ -33,7 +33,7 @@ object AddMeasurement {
   case class Data(
 
     thingID: UUID,
-    dataTime: String,
+    dataTime: Date,
     sensor: List[String],
     value: List[Double],
     label: Double
