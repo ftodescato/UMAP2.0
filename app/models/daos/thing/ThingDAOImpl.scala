@@ -53,7 +53,7 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     var list = listLabel.toList
     Future.successful(list)
   }
-
+  
 
   def find(serialNumber: String) : Future[Option[Thing]] = {
     collection.find(Json.obj("serialNumber" -> serialNumber)).one[Thing]
