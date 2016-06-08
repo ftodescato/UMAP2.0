@@ -60,15 +60,14 @@ class ApplicationController @Inject() (
     val obs: Array[Double] = Array(1.2, 2, 3)
     val obs2: Array[Double] = Array(0, 1, 0)
     val obs3: Array[Double] = Array(1.2,2,3)
-    val health: List[Double]= List(0.0,1.0,0.0)
+    val health: List[Double]= List(0.0,1.0,2.0)
     val lista: List[Array[Double]] = List(obs,obs2,obs3)
     val e = new Engine
     val aux:NaiveBayesModel = e.createModel(health,lista)
     val temp:Array[Double] = e.prediction(lista,aux)
     Future.successful(Ok(Json.obj("Array"->temp)))
   }
-
-  def LogReg = Action.async { implicit request =>
+  def ModelLogReg(): LogRegModel ={
     val obs: Array[Double] = Array(1.2, 2, 3)
     val obs2: Array[Double] = Array(0, 1, 0)
     val obs3: Array[Double] = Array(1.2,2,3)
@@ -76,13 +75,22 @@ class ApplicationController @Inject() (
     val lista: List[Array[Double]] = List(obs,obs2,obs3)
     val e = new Engine
     val modello:LogRegModel = e.getLogRegModel(health,lista)
+    modello
+  }
+  def LogReg = Action.async { implicit request =>
+    val obs: Array[Double] = Array(1.2, 2, 3)
+    val obs2: Array[Double] = Array(0, 1, 0)
+    val obs3: Array[Double] = Array(1.2,2,3)
+    val lista: List[Array[Double]] = List(obs,obs2,obs3)
+    val e = new Engine
+    val modello:LogRegModel = ModelLogReg()
     val predizione:Array[Double] = e.getLogRegPrediction(modello,lista)
     Future.successful(Ok(Json.obj("Array"->predizione)))
   }
 
   def index = UserAwareAction.async { implicit request =>
     Future.successful(Ok(Json.obj("test"->"contenuto")))
-  }
+}
   /**
    * Manages the sign out action.
    */
