@@ -1,5 +1,6 @@
 package controllers
 
+import java.util.UUID
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.{ Environment, LogoutEvent, Silhouette }
@@ -7,6 +8,7 @@ import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import models.User
 import models.Engine
 import models._
+import models.daos.thing.ThingDAO
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.Action
@@ -14,6 +16,7 @@ import scala.concurrent.Future
 import org.apache.spark.mllib.linalg._
 import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.mllib.regression.LabeledPoint
+
 
 /**
  * The basic application controller.
@@ -23,6 +26,7 @@ import org.apache.spark.mllib.regression.LabeledPoint
  * @param socialProviderRegistry The social provider registry.
  */
 class ApplicationController @Inject() (
+  thingDao: ThingDAO,
   val messagesApi: MessagesApi,
 //  val engine : Engine,
   val env: Environment[User, JWTAuthenticator])
@@ -56,12 +60,15 @@ class ApplicationController @Inject() (
     Future.successful(Ok(Json.obj("Array"->aux)))
   }
 
-  def NaiveBayes = Action.async { implicit request =>
+  def NaiveBayes(thingID: UUID)  = Action.async { implicit request =>
+
     val obs: Array[Double] = Array(1.2, 2, 3)
     val obs2: Array[Double] = Array(0, 1, 0)
     val obs3: Array[Double] = Array(1.2,2,3)
-    val health: List[Double]= List(0.0,1.0,2.0)
+    val health: List[Double]=thingDao.findListLabel(thingID)
+      //List(0.0,1.0,2.0)
     val lista: List[Array[Double]] = List(obs,obs2,obs3)
+    //thingDao.findListLabel(thingID)
     val e = new Engine
     val aux:NaiveBayesModel = e.createModel(health,lista)
     val temp:Array[Double] = e.prediction(lista,aux)

@@ -13,6 +13,7 @@ import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation._
 import org.apache.spark.mllib.util._
+import models.daos.thing.ThingDAO
 import models._
 
 class Engine{

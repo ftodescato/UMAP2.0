@@ -15,6 +15,7 @@ import play.api.libs.json._
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import reactivemongo.api._
+import reactivemongo.bson.BSONDocument
 
 import play.modules.reactivemongo.json._
 import play.modules.reactivemongo.json.collection._
@@ -43,7 +44,18 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     collection.find(Json.obj("thingID" -> thingID)).one[Thing]
   }
 
-  def findListLabel(thing: Thing): Future[List[Double]]={
+  def findListLabel(thingID: UUID): List[Double]={
+    // val query = BSONDocument(
+    //   "thingID" -> thingID)
+    //
+    // // result type is Future[List[BSONDocument]]
+    // val x =
+    //   collection.find(query).cursor[BSONDocument].collect[List]()
+    // //val x=collection.find(Json.obj("thingID" -> thingID)).printHeadResult()
+    // //collection.find(equal("i", 71)).first().printHeadResult()
+    // //println(x)
+    // //
+
     var listMeasurements = new ListBuffer[Measurements]
     for (measurements <- thing.datas)
     listMeasurements += measurements
@@ -51,9 +63,9 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     for (meas <- listMeasurements)
     listLabel += meas.label
     var list = listLabel.toList
-    Future.successful(list)
+    list
   }
-  
+
 
   def find(serialNumber: String) : Future[Option[Thing]] = {
     collection.find(Json.obj("serialNumber" -> serialNumber)).one[Thing]

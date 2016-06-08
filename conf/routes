@@ -11,7 +11,7 @@ GET         /                             controllers.Assets.at(path="/public", 
 GET         /testDue                        controllers.ApplicationController.index
 GET         /corr                           controllers.ApplicationController.correlation
 GET         /sumstat/:mv                    controllers.ApplicationController.sumStatistic(mv:String)
-GET         /NB                             controllers.ApplicationController.NaiveBayes
+GET         /NB/:id                         controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
 GET         /logreg                         controllers.ApplicationController.LogReg
 GET         /user                           controllers.ApplicationController.user
 POST        /test                           controllers.ApplicationController.test
