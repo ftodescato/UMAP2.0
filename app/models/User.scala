@@ -15,7 +15,8 @@ case class User(
   company: UUID,
   mailConfirmed: Boolean,
   token: String,
-  role: String) extends Identity
+  role: String,
+  secretString: String) extends Identity
 
 /**
  * The companion object.
