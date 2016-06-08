@@ -7,7 +7,7 @@ GET         /testDue                        controllers.ApplicationController.in
 GET         /corr                           controllers.ApplicationController.correlation
 GET         /sumstat/:mv                    controllers.ApplicationController.sumStatistic(mv:String)
 GET         /NB                             controllers.ApplicationController.NaiveBayes
-GET         /logreg                         controllers.ApplicationController.getPrediction
+GET         /logreg                         controllers.ApplicationController.LogReg
 GET         /user                           controllers.ApplicationController.user
 POST         /test                          controllers.ApplicationController.test
 GET         /signOut                        controllers.ApplicationController.signOut

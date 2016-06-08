@@ -13,17 +13,7 @@ import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation._
 import org.apache.spark.mllib.util._
-//MODELLO LOGREG
-class Model(i:Double,nf:Int,nc:Int,w:Vector){
-  val intercept:Double = i
-  val numFeatures:Int = nf
-  val numClasses:Int = nc
-  val  weights:Vector = w
-  def getIntercept: Double ={return intercept}
-  def getNumFeatures: Int ={return numFeatures}
-  def getClasses: Int ={return numClasses}
-  def getWeights: Vector ={return weights}
-}
+import models._
 
 class Engine{
   //CORRELATION
@@ -59,7 +49,7 @@ class Engine{
     }
   }
   //LOGISTIC REGRESSION
-  def getPrediction(labelList: List[Double], measureList: List[Array[Double]]) : Array[Double] = {
+  def getLogRegModel(labelList: List[Double], measureList: List[Array[Double]]) : LogRegModel ={
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
     val measureArray = measureList.toArray
@@ -84,12 +74,20 @@ class Engine{
     val metrics = new MulticlassMetrics(predictionAndLabels)
     val precision = metrics.precision
     predictionAndLabels.collect().foreach{ point =>  println(point)}
-    val savedModel:Model = new Model(model.intercept,model.numFeatures,model.numClasses,model.weights)
-    val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(savedModel.getWeights,savedModel.getIntercept,savedModel.getNumFeatures,savedModel.getClasses)
+    val savedModel:LogRegModel = new LogRegModel(model.intercept,model.numFeatures,model.numClasses,model.weights)
+    savedModel
+  }
+  def getLogRegPrediction(modello: LogRegModel, measureList: List[Array[Double]]) : Array[Double] = {
+    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val sc = new SparkContext(configuration)
+    val measureArray = measureList.toArray
+    val vecMeasureArray = measureArray.map(Vectors.dense(_))
+    val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
+    val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(modello.getWeights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
     val prediction = loadedModel.predict(test2)
     prediction.collect.toArray
-    }
-//NAIVE BAYES
+  }
+  //NAIVE BAYES
   def createModel (labelList: List[Double], measureList: List[Array[Double]]) : NaiveBayesModel ={
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
