@@ -12,7 +12,9 @@ object ResetPassword {
    */
   val form = Form(
     mapping(
-      "email" -> email
+      "email" -> email,
+      "secretString" -> nonEmptyText,
+      "newPassword" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
@@ -21,7 +23,9 @@ object ResetPassword {
 
    */
   case class Data(
-    email: String
+    email: String,
+    secretString: String,
+    newPassword: String
   )
 
   /**

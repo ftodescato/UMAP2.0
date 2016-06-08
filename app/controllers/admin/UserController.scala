@@ -123,7 +123,8 @@ def updateUser(userID: UUID) = SecuredAction(WithServices("admin", true)).async(
           company = user.company,
           mailConfirmed = false,
           token = "vuoto",
-          role = data.role
+          role = data.role,
+          secretString = data.secretString
        )
        for {
          user <- userDao.update(userID,user2)
@@ -156,7 +157,8 @@ def updateUser(userID: UUID) = SecuredAction(WithServices("admin", true)).async(
               company = request.identity.company,
               mailConfirmed = false,
               token = "vuoto",
-              role = data.role
+              role = data.role,
+              secretString = data.secretString
             )
             val email = Email(
               "Password d'autenticazione",

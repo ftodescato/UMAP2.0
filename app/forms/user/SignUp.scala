@@ -20,7 +20,8 @@ object SignUp {
       "email" -> email,
       "password" -> nonEmptyText,
       "company" -> uuid,
-      "role" -> nonEmptyText
+      "role" -> nonEmptyText,
+      "secretString" ->nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
@@ -31,7 +32,8 @@ object SignUp {
     email: String,
     password: String,
     company: UUID,
-    role: String)
+    role: String,
+    secretString: String)
 
   /**
    * The companion object.

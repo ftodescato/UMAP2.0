@@ -34,6 +34,12 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
   def findByIDCompany(companyID: UUID) : Future[List[User]] = {
     collection.find(Json.obj("company" -> companyID)).cursor[User]().collect[List]()
   }
+  def findByEmail(email: String): Future[Option[User]] ={
+    collection.find(Json.obj( "email" -> email )).one[User]
+  }
+  def findSecretString(user: User): Future[String] ={
+    Future.successful(user.secretString)
+  }
 
 
   def find(loginInfo: LoginInfo) : Future[Option[User]] = {
@@ -90,7 +96,8 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
         company = user.company,
         mailConfirmed = true,
         token = "vuoto",
-        role = user.role
+        role = user.role,
+        secretString = user.secretString
       )
       collection.update(Json.obj("userID" -> user.userID), user2)
       Future.successful(user2)

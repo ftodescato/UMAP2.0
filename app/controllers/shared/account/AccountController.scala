@@ -74,7 +74,8 @@ class AccountController @Inject() (
                company = user.company,
                mailConfirmed = false,
                token = "vuoto",
-               role = user.role
+               role = user.role,
+               secretString = user.secretString
              )
              for {
                user <- userDao.update(request.identity.userID,user2)
@@ -114,18 +115,18 @@ class AccountController @Inject() (
        Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
      }
  }
+ //
+ // val random = new scala.util.Random
+ //
+ // def randomString(alphabet: String)(n: Int): String =
+ //   Stream.continually(random.nextInt(alphabet.size)).map(alphabet).take(n).mkString
+ //
+ // def randomAlphanumericString(n: Int) =
+ //   randomString("abcdefghijklmnopqrstuvwxyz0123456789")(n)
 
- val random = new scala.util.Random
-
- def randomString(alphabet: String)(n: Int): String =
-   Stream.continually(random.nextInt(alphabet.size)).map(alphabet).take(n).mkString
-
- def randomAlphanumericString(n: Int) =
-   randomString("abcdefghijklmnopqrstuvwxyz0123456789")(n)
-
- def resetPassword = SecuredAction.async(parse.json) { implicit request =>
+ def resetPassword = Action.async(parse.json) { implicit request =>
    request.body.validate[ResetPassword.Data].map { data =>
-     userDao.findByID(request.identity.userID).flatMap {
+     userDao.findByEmail(data.email).flatMap {
        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notExist"))))
        case Some(user) =>
          val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
@@ -133,20 +134,19 @@ class AccountController @Inject() (
            case None =>
              Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
            case Some(psw) =>
-           val password = randomAlphanumericString(7)
-           val authInfo = passwordHasher.hash(password)
-           val email = Email(
-             "Password d'autenticazione",
-             "LatexeBiscotti <latexebiscotti@gmail.com>",
-             Seq("Miss TO <"+user.email+">"),
-             bodyText = Some("Password per il tuo primo login in UMAP:"+password)
-           )
-           mailer.send(email)
+           if(user.secretString == data.secretString){
+           var authInfo = passwordHasher.hash(data.newPassword)
+           userDao.confirmedMail(user)
+
              for{
+
                authInfo <- passwordInfoDao.update(loginInfo, authInfo)
              }yield {
                Ok(Json.obj("token" -> "ok"))
-              }
+             }
+           }else
+           Future.successful(BadRequest(Json.obj("message" -> Messages("secretString.notCorrect"))))
+
          }
    }
  }.recoverTotal {

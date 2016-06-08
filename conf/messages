@@ -11,6 +11,7 @@ measurements.notExists = Measurements does not exists!
 thing.notExists = Thing does not exists!
 thingType.notExists = ThingType does not exists!
 company.notExists = Company does not exists!
+secretString.notCorrect = Secret string is not correct!
 could.not.authenticate = Could not authenticate with social provider! Please try again!
 
 toggle.navigation = Toggle navigation

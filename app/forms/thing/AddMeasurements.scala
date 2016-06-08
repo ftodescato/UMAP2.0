@@ -10,6 +10,7 @@ import models._
 import java.util.UUID
 
 import scala.collection.mutable.ListBuffer
+import play.api.data.format.Formats._
 
 
 
@@ -24,7 +25,7 @@ object AddMeasurement {
       "dataTime" -> nonEmptyText,
       "sensor" -> list(text),
       "value" -> list(longNumber),
-      "healty" -> boolean
+      "label" -> of(doubleFormat)
         )(Data.apply)(Data.unapply)
   )
 
@@ -35,7 +36,7 @@ object AddMeasurement {
     dataTime: String,
     sensor: List[String],
     value: List[Long],
-    healty: Boolean
+    label: Double
   )
 
 

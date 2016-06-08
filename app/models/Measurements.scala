@@ -14,7 +14,7 @@ case class Measurements(
   thingID: UUID,
   dataTime: String,
   sensors: List[DetectionDouble],
-  healty: Boolean
+  label: Double
 )
 
 object Measurements {

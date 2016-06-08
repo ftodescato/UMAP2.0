@@ -170,7 +170,7 @@ extends Silhouette[User, JWTAuthenticator] {
                   thingID = data.thingID,
                   dataTime = data.dataTime,
                   sensors = listDD,
-                  healty = data.healty
+                  label = data.label
               )
               for{
 
