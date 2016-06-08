@@ -157,14 +157,14 @@ extends Silhouette[User, JWTAuthenticator] {
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
       }
   }
-
+  //Aggiunge misura alla thing
   def addMeasurements = Action.async(parse.json) { implicit request =>
     request.body.validate[AddMeasurement.Data].map { data =>
-      val thingInfo = data.thingID
+      val thingInfo = data.thingID//nuovo id
       thingDao.findByID(thingInfo).flatMap{
-        case Some(thingToAssign) =>
-        val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))
-        yield new DetectionDouble(sensorName, valueName)
+        case Some(thingToAssign) =>//verifica esistenza id
+        val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))//data.sensor data.value sono liste
+        yield new DetectionDouble(sensorName, valueName)//end for
               val measurements = Measurements(
                   measurementsID = UUID.randomUUID(),
                   thingID = data.thingID,
