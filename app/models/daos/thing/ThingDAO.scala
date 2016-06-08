@@ -26,6 +26,8 @@ trait ThingDAO {
 
   // def findMeasuremets(thing: Thing, measurementsID: UUID) : Future[Measurements]
 
+  def findListLabel(thing: Thing): Future[List[Double]]
+
   def save(thing: Thing): Future[Thing]
 
   def update(thingID: UUID, thing2: Thing): Future[Thing]
