@@ -24,7 +24,7 @@ object AddMeasurement {
       "thingID" -> uuid,
       "dataTime" -> nonEmptyText,
       "sensor" -> list(text),
-      "value" -> list(longNumber),
+      "value" -> list(of(doubleFormat)),
       "label" -> of(doubleFormat)
         )(Data.apply)(Data.unapply)
   )
@@ -35,7 +35,7 @@ object AddMeasurement {
     thingID: UUID,
     dataTime: String,
     sensor: List[String],
-    value: List[Long],
+    value: List[Double],
     label: Double
   )
 

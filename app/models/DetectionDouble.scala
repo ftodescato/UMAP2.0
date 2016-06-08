@@ -8,7 +8,7 @@ import play.api.libs.json._
  case class DetectionDouble(
   //measurementsID: UUID,
   sensor: String,
-  value: Long
+  value: Double
 )
 
 object DetectionDouble {
