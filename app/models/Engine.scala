@@ -13,7 +13,7 @@ import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation._
 import org.apache.spark.mllib.util._
-//ALTRI ALGORITMI
+//MODELLO LOGREG
 class Model(i:Double,nf:Int,nc:Int,w:Vector){
   val intercept:Double = i
   val numFeatures:Int = nf
@@ -26,6 +26,7 @@ class Model(i:Double,nf:Int,nc:Int,w:Vector){
 }
 
 class Engine{
+  //CORRELATION
   def getCorrelation(a: List[Double], b: List[Double]) : Double = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
@@ -37,7 +38,7 @@ class Engine{
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
     correlation
   }
-  //SUMSTATISTIC FUNZIONANTE
+  //SUMSTATISTIC (FUNZIONI BASE)
   def sumStatistic(lista: List[Array[Double]], mv: String) : Array[Double] = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
@@ -57,6 +58,7 @@ class Engine{
         result.min.toArray
     }
   }
+  //LOGISTIC REGRESSION
   def getPrediction(labelList: List[Double], measureList: List[Array[Double]]) : Array[Double] = {
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
@@ -89,14 +91,8 @@ class Engine{
     }
 //NAIVE BAYES
   def createModel (labelList: List[Double], measureList: List[Array[Double]]) : NaiveBayesModel ={
-    val conf = new SparkConf(false) // skip loading external settings
-        .setMaster("local[4]") // run locally with enough threads
-        .setAppName("firstSparkApp")
-        .set("spark.logConf", "true")
-        .set("spark.driver.host", "localhost")
-        .set("spark.driver.allowMultipleContexts", "true")
-
-      val sc = new SparkContext(conf)
+    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val sc = new SparkContext(configuration)
     //Trasforma la lista di misurazioni in array e gli array al suo interno in vector
     val measureArray = measureList.toArray
     val vecMeasureArray = measureArray.map(Vectors.dense(_))
@@ -127,14 +123,8 @@ class Engine{
   }
 
   def prediction (measureList: List[Array[Double]], model: NaiveBayesModel): Array[Double] ={
-    val conf = new SparkConf(false) // skip loading external settings
-        .setMaster("local[4]") // run locally with enough threads
-        .setAppName("firstSparkApp")
-        .set("spark.logConf", "true")
-        .set("spark.driver.host", "localhost")
-        .set("spark.driver.allowMultipleContexts", "true")
-
-      val sc = new SparkContext(conf)
+    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val sc = new SparkContext(configuration)
     //Converte la lista in array e gli array all'interno in vector
     val measureArray = measureList.toArray
     val vecMeasureArray = measureArray.map(Vectors.dense(_))
