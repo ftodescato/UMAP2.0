@@ -99,7 +99,8 @@ class UserController @Inject() (
                   company = data.company,
                   mailConfirmed = false,
                   token = "vuoto",
-                  role = data.role
+                  role = data.role,
+                  secretString = data.secretString
                 )
                 for {
                   user <- userDao.update(userID,user2)
@@ -140,7 +141,8 @@ class UserController @Inject() (
               company = data.company,
               mailConfirmed = false,
               token = "vuoto",
-              role = data.role
+              role = data.role,
+              secretString = data.secretString 
             )
               val email = Email(
                 "Password d'autenticazione",

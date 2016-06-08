@@ -19,7 +19,8 @@ object EditUser {
       "surname" -> nonEmptyText,
       "email" -> email,
       "company" -> uuid,
-      "role"  -> nonEmptyText
+      "role"  -> nonEmptyText,
+      "secretString" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
@@ -32,7 +33,8 @@ object EditUser {
     surname: String,
     email: String,
     company: UUID,
-    role: String
+    role: String,
+    secretString: String
   )
 
   /**

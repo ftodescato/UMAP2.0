@@ -18,6 +18,8 @@ trait UserDAO {
   def find(loginInfo: LoginInfo): Future[Option[User]]
 
   def findByID(userID: UUID): Future[Option[User]]
+  def findByEmail(email: String): Future[Option[User]]
+  def findSecretString(user: User): Future[String]
 
   def findByName(userName: String): Future[List[User]]
 

@@ -3,6 +3,8 @@ package models.daos.thing
 import java.util.UUID
 
 import models.Thing
+import models.Measurements
+import models.DetectionDouble
 
 import scala.concurrent.Future
 
@@ -22,9 +24,15 @@ trait ThingDAO {
 
   def find(serialNumber: String): Future[Option[Thing]]
 
+  // def findMeasuremets(thing: Thing, measurementsID: UUID) : Future[Measurements]
+
   def save(thing: Thing): Future[Thing]
 
   def update(thingID: UUID, thing2: Thing): Future[Thing]
+
+  def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
+
+  // def updateDectentionDouble(thingID:UUID, measurements: Measurements, detectionDouble: DetectionDouble): Future[Thing]
 
   def remove(thingID: UUID): Future[List[Thing]]
 

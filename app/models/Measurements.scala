@@ -1,18 +1,20 @@
 package models
 
-import java.util.UUID
 import play.api.libs.json._
 import java.util.{Date, Locale}
 import java.text.DateFormat
 import java.text.DateFormat._
 import scala.collection.mutable.ListBuffer
 
+import java.util.UUID
 
 
 case class Measurements(
-  dataTime: Date,
-  sensors: ListBuffer[DetectionDouble],
-  healty: Boolean
+  measurementsID: UUID,
+  thingID: UUID,
+  dataTime: String,
+  sensors: List[DetectionDouble],
+  label: Double
 )
 
 object Measurements {
