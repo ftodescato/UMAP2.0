@@ -161,25 +161,21 @@ extends Silhouette[User, JWTAuthenticator] {
   def addMeasurements = Action.async(parse.json) { implicit request =>
     request.body.validate[AddMeasurement.Data].map { data =>
       val thingInfo = data.thingID//nuovo id
-      thingDao.findByID(thingInfo).flatMap{
-        case Some(thingToAssign) =>//verifica esistenza id
-        val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))//data.sensor data.value sono liste
-        yield new DetectionDouble(sensorName, valueName)//end for
-              val measurements = Measurements(
-                  measurementsID = UUID.randomUUID(),
-                  thingID = data.thingID,
-                  dataTime = data.dataTime,
-                  sensors = listDD,
-                  label = data.label
-              )
-              for{
-
-                thing <- thingDao.updateMeasurements(thingInfo, measurements)
-                //measurements <- measurementsDao.add(measurements)
-                } yield {
-                  Ok(Json.obj("ok" -> "ok"))
-
-                }
+      thingDao.findByID(thingInfo).flatMap{//verifica esistenza id
+        case Some(thingToAssign) =>
+          val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))//data.sensor data.value sono liste
+            yield new DetectionDouble(sensorName, valueName)//end for
+          val measurements = Measurements(
+              measurementsID = UUID.randomUUID(),
+              thingID = data.thingID,
+              dataTime = data.dataTime,
+              sensors = listDD,
+              label = data.label
+          )
+          for{
+            thing <- thingDao.updateMeasurements(thingInfo, measurements)
+            //measurements <- measurementsDao.add(measurements)
+          }yield {Ok(Json.obj("ok" -> "ok"))}
         case None =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       }
