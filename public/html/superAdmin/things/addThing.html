@@ -1,0 +1,28 @@
+
+<section id="addThing" class="container-fluid">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.superAdmin()">Home</a></li>
+    <li><a ui-sref="root.superAdmin.things()">Gestione Oggetti</a></li>
+    <li class="active">Nuova oggetto</li>
+  </ul>
+  <h1 class="text-center page-header">Aggiungi un nuovo oggetto</h1>
+  <div class="row ">
+    <form ng-submit="addThing()" name="myForm" class="col-xs-6 col-xs-offset-3">
+      <label for="thingNameInput">Nome dell'oggetto            </label>
+      <input type="text" id="thingNameInput" ng-model="newThing.thingName" placeholder="nome" class="form-control"/><br/>
+      <label for="thingSerialInput">Numero di serie dell'oggetto            </label>
+      <input type="text" id="thingSerialInput" ng-model="newThing.serialNumber" placeholder="numero di serie" class="form-control"/><br/>
+      <label for="thingDescriptionInput">Descrizione dell'oggetto            </label>
+      <textarea type="text" id="thingDescriptionInput" ng-model="newThing.description" placeholder="descrizione" class="form-control"></textarea><br/>
+      <label for="thingCompanyInput">Company dell'oggetto                    </label>
+      <select id="thingCompanyInput" ng-model="newThing.company" class="form-control">
+        <option ng-repeat="company in companies" value="{{company.companyID}}">{{company.companyName}}</option>
+      </select><br/>
+      <label for="thingTypeInput">Modello dell'oggetto                    </label>
+      <select id="thingTypeInput" ng-model="newThing.thingTypeID" class="form-control">
+        <option ng-repeat="thingType in thingTypes" value="{{thingType.thingTypeID}}">{{thingType.thingTypeName}}</option>
+      </select><br/>
+      <button type="submit" ng-disabled="myForm.$invalid" class="btn btn-success">Aggiungi</button>
+    </form>
+  </div>
+</section>

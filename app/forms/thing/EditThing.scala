@@ -14,21 +14,17 @@ object EditThing {
    */
   val form = Form(
     mapping(
-      "thingName" -> nonEmptyText,
+      "name" -> nonEmptyText,
       "serialNumber" -> nonEmptyText,
-      "description" -> nonEmptyText,
-      "thingTypeID" -> uuid,
-      "company" -> uuid
+      "description" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
-    thingName: String,
+    name: String,
     serialNumber: String,
-    description: String,
-    thingTypeID: UUID,
-    company: UUID
+    description: String
     )
 
 

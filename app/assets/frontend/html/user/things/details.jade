@@ -1,0 +1,35 @@
+section(id="thingsDetails" class="container-fluid" )
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.user()") Home
+    li
+      a(ui-sref="root.user.things()") Gestione Oggetti
+    li(class="active") Dettagli Oggetto
+  h1(class="text-center page-header") Dettagli dell'oggetto
+    small # {{thing.thingID}}
+  h2(class="text-center") {{thing.name}}
+  div(class="row")
+    div(class="col-xs-12")
+      input(class="form-control" ng-model="searchThingTypes.$" placeholder="cerca con qualsiasi valore")
+  div(class="table-responsive")
+    table(class="table")       
+      thead
+        th 
+          a(class="btn" ng-click="order('')") 
+            strong  Data rilevazione      
+        th 
+          a(class="btn" ng-click="order('')") 
+            strong  Nome parametro      
+        th 
+          a(class="btn" ng-click="order('')") 
+            strong Valore  
+        th 
+          a(class="btn" ng-click="order('')") 
+            strong Visibilità  
+      tbody
+        tr(ng-repeat="x in thing.datas |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
+          td {{x.name}}
+          td {{x.visible}}
+            
+            
+  

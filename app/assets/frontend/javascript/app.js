@@ -1,10 +1,10 @@
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
+  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user','umap.adminUser.thingTypes','umap.adminUser.things','umap.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
-  //$urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/');
 
     $stateProvider.state('root', {
       url: '/',
@@ -64,11 +64,20 @@
             event.preventDefault();
             $state.go('root.admin');
             break;
+          case 'user':
+            event.preventDefault();
+            $state.go('root.user');
+            break;
           default:
 
         }
       }
-    })
+    });
+    $rootScope.$on('$stateChangeError', function(e, toState, toParams, fromState, fromParams, error){
+    if(error === "Not Authorized"){
+        $state.go("root");
+      }
+    });
   }]);
 
   umap.factory('InjectHeadersService',['$q','$cookies','$injector' ,function($q, $cookies,$injector){

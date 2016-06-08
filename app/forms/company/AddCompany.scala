@@ -3,8 +3,7 @@ package forms.company
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
-
-
+import java.util.Date
 
 object AddCompany {
 
@@ -13,13 +12,28 @@ object AddCompany {
    */
   val form = Form(
     mapping(
+      "companyBusinessName" -> nonEmptyText,
+      "companyAddress" -> nonEmptyText,
+      "companyCity" -> nonEmptyText,
+      "companyCAP" -> nonEmptyText,
+      "companyPIVA" -> nonEmptyText,
+      "companyDescription" -> nonEmptyText,
+      "companyLicenseExpiration" -> date,
       "companyName" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
-    companyName: String)
+    companyBusinessName: String,
+    companyAddress: String,
+    companyCity: String,
+    companyCAP: String,
+    companyPIVA: String,
+    companyDescription: String,
+    companyLicenseExpiration: Date,
+    companyName: String
+    )
 
 
   /**

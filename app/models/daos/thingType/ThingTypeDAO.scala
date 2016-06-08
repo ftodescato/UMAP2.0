@@ -16,6 +16,8 @@ trait ThingTypeDAO {
 
   def findByID(thingTypeID: UUID): Future[Option[ThingType]]
 
+  def findByCompany(companyID: UUID): Future[List[ThingType]]
+
   def save(thingType: ThingType): Future[ThingType]
 
   def update(thingTypeID: UUID, thingType2: ThingType): Future[ThingType]

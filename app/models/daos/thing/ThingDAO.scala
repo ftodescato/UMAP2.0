@@ -18,7 +18,7 @@ trait ThingDAO {
 
   def findAll(): Future[List[Thing]]
 
-  def findByCompany(companyID: UUID): Future[Option[Thing]]
+  def findByCompany(companyID: UUID): Future[List[Thing]]
 
   def findByID(thingID: UUID): Future[Option[Thing]]
 

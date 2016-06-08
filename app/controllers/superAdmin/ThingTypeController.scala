@@ -47,63 +47,13 @@ extends Silhouette[User, JWTAuthenticator] {
      Future.successful(Ok(Json.toJson(thingType)))
    }
   }
-
-  // def showCompanyDetails(companyID: UUID) = Action.async{ implicit request =>
-  //   val company = companyDao.findByID(companyID)
-  //   company.flatMap{
-  //     company =>
-  //     Future.successful(Ok(Json.toJson(company)))
-  //   }
-  // }
-
-  // def delete(thingID: UUID) = Action.async{ implicit request =>
-  //   thingDao.findByID(thingID).flatMap{
-  //     case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-  //     case Some (thing) =>
-  //       for{
-  //         thing <- thingDao.remove(thingID)
-  //       }yield{
-  //         //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-  //         //env.eventBus.publish(LoginEvent(user, request, request2Messages))
-  //         Ok(Json.obj("ok" -> "ok"))
-  //        }
-  //   }
-  // }
-
-  // def updateThing (thingID : UUID) = Action.async(parse.json) { implicit request =>
-  //   request.body.validate[EditThing.Data].map { data =>
-  //     val companyInfo = data.company
-  //     companyDao.findByID(companyInfo).flatMap{
-  //       case Some (companyToAssign) =>
-  //         val thingTypeInfo = data.thingTypeID
-  //         thingTypeDao.findByID(thingTypeInfo).flatMap{
-  //           case Some(thingTypeToAssign) =>
-  //             val thing2 = Thing(
-  //                 thingID = UUID.randomUUID(),
-  //                 name = data.thingName,
-  //                 serialNumber = data.serialNumber,
-  //                 description = data.description,
-  //                 thingTypeID = data.thingTypeID,
-  //                 companyID = data.company
-  //             )
-  //             for{
-  //               thing <- thingDao.update(thingID,thing2)
-  //             }yield {
-  //               //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-  //               //env.eventBus.publish(LoginEvent(user, request, request2Messages))
-  //               Ok(Json.obj("ok" -> "ok"))
-  //              }
-  //           case None =>
-  //             Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
-  //         }
-  //       case None =>
-  //        Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-  //      }
-  //    }.recoverTotal {
-  //       case error =>
-  //         Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
-  //      }
-  // }
+  def showThingTypeDetails(id: UUID) = SecuredAction.async{ implicit request =>
+   val thingType = thingTypeDao.findByID(id)
+   thingType.flatMap{
+    thingType =>
+     Future.successful(Ok(Json.toJson(thingType)))
+   }
+  }
 
   def addThingType = Action.async(parse.json) { implicit request =>
     request.body.validate[AddThingType.Data].map { data =>
@@ -185,7 +135,7 @@ def delete(thingTypeID: UUID) = SecuredAction(WithServices("superAdmin", true)).
             companyIDList += companyID
           }
           val thingType2 = ThingType(
-            thingTypeID = UUID.randomUUID(),
+            thingTypeID = thingType.thingTypeID,
             thingTypeName = data.thingTypeName,
             companyID = companyIDList,
             doubleValue = thingType.doubleValue

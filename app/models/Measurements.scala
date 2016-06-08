@@ -5,14 +5,14 @@ import java.util.{Date, Locale}
 import java.text.DateFormat
 import java.text.DateFormat._
 import scala.collection.mutable.ListBuffer
-
+import java.util.Date
 import java.util.UUID
 
 
 case class Measurements(
   measurementsID: UUID,
   thingID: UUID,
-  dataTime: String,
+  dataTime: Date,
   sensors: List[DetectionDouble],
   label: Double
 )

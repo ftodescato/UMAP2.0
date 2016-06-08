@@ -37498,10 +37498,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user']);
+  var umap = angular.module('umap', ['ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user','umap.adminUser.thingTypes','umap.adminUser.things','umap.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
-  //$urlRouterProvider.otherwise('/');
+  $urlRouterProvider.otherwise('/');
 
     $stateProvider.state('root', {
       url: '/',
@@ -37561,11 +37561,20 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             event.preventDefault();
             $state.go('root.admin');
             break;
+          case 'user':
+            event.preventDefault();
+            $state.go('root.user');
+            break;
           default:
 
         }
       }
-    })
+    });
+    $rootScope.$on('$stateChangeError', function(e, toState, toParams, fromState, fromParams, error){
+    if(error === "Not Authorized"){
+        $state.go("root");
+      }
+    });
   }]);
 
   umap.factory('InjectHeadersService',['$q','$cookies','$injector' ,function($q, $cookies,$injector){
@@ -37666,6 +37675,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
   var umap = angular.module('umap.admin',['ui.router']);
   umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+      $cookies = _$cookies_;
+    }]);
     $stateProvider.state('root.admin',{
       url: 'admin',
       views: {
@@ -37676,7 +37689,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             'header@':{
               templateUrl: 'assets/html/admin/header.html'
             }
-        }
+        },
+        resolve: {
+          security: ['$q', function($q){
+              var role = $cookies.get('Role');
+              if(role != 'admin'){
+                 return $q.reject("Not Authorized");
+              }
+          }]
+       }
     });
   }]);
 
@@ -37838,6 +37859,125 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 })();
 
 (function(){
+  var umap = angular.module('umap.adminUser.thingTypes',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.thingTypes', {
+      url: '/thingTypes',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/thingTypes/index.html',
+              controller:  'ThingTypesControllerAU'
+            }
+        }
+    });
+    $stateProvider.state('root.user.thingTypes', {
+      url: '/thingTypes',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/thingTypes/index.html',
+              controller:  'ThingTypesControllerAU'
+            }
+        }
+    });
+    $stateProvider.state('root.admin.thingTypesDetails', {
+      url: '/thingTypes/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/thingTypes/details.html',
+              controller:  'ThingTypesControllerDetailsAU'
+            }
+        }
+    });
+    $stateProvider.state('root.user.thingTypesDetails', {
+      url: '/thingTypes/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/thingTypes/details.html',
+              controller:  'ThingTypesControllerDetailsAU'
+            }
+        }
+    });
+  }]);
+  umap.factory('ThingTypeServiceAU', function($resource){
+    return{
+        ThingType: $resource('/api/thingTypes/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+      }),
+        Thing: $resource('/api/things/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+      })
+    }
+  });
+  umap.controller('ThingTypesControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
+    ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypes = thingTypes;
+    });
+  }]);
+  umap.controller('ThingTypesControllerDetailsAU', ['$scope','$stateParams','ThingTypeServiceAU',function($scope,$stateParams,ThingTypeServiceAU){
+    ThingTypeServiceAU.ThingType.get({id: $stateParams.id}).$promise.then(function(thingType){
+      $scope.thingType = thingType;
+    });
+  }]);
+})();
+
+(function(){
+  var umap = angular.module('umap.adminUser.things',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.things', {
+      url: '/things',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/things/index.html',
+              controller:  'ThingsControllerAU'
+            }
+        }
+    });
+    $stateProvider.state('root.user.things', {
+      url: '/things',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/things/index.html',
+              controller:  'ThingsControllerAU'
+            }
+        }
+    });
+    $stateProvider.state('root.admin.thingDetails', {
+      url: '/things/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/things/details.html',
+              controller:  'ThingsControllerDetailsAU'
+            }
+        }
+    });
+    $stateProvider.state('root.user.thingDetails', {
+      url: '/things/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/things/details.html',
+              controller:  'ThingsControllerDetailsAU'
+            }
+        }
+    });
+  }]);
+  umap.controller('ThingsControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
+    ThingTypeServiceAU.Thing.query().$promise.then(function(things){
+      $scope.things = things;
+    });
+  }]);
+  umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams', 'ThingTypeServiceAU', function($scope, $stateParams, ThingTypeServiceAU ){
+    ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
+      $scope.thing = thing;
+      console.log(thing);
+    });
+  }]);
+})();
+
+(function(){
   'use strict';
   var umap = angular.module('umap.superAdmin.company',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
@@ -37922,6 +38062,10 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
 
   var umap = angular.module('umap.superAdmin',['ui.router']);
   umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+      $cookies = _$cookies_;
+    }]);
     $stateProvider.state('root.superAdmin',{
       url: 'superAdmin',
       views: {
@@ -37932,7 +38076,15 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             'header@':{
               templateUrl: 'assets/html/superAdmin/header.html'
             }
-        }
+        },
+        resolve: {
+          security: ['$q', function($q){
+              var role = $cookies.get('Role');
+              if(role != 'superAdmin'){
+                 return $q.reject("Not Authorized");
+              }
+          }]
+       }
     });
   }]);
 
@@ -37962,6 +38114,33 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
             }
         }
     });
+    $stateProvider.state('root.superAdmin.addThings', {
+      url: '/things/addThing',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/things/addThing.html',
+              controller:  'ThingsController'
+            }
+        }
+    });
+    $stateProvider.state('root.superAdmin.updateThingType', {
+      url: '/things/ThingType/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/things/updateThingType.html',
+              controller:  'ThingTypeDetailsController'
+            }
+        }
+    });
+    $stateProvider.state('root.superAdmin.updateThing', {
+      url: '/things/Thing/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/things/updateThing.html',
+              controller:  'ThingDetailsController'
+            }
+        }
+    });
   }]);
 
   umap.factory('ThingTypeService', function($resource){
@@ -37970,17 +38149,33 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
           update:{
             method: 'PUT'
           }
+        }),
+        Thing: $resource('/api/thingsSA/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
         })
     }
   })
 
-  umap.controller('ThingsTypeController',['$scope','$state','CompanyService','ThingTypeService',function($scope,$state,CompanyService,ThingTypeService){
+  umap.controller('ThingsTypeController',['$scope','$state','$window','CompanyService','ThingTypeService',function($scope,$state,$window,CompanyService,ThingTypeService){
     CompanyService.query().$promise.then(function(companies){
+      $scope.companiesHash = {}
+      for (var i = 0; i < companies.length; i++) {
+        $scope.companiesHash[companies[i].companyID] = companies[i].companyName;
+      }
       $scope.companies = companies;
     });
     ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypesHash = {}
+      for (var i = 0; i < thingTypes.length; i++) {
+        $scope.thingTypesHash[thingTypes[i].thingTypeID] = thingTypes[i].thingTypeName;
+      }
       $scope.thingTypes = thingTypes;
     })
+    ThingTypeService.Thing.query().$promise.then(function(things){
+      $scope.things = things;
+    });
     $scope.newThingType = {
       "company": [],
       "thingTypeName":'',
@@ -38017,7 +38212,80 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         $state.go('root.superAdmin.things');
       })
       //console.log($scope.newThingType);
+    };
+    $scope.deleteThingType = function(id){
+      var deleteThingType = $window.confirm('Sei sicuro ?');
+      if(deleteThingType){
+        ThingTypeService.ThingType.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
     }
+    $scope.deleteThing = function(id){
+      var deleteThing = $window.confirm('Sei sicuro ?');
+      if(deleteThing){
+        ThingTypeService.Thing.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
+    }
+  }]);
+  umap.controller('ThingTypeDetailsController',['$scope','$state','$stateParams','CompanyService','ThingTypeService', function($scope,$state,$stateParams,CompanyService,ThingTypeService){
+    ThingTypeService.ThingType.get({id: $stateParams.id}).$promise.then(function(thingType){
+      $scope.thingType = {
+        "company": [] ,
+        "thingTypeName":''
+      }
+      $scope.thingType.company = thingType.companyID;
+      $scope.thingType.thingTypeName = thingType.thingTypeName;
+    });
+    CompanyService.query().$promise.then(function(companies){
+      $scope.companies = companies;
+    });
+    $scope.addItem = function (){
+      $scope.thingType.company.push('');
+    }
+    $scope.removeItem = function (index){
+      $scope.thingType.company.splice(index,1);
+    }
+    $scope.updateThingType = function (){
+      ThingTypeService.ThingType.update({id: $stateParams.id}, $scope.thingType, function(){
+        $state.go('root.superAdmin.things');
+      })
+    }
+  }]);
+
+  umap.controller('ThingsController',['$scope','$state','ThingTypeService','CompanyService',function($scope,$state,ThingTypeService,CompanyService){
+    $scope.newThing = {
+      'thingName':'',
+      'serialNumber':'',
+      'description':'',
+      'thingTypeID':'',
+      'company':''
+    };
+
+    CompanyService.query().$promise.then(function(companies){
+      $scope.companies = companies;
+    });
+    ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypes = thingTypes;
+    });
+    $scope.addThing = function(){
+      ThingTypeService.Thing.save($scope.newThing, function(result){
+        $state.go('root.superAdmin.things');
+      })
+    }
+  }]);
+
+  umap.controller('ThingDetailsController',['$state','$stateParams','$scope','ThingTypeService',function($state,$stateParams,$scope,ThingTypeService){
+    ThingTypeService.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
+      $scope.thing = thing;
+    });
+    $scope.updateThing = function(){
+      ThingTypeService.Thing.update({id: $stateParams.id},$scope.thing, function(){
+        $state.go('root.superAdmin.things')
+      })
+    };
   }]);
 })();
 
@@ -38154,5 +38422,41 @@ angular.module('ngCookies').provider('$$cookieWriter', function $$CookieWriterPr
         });
       }
     }
+  }]);
+})();
+
+(function(){
+  'use strict';
+
+  var umap = angular.module('umap.user',['ui.router']);
+  umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+      $cookies = _$cookies_;
+    }]);
+    $stateProvider.state('root.user',{
+      url: 'user',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/home.html',
+              controller:  'UserController'
+            },
+            'header@':{
+              templateUrl: 'assets/html/user/header.html'
+            }
+        },
+        resolve: {
+          security: ['$q', function($q){
+              var role = $cookies.get('Role');
+              if(role != 'user'){
+                 return $q.reject("Not Authorized");
+              }
+          }]
+       }
+    });
+  }]);
+
+  umap.controller('UserController',['$scope',function($scope){
+
   }]);
 })();

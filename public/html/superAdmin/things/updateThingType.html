@@ -7,16 +7,16 @@
   </ul>
   <h1 class="text-center page-header">Modifica un tipo di oggetto</h1>
   <div class="row ">
-    <form ng-submit="addThingType()" name="myForm" class="col-xs-6 col-xs-offset-3">
+    <form ng-submit="updateThingType()" name="myForm" class="col-xs-6 col-xs-offset-3">
       <label for="thingTypeInput">Nome della tipologia            </label>
-      <input type="text" id="thingTypeInput" ng-model="newThingType.thingTypeName" placeholder="nome" value="newThingType.thingTypeName" class="form-control"/><br/>
+      <input type="text" id="thingTypeInput" ng-model="thingType.thingTypeName" placeholder="nome" value="thingType.thingTypeName" class="form-control"/><br/>
       <label>Company di appartenza</label>
-      <button ng-click="addItem('Company')" class="btn">Aggiungi Company                </button>
-      <div ng-repeat="company in newThingType.company track by $index">                  
-        <select ng-model="newThingType.company[$index]" required="" class="form-control">
+      <button ng-click="addItem()" class="btn">Aggiungi Company                </button>
+      <div ng-repeat="company in thingType.company track by $index">                  
+        <select ng-model="thingType.company[$index]" required="" class="form-control">
           <option ng-repeat="company in companies" value="{{company.companyID}}">{{company.companyName}}</option>
         </select>
-        <button ng-click="removeItem('Company',$index)">Rimuovi  </button>
+        <button ng-click="removeItem($index)">Rimuovi  </button>
       </div><br/>
       <button type="submit" ng-disabled="myForm.$invalid" class="btn btn-success">Aggiungi</button>
     </form>

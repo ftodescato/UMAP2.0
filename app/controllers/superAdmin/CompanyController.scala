@@ -73,6 +73,13 @@ class CompanyController @Inject() (
         case Some (company) =>
           val company2 = Company(
               companyID = company.companyID,
+              companyBusinessName = data.companyBusinessName,
+              companyAddress = data.companyAddress,
+              companyCity = data.companyCity,
+              companyCAP = data.companyCAP,
+              companyPIVA = data.companyPIVA,
+              companyDescription = data.companyDescription,
+              companyLicenseExpiration = data.companyLicenseExpiration,
               companyName = Some(data.companyName)
           )
           for{
@@ -94,6 +101,13 @@ class CompanyController @Inject() (
       //val authInfo = passwordHasher.hash(data.password)
       val company = Company(
           companyID = UUID.randomUUID(),
+          companyBusinessName = data.companyBusinessName,
+          companyAddress = data.companyAddress,
+          companyCity = data.companyCity,
+          companyCAP = data.companyCAP,
+          companyPIVA = data.companyPIVA,
+          companyDescription = data.companyDescription,
+          companyLicenseExpiration = data.companyLicenseExpiration,
           companyName = Some(data.companyName)
       )
       for{

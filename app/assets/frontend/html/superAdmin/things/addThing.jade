@@ -1,0 +1,28 @@
+section(id="addThing" class="container-fluid")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li
+      a(ui-sref="root.superAdmin.things()") Gestione Oggetti
+    li(class="active") Nuova oggetto
+  h1(class="text-center page-header") Aggiungi un nuovo oggetto
+  div(class="row ")
+    form(ng-submit="addThing()" name="myForm" class="col-xs-6 col-xs-offset-3")
+      label(for="thingNameInput" ) Nome dell'oggetto            
+      input(type="text" id="thingNameInput" class="form-control" ng-model="newThing.thingName" placeholder="nome")
+      br
+      label(for="thingSerialInput" ) Numero di serie dell'oggetto            
+      input(type="text" id="thingSerialInput" class="form-control" ng-model="newThing.serialNumber" placeholder="numero di serie")
+      br
+      label(for="thingDescriptionInput" ) Descrizione dell'oggetto            
+      textarea(type="text" id="thingDescriptionInput" class="form-control" ng-model="newThing.description" placeholder="descrizione")
+      br
+      label(for="thingCompanyInput" ) Company dell'oggetto                    
+      select( class="form-control" id="thingCompanyInput" ng-model="newThing.company")
+        option(ng-repeat="company in companies"  value="{{company.companyID}}") {{company.companyName}}
+      br
+      label(for="thingTypeInput" ) Modello dell'oggetto                    
+      select( class="form-control" id="thingTypeInput" ng-model="newThing.thingTypeID")
+        option(ng-repeat="thingType in thingTypes"  value="{{thingType.thingTypeID}}") {{thingType.thingTypeName}}
+      br
+      button(type='submit' class="btn btn-success" ng-disabled="myForm.$invalid") Aggiungi

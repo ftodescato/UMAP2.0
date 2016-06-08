@@ -1,0 +1,30 @@
+section(id="thingsList" class="container-fluid" )
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.admin()") Home
+    li
+      a(ui-sref="root.admin.thingTypes()") Gestione Modelli Oggetti
+    li(class="active") Dettagli Modello Oggetti
+  h1(class="text-center page-header") Dettagli del modello di oggetto
+    small # {{thingType.thingTypeID}}
+  h2(class="text-center") {{thingType.thingTypeName}}
+  h3 Parametri Double
+  div(class="row")
+    div(class="col-xs-12")
+      input(class="form-control" ng-model="searchThingTypes.$" placeholder="cerca con qualsiasi valore")
+  div(class="table-responsive")
+    table(class="table")       
+      thead
+        th 
+          a(class="btn" ng-click="order('doubleValue')") 
+            strong  Nome parametro      
+        th 
+          a(class="btn" ng-click="order('doubleValue.valuee')") 
+            strong Visibilità  
+      tbody
+        tr(ng-repeat="x in thingType.doubleValue.valuee |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
+          td {{x.name}}
+          td {{x.visible}}
+            
+            
+  

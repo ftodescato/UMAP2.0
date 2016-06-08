@@ -7,15 +7,15 @@ section(id="updateThingType" class="container-fluid")
     li(class="active") Modifica tipolgia di oggetto
   h1(class="text-center page-header") Modifica un tipo di oggetto
   div(class="row ")
-    form(ng-submit="addThingType()" name="myForm" class="col-xs-6 col-xs-offset-3")
+    form(ng-submit="updateThingType()" name="myForm" class="col-xs-6 col-xs-offset-3")
       label(for="thingTypeInput" ) Nome della tipologia            
-      input(type="text" id="thingTypeInput" class="form-control" ng-model="newThingType.thingTypeName" placeholder="nome" value="newThingType.thingTypeName")
+      input(type="text" id="thingTypeInput" class="form-control" ng-model="thingType.thingTypeName" placeholder="nome" value="thingType.thingTypeName")
       br
       label Company di appartenza
-      button(class="btn" ng-click="addItem('Company')") Aggiungi Company                
-      div(ng-repeat="company in newThingType.company track by $index")                   
-        select( class="form-control"  ng-model="newThingType.company[$index]" required="")
+      button(class="btn" ng-click="addItem()") Aggiungi Company                
+      div(ng-repeat="company in thingType.company track by $index")                   
+        select( class="form-control"  ng-model="thingType.company[$index]" required="")
           option(ng-repeat="company in companies"  value="{{company.companyID}}") {{company.companyName}}
-        button(ng-click="removeItem('Company',$index)") Rimuovi  
+        button(ng-click="removeItem($index)") Rimuovi  
       br
       button(type='submit' class="btn btn-success" ng-disabled="myForm.$invalid") Aggiungi

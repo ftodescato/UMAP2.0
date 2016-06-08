@@ -19,6 +19,33 @@
             }
         }
     });
+    $stateProvider.state('root.superAdmin.addThings', {
+      url: '/things/addThing',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/things/addThing.html',
+              controller:  'ThingsController'
+            }
+        }
+    });
+    $stateProvider.state('root.superAdmin.updateThingType', {
+      url: '/things/ThingType/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/things/updateThingType.html',
+              controller:  'ThingTypeDetailsController'
+            }
+        }
+    });
+    $stateProvider.state('root.superAdmin.updateThing', {
+      url: '/things/Thing/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/things/updateThing.html',
+              controller:  'ThingDetailsController'
+            }
+        }
+    });
   }]);
 
   umap.factory('ThingTypeService', function($resource){
@@ -27,17 +54,33 @@
           update:{
             method: 'PUT'
           }
+        }),
+        Thing: $resource('/api/thingsSA/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
         })
     }
   })
 
-  umap.controller('ThingsTypeController',['$scope','$state','CompanyService','ThingTypeService',function($scope,$state,CompanyService,ThingTypeService){
+  umap.controller('ThingsTypeController',['$scope','$state','$window','CompanyService','ThingTypeService',function($scope,$state,$window,CompanyService,ThingTypeService){
     CompanyService.query().$promise.then(function(companies){
+      $scope.companiesHash = {}
+      for (var i = 0; i < companies.length; i++) {
+        $scope.companiesHash[companies[i].companyID] = companies[i].companyName;
+      }
       $scope.companies = companies;
     });
     ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypesHash = {}
+      for (var i = 0; i < thingTypes.length; i++) {
+        $scope.thingTypesHash[thingTypes[i].thingTypeID] = thingTypes[i].thingTypeName;
+      }
       $scope.thingTypes = thingTypes;
     })
+    ThingTypeService.Thing.query().$promise.then(function(things){
+      $scope.things = things;
+    });
     $scope.newThingType = {
       "company": [],
       "thingTypeName":'',
@@ -74,6 +117,79 @@
         $state.go('root.superAdmin.things');
       })
       //console.log($scope.newThingType);
+    };
+    $scope.deleteThingType = function(id){
+      var deleteThingType = $window.confirm('Sei sicuro ?');
+      if(deleteThingType){
+        ThingTypeService.ThingType.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
     }
+    $scope.deleteThing = function(id){
+      var deleteThing = $window.confirm('Sei sicuro ?');
+      if(deleteThing){
+        ThingTypeService.Thing.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
+    }
+  }]);
+  umap.controller('ThingTypeDetailsController',['$scope','$state','$stateParams','CompanyService','ThingTypeService', function($scope,$state,$stateParams,CompanyService,ThingTypeService){
+    ThingTypeService.ThingType.get({id: $stateParams.id}).$promise.then(function(thingType){
+      $scope.thingType = {
+        "company": [] ,
+        "thingTypeName":''
+      }
+      $scope.thingType.company = thingType.companyID;
+      $scope.thingType.thingTypeName = thingType.thingTypeName;
+    });
+    CompanyService.query().$promise.then(function(companies){
+      $scope.companies = companies;
+    });
+    $scope.addItem = function (){
+      $scope.thingType.company.push('');
+    }
+    $scope.removeItem = function (index){
+      $scope.thingType.company.splice(index,1);
+    }
+    $scope.updateThingType = function (){
+      ThingTypeService.ThingType.update({id: $stateParams.id}, $scope.thingType, function(){
+        $state.go('root.superAdmin.things');
+      })
+    }
+  }]);
+
+  umap.controller('ThingsController',['$scope','$state','ThingTypeService','CompanyService',function($scope,$state,ThingTypeService,CompanyService){
+    $scope.newThing = {
+      'thingName':'',
+      'serialNumber':'',
+      'description':'',
+      'thingTypeID':'',
+      'company':''
+    };
+
+    CompanyService.query().$promise.then(function(companies){
+      $scope.companies = companies;
+    });
+    ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypes = thingTypes;
+    });
+    $scope.addThing = function(){
+      ThingTypeService.Thing.save($scope.newThing, function(result){
+        $state.go('root.superAdmin.things');
+      })
+    }
+  }]);
+
+  umap.controller('ThingDetailsController',['$state','$stateParams','$scope','ThingTypeService',function($state,$stateParams,$scope,ThingTypeService){
+    ThingTypeService.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
+      $scope.thing = thing;
+    });
+    $scope.updateThing = function(){
+      ThingTypeService.Thing.update({id: $stateParams.id},$scope.thing, function(){
+        $state.go('root.superAdmin.things')
+      })
+    };
   }]);
 })();

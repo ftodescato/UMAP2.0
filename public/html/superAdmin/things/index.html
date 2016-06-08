@@ -12,7 +12,7 @@
   </div>
   <div class="row">
     <div class="col-xs-12">
-      <input ng-model="search.$" placeholder="cerca con qualsiasi valore" class="form-control"/>
+      <input ng-model="searchThingTypes.$" placeholder="cerca con qualsiasi valore" class="form-control"/>
     </div>
   </div>
   <div class="table-responsive">
@@ -21,20 +21,66 @@
         <th> <a ng-click="order('thingTypeID')" class="btn"> <strong>ID </strong></a></th>
         <th> <a ng-click="order('thingTypeName')" class="btn"> <strong>Nome        </strong></a></th>
         <th> <a ng-click="order('company')" class="btn"> <strong>Companies        </strong></a></th>
+        <th> <a ng-click="order('doubleValue')" class="btn"> <strong>Parametri Double       </strong></a></th>
         <th>Azioni        </th>
       </thead>
       <tbody>
-        <tr ng-repeat="thingType in thingTypes |  orderBy:predicate:reverse | filter:search:strict track by $index ">
+        <tr ng-repeat="thingType in thingTypes |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ">
           <td>{{thingType.thingTypeID}}</td>
           <td>{{thingType.thingTypeName}}</td>
           <td> 
             <ul>
-              <li ng-repeat="c in thingType.companyID">{{c}}</li>
+              <li ng-repeat="c in thingType.companyID">{{companiesHash[c]}}</li>
+            </ul>
+          </td>
+          <td>
+            <ul>
+              <li ng-repeat="p in thingType.doubleValue.valuee">{{p.name}} (visibile={{p.visible}})</li>
             </ul>
           </td>
           <td> 
             <button ui-sref="root.superAdmin.updateThingType({id:thingType.thingTypeID})" class="btn btn-warning">Modifica</button>
-            <form ng-submit="deleteThingType(user.thingType.thingTypeID)">
+            <form ng-submit="deleteThingType(thingType.thingTypeID)">
+              <button type="submit" class="btn btn-danger">Elimina </button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <h1 class="text-center page-header">Lista degli oggetti presenti</h1>
+  <div class="row">
+    <div class="col-xs-4 col-xs-offset-1">
+      <button ui-sref="root.superAdmin.addThings()" class="btn btn-success">Nuovo</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <input ng-model="searchThings.$" placeholder="cerca con qualsiasi valore" class="form-control"/>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <th> <a ng-click="order('thingTypeID')" class="btn"> <strong>ID </strong></a></th>
+        <th> <a ng-click="order('thingTypeName')" class="btn"> <strong>Nome        </strong></a></th>
+        <th> <a ng-click="order('serialNumber')" class="btn"> <strong>Numero di serie   </strong></a></th>
+        <th> <a ng-click="order('description')" class="btn"> <strong>Descrizione   </strong></a></th>
+        <th> <a ng-click="order('thingTypeId')" class="btn"> <strong>Modello                    </strong></a></th>
+        <th> <a ng-click="order('company')" class="btn"> <strong>Company          </strong></a></th>
+        <th>Azioni        </th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="thing in things |  orderBy:predicate:reverse | filter:searchThings:strict track by $index ">
+          <td>{{thing.thingID}}</td>
+          <td>{{thing.name}}</td>
+          <td>{{thing.serialNumber}}</td>
+          <td>{{thing.description}}</td>
+          <td>{{thingTypesHash[thing.thingTypeID]}}</td>
+          <td>{{companiesHash[thing.companyID]}}</td>
+          <td> 
+            <button ui-sref="root.superAdmin.updateThing({id:thing.thingID})" class="btn btn-warning">Modifica</button>
+            <form ng-submit="deleteThing(thing.thingID)">
               <button type="submit" class="btn btn-danger">Elimina </button>
             </form>
           </td>

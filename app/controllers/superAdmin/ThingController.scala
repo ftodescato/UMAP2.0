@@ -72,11 +72,7 @@ extends Silhouette[User, JWTAuthenticator] {
 
   def updateThing (thingID : UUID) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
     request.body.validate[EditThing.Data].map { data =>
-      val companyInfo = data.company
-      companyDao.findByID(companyInfo).flatMap{
-        case Some (companyToAssign) =>
-          val thingTypeInfo = data.thingTypeID
-          thingTypeDao.findByID(thingTypeInfo).flatMap{
+          thingDao.findByID(thingID).flatMap{
             case Some(thingTypeToAssign) =>
               // var detectionInitial = Detection(
               //     sensor = "",
@@ -90,13 +86,13 @@ extends Silhouette[User, JWTAuthenticator] {
               // )
               // var listMeasurements = List(datasInitial)
               val thing2 = Thing(
-                  thingID = UUID.randomUUID(),
-                  name = data.thingName,
+                  thingID = thingTypeToAssign.thingID,
+                  name = data.name,
                   serialNumber = data.serialNumber,
                   description = data.description,
-                  thingTypeID = data.thingTypeID,
-                  companyID = data.company,
-                  datas = new ListBuffer[Measurements]
+                  thingTypeID = thingTypeToAssign.thingTypeID,
+                  companyID = thingTypeToAssign.companyID,
+                  datas = thingTypeToAssign.datas
               )
               for{
                 thing <- thingDao.update(thingID,thing2)
@@ -108,9 +104,6 @@ extends Silhouette[User, JWTAuthenticator] {
             case None =>
               Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
           }
-        case None =>
-         Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-       }
      }.recoverTotal {
         case error =>
           Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
