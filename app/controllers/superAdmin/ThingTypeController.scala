@@ -75,7 +75,7 @@ extends Silhouette[User, JWTAuthenticator] {
           }
             dataDouble = Data(
             inUse = true,
-            valuee = aux
+            infos = aux
           )
         }
         val thingType = ThingType(

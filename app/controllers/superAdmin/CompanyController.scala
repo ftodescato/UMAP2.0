@@ -10,6 +10,7 @@ import models._
 import models.Company
 import models.User
 import models.daos.user.UserDAO
+import models.daos.function.FunctionDAO
 import models.daos.company.CompanyDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -22,6 +23,7 @@ import play.api.mvc.Action
 //import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
 import scala.concurrent.Future
+import scala.collection.mutable.ListBuffer
 
 
 class CompanyController @Inject() (
@@ -31,6 +33,7 @@ class CompanyController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
   companyDao: CompanyDAO,
+  functionDao: FunctionDAO,
   userDao: UserDAO)
   extends Silhouette[User, JWTAuthenticator] {
 
@@ -71,6 +74,11 @@ class CompanyController @Inject() (
       companyDao.findByID(companyID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
         case Some (company) =>
+          var listNameFunction = new ListBuffer[String]
+          var functions = functionDao.findAll()
+          for(function <- functions)
+            for(nameFunction <- function)
+            listNameFunction += nameFunction.name
           val company2 = Company(
               companyID = company.companyID,
               companyBusinessName = data.companyBusinessName,
@@ -80,6 +88,7 @@ class CompanyController @Inject() (
               companyPIVA = data.companyPIVA,
               companyDescription = data.companyDescription,
               companyLicenseExpiration = data.companyLicenseExpiration,
+              functionAlgList = listNameFunction,
               companyName = Some(data.companyName)
           )
           for{
@@ -99,6 +108,11 @@ class CompanyController @Inject() (
   def addCompany = Action.async(parse.json) { implicit request =>
     request.body.validate[AddCompany.Data].map { data =>
       //val authInfo = passwordHasher.hash(data.password)
+      var listNameFunction = new ListBuffer[String]
+      var functions = functionDao.findAll()
+      for(function <- functions)
+        for(nameFunction <- function)
+        listNameFunction += nameFunction.name
       val company = Company(
           companyID = UUID.randomUUID(),
           companyBusinessName = data.companyBusinessName,
@@ -108,6 +122,7 @@ class CompanyController @Inject() (
           companyPIVA = data.companyPIVA,
           companyDescription = data.companyDescription,
           companyLicenseExpiration = data.companyLicenseExpiration,
+          functionAlgList = listNameFunction,
           companyName = Some(data.companyName)
       )
       for{

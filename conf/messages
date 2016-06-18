@@ -7,6 +7,7 @@ user.exists = There already exists a user with this email!
 user.notComplete = User does not complete!
 mail.notExists = Mail does not exists!
 user.notExists = User does not exists!
+parameters.notCorrect = Parameters of measurements not correct!
 measurements.notExists = Measurements does not exists!
 thing.notExists = Thing does not exists!
 thingType.notExists = ThingType does not exists!
