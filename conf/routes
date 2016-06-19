@@ -19,6 +19,7 @@ GET         /logreg                         controllers.ApplicationController.Lo
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
 PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
 PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
+PUT         /api/account/resetPasswords        controllers.shared.account.AccountController.resetPassword
 
 #ADMIN
 
@@ -37,7 +38,6 @@ GET /api/things/:id                             controllers.shared.thingType.Thi
 
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
-PUT         /api/resetPasswordsSA              controllers.shared.account.AccountController.resetPassword
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
 #POST        /api/detectionDouble/:id          controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
 

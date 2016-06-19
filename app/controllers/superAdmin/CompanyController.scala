@@ -96,7 +96,7 @@ class CompanyController @Inject() (
       }
   }
 
-  def addCompany = Action.async(parse.json) { implicit request =>
+  def addCompany = UserAwareAction.async(parse.json) { implicit request =>
     request.body.validate[AddCompany.Data].map { data =>
       //val authInfo = passwordHasher.hash(data.password)
       val company = Company(

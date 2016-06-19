@@ -42,15 +42,7 @@
     }
   });
 
-  umap.controller('UserControllerA',['$scope','UserServiceA','CompanyService','AccountService','$stateParams','$state','$window', function($scope, UserServiceA,CompanyService,AccountService, $stateParams,$state,$window) {
-    CompanyService.query().$promise.then(function(companies){
-      $scope.hash = {}
-      for (var i = 0; i < companies.length; i++) {
-        $scope.hash[companies[i].companyID] = companies[i].companyName;
-      }
-      //console.log($scope.hash['17fd5bc4-974e-4e5f-a9bc-e89128197ca2']);
-    });
-    $scope.companies = CompanyService.query();
+  umap.controller('UserControllerA',['$scope','UserServiceA','AccountService','$stateParams','$state','$window', function($scope, UserServiceA,AccountService, $stateParams,$state,$window) {
     $scope.user = {
        'name': '',
        'surname':'',
