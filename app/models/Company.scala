@@ -3,6 +3,7 @@ package models
 import java.util.UUID
 import play.api.libs.json.Json
 import java.util.Date
+import scala.collection.mutable.ListBuffer
 
 
 case class Company(
@@ -14,6 +15,7 @@ case class Company(
   companyPIVA: String,
   companyDescription: String,
   companyLicenseExpiration: Date,
+  functionAlgList: ListBuffer[String],
   companyName: Option[String]
 
    )

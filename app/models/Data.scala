@@ -8,7 +8,7 @@ import scala.collection.mutable.ListBuffer
 
 case class Data(
   inUse: Boolean,
-  valuee: ListBuffer[Info]
+  infos: ListBuffer[Info]
 )
 
 
