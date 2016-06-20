@@ -48,6 +48,7 @@ class Engine{
         result.min.toArray
     }
   }
+
   //LOGISTIC REGRESSION
   def getLogRegModel(labelList: List[Double], measureList: List[Array[Double]]) : LogRegModel ={
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
@@ -77,9 +78,12 @@ class Engine{
     val savedModel:LogRegModel = new LogRegModel(model.intercept,model.numFeatures,model.numClasses,model.weights)
     savedModel
   }
+
   def getLogRegPrediction(modello: LogRegModel, measureList: List[Array[Double]]) : Array[Double] = {
+
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
+
     val measureArray = measureList.toArray
     val vecMeasureArray = measureArray.map(Vectors.dense(_))
     val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
@@ -87,6 +91,7 @@ class Engine{
     val prediction = loadedModel.predict(test2)
     prediction.collect.toArray
   }
+
   //NAIVE BAYES
   def createModel (labelList: List[Double], measureList: List[Array[Double]]) : NaiveBayesModel ={
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
@@ -150,5 +155,16 @@ class Engine{
 
     // Ritorno Array
     arrayResult
+  }
+
+  def prediction2 (data: Array[Double], model: NaiveBayesModel): Double ={
+    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val sc = new SparkContext(configuration)
+    //Converte la lista in array e gli array all'interno in vector
+    val test = Vectors.dense(data)
+
+    //Faccio la predizione
+    val result = model.predict(test)
+    result
   }
 }
