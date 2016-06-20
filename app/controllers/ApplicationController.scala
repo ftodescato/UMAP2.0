@@ -134,6 +134,17 @@ class ApplicationController @Inject() (
     Future.successful(Ok(Json.obj("Label nel DB"->label,"Array"->predizione)))
   }
 
+  def futureV =Action.async { implicit request =>
+      val obs: Array[Double] = Array(1, 4, 2)
+      val obs2: Array[Double] = Array(2, 3, 4)
+      val obs3: Array[Double] = Array(3,2,6)
+      val obs4: Array[Double] = Array(4,1,8)
+      val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4)
+      val e = new Engine
+      val sol=e.getFuture(lista)
+      Future.successful(Ok(Json.obj("Array"->sol)))
+  }
+
   def index = UserAwareAction.async { implicit request =>
     Future.successful(Ok(Json.obj("test"->"contenuto")))
 }
