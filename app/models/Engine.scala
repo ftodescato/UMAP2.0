@@ -87,6 +87,44 @@ class Engine{
     val prediction = loadedModel.predict(test2)
     prediction.collect.toArray
   }
+  //FUTURE VALUE
+  def getFuture(lista:List[Array[Double]]):Array[Double] ={
+    val times=lista(0).length
+    var sol=Array.empty[Double]
+    var i:Int=0;
+    var a:Double=0;
+    for(i<- 0 until times){
+      a=getSingleFuture(lista,i)
+      sol=sol:+a
+    }
+    sol
+  }
+
+  def getSingleFuture(lista:List[Array[Double]],arraycol:Int):Double ={
+    val arraylength:Int =lista(0).length
+    val listlength:Int =lista.length
+    var listiterator:Int=0;
+    var sumxy:Double = 0;
+    for(listiterator <- 0 until listlength){
+      sumxy=sumxy+((lista(listiterator)(arraycol))*(listiterator+1))
+    }
+    var sumx:Double =0;
+    for(listiterator <- 1 until listlength+1){
+      sumx=sumx+listiterator
+    }
+    var sumy:Double =0;
+    for(listiterator<-0 until listlength){
+      sumy=sumy+(lista(listiterator)(arraycol))
+    }
+    var sumsqx:Double=0;
+    for(listiterator<- 1 until listlength+1){
+      sumsqx=sumsqx+(listiterator*listiterator)
+    }
+    val slope=(((listlength*sumxy)-(sumx*sumy))/((listlength*sumsqx)-(sumx*sumx)))
+    val offset=((sumy-(slope*sumx))/listlength)
+    val newvalue=((slope*(listlength+1))+offset)
+    newvalue
+  }
   //NAIVE BAYES
   def createModel (labelList: List[Double], measureList: List[Array[Double]]) : NaiveBayesModel ={
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
