@@ -10,7 +10,7 @@ case class ThingType(
   thingTypeID: UUID,
   thingTypeName: String,
   companyID: ListBuffer[UUID],
-  doubleValue: Data
+  doubleValue: DataDouble
 )
 
 

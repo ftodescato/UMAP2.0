@@ -165,11 +165,43 @@ extends Silhouette[User, JWTAuthenticator] {
                 listParametersthingType += infoThingType.name
               }
               if (!(listParametersthingType.equals(data.sensor)))
-                Future.successful(BadRequest(Json.obj("message" -> Messages("parameters.notCorrect"))))
+                {
+                  val listDD = new ListBuffer[DetectionDouble]
+                  var count: Int = 1
+                  for ((nameParameterMeasurement, valueDataSensor) <- (listParametersthingType zip data.sensor))
+                  {
+                    if(nameParameterMeasurement != valueDataSensor)
+                      {
+                        var dD = new DetectionDouble(nameParameterMeasurement, 100000000.0)
+                        listDD += dD
+                      }
+                    else{
+                      var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
+                      listDD += dD
+                    }
+                    count = count + 1
+                  }
+                      val listBufferDD = listDD.toList
+                      val measurements = Measurements(
+                          measurementsID = UUID.randomUUID(),
+                          thingID = data.thingID,
+                          dataTime = data.dataTime,
+                          sensors = listBufferDD,
+                          label = data.label
+                      )
+                      for{
+
+                        thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                        //measurements <- measurementsDao.add(measurements)
+                        } yield {
+                          Ok(Json.obj("ok" -> "ok"))
+
+                        }
+                }
               else
               {
-                val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))
-                yield new DetectionDouble(sensorName, valueName)
+                val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
+                yield new DetectionDouble(sensorName, valueDouble)
                       val measurements = Measurements(
                           measurementsID = UUID.randomUUID(),
                           thingID = data.thingID,
