@@ -6,9 +6,11 @@ import javax.inject.Inject
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.company._
+import forms.engine._
 import models._
 import models.Company
 import models.User
+import models.Function
 import models.daos.user.UserDAO
 import models.daos.function.FunctionDAO
 import models.daos.company.CompanyDAO
@@ -107,6 +109,9 @@ class CompanyController @Inject() (
 
   def addCompany = UserAwareAction.async(parse.json) { implicit request =>
     request.body.validate[AddCompany.Data].map { data =>
+      companyDao.findByName(data.companyName).flatMap{
+        case Some(company) => Future.successful(BadRequest(Json.obj("message" -> Messages("company.exists"))))
+        case None  =>
       //val authInfo = passwordHasher.hash(data.password)
       var listNameFunction = new ListBuffer[String]
       var functions = functionDao.findAll()
@@ -136,9 +141,46 @@ class CompanyController @Inject() (
           //env.eventBus.publish(LoginEvent(user, request, request2Messages))
           Ok(Json.obj("ok" -> "ok"))
         }
+      }
       }.recoverTotal {
           case error =>
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
         }
   }
+
+  def selectFunction = Action.async(parse.json) { implicit request =>
+    request.body.validate[SelectFunction.Data].map { data =>
+      companyDao.findByName(data.companyName).flatMap{
+        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+        case Some(company) =>
+          val functionList = new ListBuffer[String]
+          for( functionAlgList <- data.listFunction ){
+            functionList += functionAlgList
+          }
+          val newCompany = Company(
+              companyID = company.companyID,
+              companyBusinessName = company.companyBusinessName,
+              companyAddress = company.companyAddress,
+              companyCity = company.companyCity,
+              companyCAP = company.companyCAP,
+              companyPIVA = company.companyPIVA,
+              companyDescription = company.companyDescription,
+              companyLicenseExpiration = company.companyLicenseExpiration,
+              functionAlgList = functionList,
+              companyName = company.companyName
+          )
+          for{
+            company <- companyDao.update(company.companyID, newCompany)
+          }yield {
+            //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+            Ok(Json.obj("ok" -> "ok"))
+           }
+      }
+    }.recoverTotal {
+          case error =>
+            Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+        }
+  }
+
 }
