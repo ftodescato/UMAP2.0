@@ -6,17 +6,17 @@ import scala.collection.mutable.ListBuffer
 
 
 
-case class Data(
+case class DataDouble(
   inUse: Boolean,
-  valuee: ListBuffer[Info]
+  infos: ListBuffer[Info]
 )
 
 
-object Data {
+object DataDouble {
 
    /**
    * Converts the [Data] object to Json and vice versa.
    */
-   implicit val jsonFormatData = Json.format[Data]
+   implicit val jsonFormatData = Json.format[DataDouble]
 
  }

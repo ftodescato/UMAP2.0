@@ -1,0 +1,22 @@
+section(id="analisi" class="container-fluid" )
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.admin()") Home
+    li(class="active") Analisi Predittiva
+  h1(class="text-center page-header") Configura un'analisi predittiva
+  div(class="row")
+    div(class="col-sm-4")
+      h2 Funzioni Disponibili
+      div(ng-repeat=" item in functions track by $index")
+        span( data-jqyoui-options="{revert: true, cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.functionName}}
+        br
+    div(class="col-sm-4")
+      h2 Grafici Disponibili
+      div(ng-repeat=" item in charts track by $index")
+        span( data-jqyoui-options="{revert: true}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.chartName}}
+        br
+  div(class="row")
+    div(class="col-sm-4")
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="fun.fun") {{fun.fun.functionName}}
+    div(class="col-sm-4")
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="fun.chart") {{fun.chart.chartName}}

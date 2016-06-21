@@ -7,17 +7,17 @@
   </ul>
   <h1 class="text-center page-header">Aggiungi un nuovo utente</h1>
   <div class="row ">
-    <form ng-submit="addUser()" class="col-xs-6 col-xs-offset-3">
+    <form ng-submit="addUser()" name="myForm" class="col-xs-6 col-xs-offset-3">
       <label for="userNameInput">Nome dell'utente            </label>
-      <input type="text" id="userNameInput" ng-model="user.name" placeholder="nome" class="form-control"/><br/>
+      <input type="text" id="userNameInput" ng-model="user.name" placeholder="nome" required="" class="form-control"/><br/>
       <label for="userSurnameInput">Cognome dell'utente                    </label>
-      <input type="text" id="userSurnameInput" ng-model="user.surname" placeholder="cognome" class="form-control"/><br/>
+      <input type="text" id="userSurnameInput" ng-model="user.surname" placeholder="cognome" required="" class="form-control"/><br/>
       <label for="userEmailInput">Email dell'utente                    </label>
-      <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" class="form-control"/><br/>
+      <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" required="" class="form-control"/><br/>
       <label for="userPswInput">Password dell'utente                    </label>
-      <input type="password" id="userPswInput" ng-model="user.password" placeholder="password" class="form-control"/><br/>
+      <input type="password" id="userPswInput" ng-model="user.password" placeholder="password" required="" class="form-control"/><br/>
       <label for="userRoleInput">Ruolo dell'utente                    </label>
-      <select id="userRoleInput" ng-model="user.role" class="form-control">
+      <select id="userRoleInput" ng-model="user.role" required="" class="form-control">
         <option value="user">User</option>
         <option value="admin">Admin</option>
       </select><br/>

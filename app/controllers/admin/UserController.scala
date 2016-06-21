@@ -160,7 +160,7 @@ def updateUser(userID: UUID) = SecuredAction(WithServices("admin", true)).async(
               mailConfirmed = false,
               token = "vuoto",
               role = data.role,
-              secretString = data.secretString
+              secretString = data.password
             )
             val email = Email(
               "Password d'autenticazione",

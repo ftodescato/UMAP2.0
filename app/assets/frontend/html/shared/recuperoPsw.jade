@@ -2,12 +2,22 @@ section(id="recuperoPsw")
 ul(class="breadcrumb")
   li(class="active") Recupero Password
 h1(class="page-header text-center") Recupero Password
-h2 Inserisci la tua mail e ti verrà inviata la nuova password.
+p(class="text-center") Inserisci la tua mail e ti verrà inviata la nuova password.
 div(class="container-fluid")
   div(class="row")
-  form(ng-submit="resetRequest()" class="col-xs-6 col-xs-offset-3")
-    label(for="emailInput") Indirizzo email
-    input(type="text" id="emailInput" class="form-control" ng-model="credentials.email" placeholder="email")
-    br
-    button(type='submit' class="btn btn-success") Invia richiesta
+    form(ng-submit="resetRequest()" name="myForm" class="col-xs-6 col-xs-offset-3")
+      h2(class="text-center") {{errore}}
+      label(for="emailInput") Indirizzo email
+      input(type="text" id="emailInput" class="form-control" ng-model="credentials.email" placeholder="email" required="")
+      br
+      label(for="secretString") Frase segreta 
+      input(type="text" id="secretString" class="form-control" ng-model="credentials.secretString" placeholder="frase segreta" required="")
+      br
+      label(for="newPassword") Nuova password 
+      input(type="password" id="newPassword" class="form-control" ng-model="credentials.newPassword" placeholder="password" required="")
+      br
+      label(for="newPasswordTwo") Conferma password 
+      input(type="password" id="newPassword" class="form-control" ng-model="newPasswordTwo" placeholder="conferma password" required="")
+      br
+      button(type='submit' class="btn btn-success" ng-disabled="myForm.$invalid") Reset Password
   a(ui-sref="root") Torna al login

@@ -20,8 +20,7 @@
       <thead>
         <th> <a ng-click="order('name')" class="btn"> <strong>Nome</strong></a></th>
         <th> <a ng-click="order('surname')" class="btn"> <strong>Cognome        </strong></a></th>
-        <th> <a ng-click="order('email')" class="btn"> <strong>Email      </strong></a></th>
-        <th> <a ng-click="order('company')" class="btn"> <strong>Company           </strong></a></th>
+        <th> <a ng-click="order('email')" class="btn"> <strong>Email              </strong></a></th>
         <th> <a ng-click="order('role')" class="btn"><strong> Ruolo  </strong></a></th>
       </thead>
       <tbody>
@@ -30,7 +29,6 @@
           <td>{{user.surname}}</td>
           <td>{{user.email}}</td>
           <td>{{user.role}}</td>
-          <td>{{hash[user.company]}}</td>
           <td> 
             <button ui-sref="root.admin.updateUser({id:user.userID})" class="btn btn-warning">Modifica</button>
             <form ng-submit="deleteUser(user.userID)">

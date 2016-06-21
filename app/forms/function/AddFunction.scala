@@ -1,36 +1,26 @@
-package forms.user
+package forms.function
 
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
-import java.util.UUID
 
-/**
- * The form which handles the sign up process.
- */
-object SignUpAdmin {
+
+object AddFunction {
 
   /**
    * A play framework form.
    */
   val form = Form(
     mapping(
-      "name" -> nonEmptyText,
-      "surname" -> nonEmptyText,
-      "email" -> email,
-      "password" -> nonEmptyText,
-      "role" -> nonEmptyText
+      "functionName" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
-    name: String,
-    surname: String,
-    email: String,
-    password: String,
-    role: String
-  )
+    functionName: String
+    )
+
 
   /**
    * The companion object.
