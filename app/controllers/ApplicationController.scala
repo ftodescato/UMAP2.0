@@ -42,9 +42,11 @@ class ApplicationController @Inject() (
   def user = SecuredAction.async { implicit request =>
     Future.successful(Ok(Json.toJson(request.identity)))
   }
+  
   def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
   }
+
   def correlation = Action.async { implicit request =>
     val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
     val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
@@ -62,25 +64,25 @@ class ApplicationController @Inject() (
     Future.successful(Ok(Json.obj("Array"->aux)))
   }
 
-  def NaiveBayes (thingID: UUID) = Action.async { implicit request =>
-
-    val thingDB =thingDao.findByID(thingID)
-    val thing = Await.result(thingDB, 1 seconds)
-    val label=thingDao.findListLabel(thing.get)
-    val data=thingDao.findListArray(thing.get)
-
-    val e = new Engine
-    val model:NaiveBayesModel = e.createModel(label,data)
-
-    //val result=e.prediction(data,model)
-    //val lista : Array[Double] = Array(24, 16, 34)
-    // lista(0)=24
-    // lista(1)=16
-    // lista(2)=34
-    //println(lista)
-    //val result:Array[Double] = e.prediction2(lista,model)
-    Future.successful(Ok(Json.obj("Array"->data)))
-  }
+  // def NaiveBayes (thingID: UUID) = Action.async { implicit request =>
+  //
+  //   val thingDB =thingDao.findByID(thingID)
+  //   val thing = Await.result(thingDB, 1 seconds)
+  //   val label=thingDao.findListLabel(thing.get)
+  //   val data=thingDao.findListArray(thing.get)
+  //
+  //   val e = new Engine
+  //   val model:NaiveBayesModel = e.createModel(label,data)
+  //
+  //   //val result=e.prediction(data,model)
+  //   //val lista : Array[Double] = Array(24, 16, 34)
+  //   // lista(0)=24
+  //   // lista(1)=16
+  //   // lista(2)=34
+  //   //println(lista)
+  //   //val result:Array[Double] = e.prediction2(lista,model)
+  //   Future.successful(Ok(Json.obj("Array"->data)))
+  // }
 
   def ModelLogReg(thingID: UUID): LogRegModel ={
     // val obs: Array[Double] = Array(1.2, 2, 3)
@@ -134,15 +136,22 @@ class ApplicationController @Inject() (
     Future.successful(Ok(Json.obj("Label nel DB"->label,"Array"->predizione)))
   }
 
-  def futureV =Action.async { implicit request =>
-      val obs: Array[Double] = Array(1, 4, 2)
-      val obs2: Array[Double] = Array(2, 3, 4)
-      val obs3: Array[Double] = Array(3,2,6)
-      val obs4: Array[Double] = Array(4,1,8)
-      val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4)
+  def futureV(thingID: UUID) =Action.async { implicit request =>
+      // val obs: Array[Double] = Array(1, 4, 2)
+      // val obs2: Array[Double] = Array(2, 3, 4)
+      // val obs3: Array[Double] = Array(3,2,6)
+      // val obs4: Array[Double] = Array(4,1,8)
+
+      val thingDB =thingDao.findByID(thingID)
+      val thing = Await.result(thingDB, 3 seconds)
+      //val label=thingDao.findListLabel(thing.get)
+      val data=thingDao.findListArray(thing.get)
+
+      //val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4)
       val e = new Engine
-      val sol=e.getFuture(lista)
-      Future.successful(Ok(Json.obj("Array"->sol)))
+      val sol=e.getFuture(data)
+      Future.successful(Ok(Json.obj("Dati"->data,
+                                    "Array"->sol)))
   }
 
   def index = UserAwareAction.async { implicit request =>

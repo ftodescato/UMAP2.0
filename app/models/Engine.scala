@@ -104,7 +104,7 @@ class Engine{
       sol
     }
 
-    def getSingleFuture(lista:List[Array[Double]],arraycol:Int):Double ={
+  def getSingleFuture(lista:List[Array[Double]],arraycol:Int):Double ={
       val arraylength:Int =lista(0).length
       val listlength:Int =lista.length
       var listiterator:Int=0;
@@ -129,81 +129,80 @@ class Engine{
       val newvalue=((slope*(listlength+1))+offset)
       newvalue
     }
-
-
-  //NAIVE BAYES
-  def createModel (labelList: List[Double], measureList: List[Array[Double]]) : NaiveBayesModel ={
-    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
-    val sc = new SparkContext(configuration)
-    //Trasforma la lista di misurazioni in array e gli array al suo interno in vector
-    val measureArray = measureList.toArray
-    val vecMeasureArray = measureArray.map(Vectors.dense(_))
-
-    //Trasforma la lista di label in array
-    val labelArray = labelList.toArray
-
-    //Lunghezza degli array
-    val length2 = measureArray.length
-
-    //Creo e riempio Array di LabeledPoint per il training
-    val trainingArray = new Array[LabeledPoint](length2)
-
-    for (i <- 0 to length2-1) {
-      trainingArray(i) = new LabeledPoint(labelArray(i), vecMeasureArray(i))
-    }
-
-    //create RDD
-    val data: RDD[LabeledPoint] = sc.parallelize(trainingArray)
-
-    //Split data into training (60%) and test (40%).
-    val splits=data.randomSplit(Array(1.0, 0.0), seed = 11L) //type: Array[RDD[]]
-    val training = splits(0) //type: RDD
-
-    //Create the model
-    val model = NaiveBayes.train(training) //type: NaiveBayesModel
-    model
-  }
-
-  def prediction (measureList: List[Array[Double]], model: NaiveBayesModel): Array[Double] ={
-    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
-    val sc = new SparkContext(configuration)
-    //Converte la lista in array e gli array all'interno in vector
-    val measureArray = measureList.toArray
-    val vecMeasureArray = measureArray.map(Vectors.dense(_))
-
-    //Creo RDD di vector per la predizione
-    val test:RDD[Vector] = sc.parallelize(vecMeasureArray)
-
-    //Faccio la predizione
-    val result = model.predict(test)
-
-    //Creo un iteratore per ciclare l'RDD
-    val it = result.toLocalIterator
-
-    //Lunghezza RDD
-    val length = result.count.toInt
-
-    //Creo array per i risultati
-    val arrayResult = new Array[Double] (length)
-
-    //Salvo risultati nell'array
-    for (i <- 0 to length-1)
-    {
-      arrayResult(i)= it.next
-    }
-
-    // Ritorno Array
-    arrayResult
-  }
-
-  def prediction2 (data: Array[Double], model: NaiveBayesModel): Double ={
-    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
-    val sc = new SparkContext(configuration)
-    //Converte la lista in array e gli array all'interno in vector
-    val test = Vectors.dense(data)
-
-    //Faccio la predizione
-    val result = model.predict(test)
-    result
-  }
 }
+
+  // //NAIVE BAYES
+  // def createModel (labelList: List[Double], measureList: List[Array[Double]]) : NaiveBayesModel ={
+  //   val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+  //   val sc = new SparkContext(configuration)
+  //   //Trasforma la lista di misurazioni in array e gli array al suo interno in vector
+  //   val measureArray = measureList.toArray
+  //   val vecMeasureArray = measureArray.map(Vectors.dense(_))
+  //
+  //   //Trasforma la lista di label in array
+  //   val labelArray = labelList.toArray
+  //
+  //   //Lunghezza degli array
+  //   val length2 = measureArray.length
+  //
+  //   //Creo e riempio Array di LabeledPoint per il training
+  //   val trainingArray = new Array[LabeledPoint](length2)
+  //
+  //   for (i <- 0 to length2-1) {
+  //     trainingArray(i) = new LabeledPoint(labelArray(i), vecMeasureArray(i))
+  //   }
+  //
+  //   //create RDD
+  //   val data: RDD[LabeledPoint] = sc.parallelize(trainingArray)
+  //
+  //   //Split data into training (60%) and test (40%).
+  //   val splits=data.randomSplit(Array(1.0, 0.0), seed = 11L) //type: Array[RDD[]]
+  //   val training = splits(0) //type: RDD
+  //
+  //   //Create the model
+  //   val model = NaiveBayes.train(training) //type: NaiveBayesModel
+  //   model
+  // }
+  //
+  // def prediction (measureList: List[Array[Double]], model: NaiveBayesModel): Array[Double] ={
+  //   val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+  //   val sc = new SparkContext(configuration)
+  //   //Converte la lista in array e gli array all'interno in vector
+  //   val measureArray = measureList.toArray
+  //   val vecMeasureArray = measureArray.map(Vectors.dense(_))
+  //
+  //   //Creo RDD di vector per la predizione
+  //   val test:RDD[Vector] = sc.parallelize(vecMeasureArray)
+  //
+  //   //Faccio la predizione
+  //   val result = model.predict(test)
+  //
+  //   //Creo un iteratore per ciclare l'RDD
+  //   val it = result.toLocalIterator
+  //
+  //   //Lunghezza RDD
+  //   val length = result.count.toInt
+  //
+  //   //Creo array per i risultati
+  //   val arrayResult = new Array[Double] (length)
+  //
+  //   //Salvo risultati nell'array
+  //   for (i <- 0 to length-1)
+  //   {
+  //     arrayResult(i)= it.next
+  //   }
+  //
+  //   // Ritorno Array
+  //   arrayResult
+  // }
+  //
+  // def prediction2 (data: Array[Double], model: NaiveBayesModel): Double ={
+  //   val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+  //   val sc = new SparkContext(configuration)
+  //   //Converte la lista in array e gli array all'interno in vector
+  //   val test = Vectors.dense(data)
+  //
+  //   //Faccio la predizione
+  //   val result = model.predict(test)
+  //   result
+  // }
