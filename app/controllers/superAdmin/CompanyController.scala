@@ -12,6 +12,7 @@ import models.Company
 import models.User
 import models.Function
 import models.daos.user.UserDAO
+import models.daos.thingType.ThingTypeDAO
 import models.daos.function.FunctionDAO
 import models.daos.company.CompanyDAO
 import play.api.i18n.{ MessagesApi, Messages }
@@ -36,6 +37,7 @@ class CompanyController @Inject() (
   val env: Environment[User, JWTAuthenticator],
   companyDao: CompanyDAO,
   functionDao: FunctionDAO,
+  thingTypeDao: ThingTypeDAO,
   userDao: UserDAO)
   extends Silhouette[User, JWTAuthenticator] {
 
@@ -177,6 +179,55 @@ class CompanyController @Inject() (
             Ok(Json.obj("ok" -> "ok"))
            }
       }
+    }.recoverTotal {
+          case error =>
+            Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+        }
+  }
+
+  def selectDataFromThingType = Action.async(parse.json) { implicit request =>
+    request.body.validate[SelectData.Data].map { data =>
+      thingTypeDao.findByName(data.thingTypeName).flatMap{
+        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
+        case Some(thingType) =>
+          val dataList = new ListBuffer[String]
+          for( thingTypeDate <- data.listData ){
+            dataList += thingTypeDate
+          }
+          var count = 1
+          var listDataTT = thingType.doubleValue.infos
+          var newListDataTT = new ListBuffer[Info]
+          for (allData <- listDataTT)
+          {
+            if (!(dataList.contains(allData)))
+              {
+                var name = listDataTT(count).name
+                var newInfo = new Info(name, false)
+                newListDataTT += newInfo
+              }
+              count = count + 1
+          }
+          var dataDouble = DataDouble(
+          inUse = true,
+          infos = listDataTT
+          )
+          val newThingType = ThingType(
+            thingTypeID = thingType.thingTypeID,
+            thingTypeName = thingType.thingTypeName,
+            companyID = thingType.companyID,
+            doubleValue = dataDouble
+            // valuesString = null,
+            // valuesFloat = null,
+            // valuesDouble = null
+          )
+        for{
+          thingType <- thingTypeDao.update(thingType.thingTypeID, newThingType)
+        }yield {
+          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+          Ok(Json.obj("ok" -> "ok"))
+         }
+        }
     }.recoverTotal {
           case error =>
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
