@@ -14,12 +14,17 @@ GET         /corr                           controllers.ApplicationController.co
 GET         /sumstat/:mv                    controllers.ApplicationController.sumStatistic(mv:String)
 GET         /NB                             controllers.ApplicationController.NaiveBayes
 GET         /logreg                         controllers.ApplicationController.LogReg
-
+#DEV
+POST  /api/functions  controllers.superAdmin.FunctionController.addFunction
 #ACCOUNT
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
 PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
 PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
 PUT         /api/account/resetPasswords        controllers.shared.account.AccountController.resetPassword
+
+#ADMIN+SUPERADMIN
+POST        /api/engine/functions                        controllers.superAdmin.CompanyController.selectFunction
+GET        /api/engine/functions                        controllers.superAdmin.FunctionController.showFunctions
 
 #ADMIN
 

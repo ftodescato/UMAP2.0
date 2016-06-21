@@ -152,7 +152,7 @@ class CompanyController @Inject() (
 
   def selectFunction = Action.async(parse.json) { implicit request =>
     request.body.validate[SelectFunction.Data].map { data =>
-      companyDao.findByName(data.companyName).flatMap{
+      companyDao.findByID(data.companyID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
         case Some(company) =>
           val functionList = new ListBuffer[String]

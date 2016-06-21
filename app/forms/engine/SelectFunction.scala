@@ -5,6 +5,7 @@ import play.api.data.Forms._
 import play.api.libs.json.Json
 //import scala.collection.mutable.ListBuffer
 
+import java.util.UUID
 
 object SelectFunction {
 
@@ -13,14 +14,14 @@ object SelectFunction {
    */
   val form = Form(
     mapping(
-      "companyName" -> nonEmptyText,
+      "companyID" -> uuid,
       "listFunction" -> list(text)
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
-    companyName: String,
+    companyID: UUID,
     listFunction: List[String]
     )
 
