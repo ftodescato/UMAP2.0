@@ -1,0 +1,25 @@
+section(id="companiesList" class="container-fluid")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li(class="active") Gestione Engine
+  h1(class="page-header text-center") Gestione Engine
+  div(class="row")
+    div(class="col-xs-6 col-xs-offset-3 text-center") 
+      h2 Scegli una Company 
+      label(for="CompanyInput" ) Company selezionata                 
+      select( class="form-control" id="CompanyInput" ng-model="info.companyID")
+        option(ng-repeat="company in companies"  value="{{company.companyID}}") {{company.companyName}}
+  div(class="row")
+    div(class="col-sm-6 text-center") 
+      h2 Funzioni Disponibili 
+      div(ng-repeat=" fun in functions track by $index")
+        span {{fun.name}}
+          input(type="checkbox" ng-model="funSelected[$index]") 
+  div(class="row")
+    div(class="col-sm-6 text-center") 
+      h2 Funzioni In Uso dalla Company 
+      div(ng-repeat=" fun in companyInUse.functionAlgList track by $index")
+        span {{fun.name}}
+  form(ng-submit="send()")
+    button(class="btn btn-success" type="submit") manda

@@ -36,10 +36,7 @@
   });
   umap.controller('AccountController',['AccountService','CompanyService','$scope','$state',function(AccountService,CompanyService,$scope,$state){
     AccountService.Profile.get().$promise.then(function(account){
-      CompanyService.get({id: account.company}).$promise.then(function(company){
-        $scope.account = account;
-        $scope.company = company.companyName;
-      });
+      $scope.account = account;
     });
     $scope.editUser = function(){
       AccountService.Profile.update({}, $scope.account, function(){
@@ -48,16 +45,19 @@
     }
   }]);
   umap.controller('AccountControllerPsw',['AccountService','$scope','$state',function(AccountService,$scope,$state){
-    $scope.newPassword = {"newPassword":''};
-    $scope.newPasswordTwo = {"newPassword":''};
+    $scope.newPasswordTwo = '';
     $scope.errore = '';
+    $scope.infos = {
+      newPassword : '',
+      newsecretString : ''
+    }
     $scope.editPsw = function (){
-      if($scope.newPasswordTwo.newPassword !== $scope.newPassword.newPassword){
+      if($scope.newPasswordTwo !== $scope.infos.newPassword){
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        AccountService.Password.update({}, $scope.newPassword, function(){
-          $state.go('root')
+        AccountService.Password.update({}, $scope.infos, function(){
+          $state.go('root',{reload: true});
         });
       }
     }

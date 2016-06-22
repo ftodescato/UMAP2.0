@@ -100,14 +100,19 @@ class AccountController @Inject() (
              case None =>
                Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
              case Some(psw) =>
+             if(user.secretString == data.newSecretString){
              var authInfo = passwordHasher.hash(data.newPassword)
              userDao.confirmedMail(user)
 
                for{
+
                  authInfo <- passwordInfoDao.update(loginInfo, authInfo)
                }yield {
                  Ok(Json.obj("token" -> "ok"))
-                }
+               }
+             }else
+             Future.successful(BadRequest(Json.obj("message" -> Messages("secretString.notCorrect"))))
+
            }
      }
    }.recoverTotal {
@@ -115,14 +120,7 @@ class AccountController @Inject() (
        Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
      }
  }
- //
- // val random = new scala.util.Random
- //
- // def randomString(alphabet: String)(n: Int): String =
- //   Stream.continually(random.nextInt(alphabet.size)).map(alphabet).take(n).mkString
- //
- // def randomAlphanumericString(n: Int) =
- //   randomString("abcdefghijklmnopqrstuvwxyz0123456789")(n)
+
 
  def resetPassword = Action.async(parse.json) { implicit request =>
    request.body.validate[ResetPassword.Data].map { data =>

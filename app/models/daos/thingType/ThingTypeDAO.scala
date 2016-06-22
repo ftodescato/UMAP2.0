@@ -11,6 +11,7 @@ import scala.concurrent.Future
  */
 trait ThingTypeDAO {
 
+  def findByName(thingTypeName: String): Future[Option[ThingType]]
 
   def findAll(): Future[List[ThingType]]
 

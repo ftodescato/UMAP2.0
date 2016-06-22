@@ -36776,7 +36776,7 @@ app.provider('Flash', function() {
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ngFlash','ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.login','umap.admin','umap.admin.user','umap.admin.analisi','umap.adminUser.thingTypes','umap.adminUser.things','umap.user']);
+  var umap = angular.module('umap', ['ngFlash','ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.superAdmin.engine','umap.login','umap.admin','umap.admin.user','umap.admin.analisi','umap.adminUser.thingTypes','umap.adminUser.things','umap.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   $urlRouterProvider.otherwise('/');
@@ -36930,10 +36930,7 @@ app.provider('Flash', function() {
   });
   umap.controller('AccountController',['AccountService','CompanyService','$scope','$state',function(AccountService,CompanyService,$scope,$state){
     AccountService.Profile.get().$promise.then(function(account){
-      CompanyService.get({id: account.company}).$promise.then(function(company){
-        $scope.account = account;
-        $scope.company = company.companyName;
-      });
+      $scope.account = account;
     });
     $scope.editUser = function(){
       AccountService.Profile.update({}, $scope.account, function(){
@@ -36942,16 +36939,19 @@ app.provider('Flash', function() {
     }
   }]);
   umap.controller('AccountControllerPsw',['AccountService','$scope','$state',function(AccountService,$scope,$state){
-    $scope.newPassword = {"newPassword":''};
-    $scope.newPasswordTwo = {"newPassword":''};
+    $scope.newPasswordTwo = '';
     $scope.errore = '';
+    $scope.infos = {
+      newPassword : '',
+      newsecretString : ''
+    }
     $scope.editPsw = function (){
-      if($scope.newPasswordTwo.newPassword !== $scope.newPassword.newPassword){
+      if($scope.newPasswordTwo !== $scope.infos.newPassword){
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        AccountService.Password.update({}, $scope.newPassword, function(){
-          $state.go('root')
+        AccountService.Password.update({}, $scope.infos, function(){
+          $state.go('root',{reload: true});
         });
       }
     }
@@ -37424,6 +37424,73 @@ app.provider('Flash', function() {
         $state.go('root.superAdmin.companies')
       });
     }
+  }]);
+})();
+
+(function(){
+  'use strict';
+  var umap = angular.module('umap.superAdmin.engine',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.superAdmin.engine', {
+      url: '/engine',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/engine/index.html',
+              controller:  'EngineController'
+            }
+        }
+    });
+    $stateProvider.state('root.superAdmin.engine.functions', {
+      url: '/functions',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/engine/functions.html',
+              controller:  'EngineFunctionsController'
+            }
+        }
+    });
+}]);
+  umap.factory('FunctionsService', function($resource) {
+    return {
+      Functions: $resource('/api/engine/functions/:id',{id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      })
+    }
+  });
+  umap.controller('EngineController',['$scope', function($scope){
+
+  }]);
+  umap.controller('EngineFunctionsController',['$scope','$state','CompanyService','FunctionsService', function($scope,$state, CompanyService, FunctionsService){
+    $scope.info = {
+      companyID: '',
+      listFunction: []
+    }
+    $scope.funSelected = [];
+    CompanyService.query().$promise.then(function(companies){
+      $scope.hash = {}
+      for (var i = 0; i < companies.length; i++) {
+        $scope.hash[companies[i].companyID] = companies[i];
+      }
+      $scope.companies = companies;
+      $scope.companyInUse = $scope.hash[$scope.info.companyID];
+
+    });
+    FunctionsService.Functions.query().$promise.then(function(functions){
+      $scope.functions = functions;
+    });
+    $scope.send = function ( ){
+      $scope.info.listFunction = [];
+      for (var i = 0; i < $scope.funSelected.length; i++) {
+        if($scope.funSelected[i])
+          $scope.info.listFunction.push($scope.functions[i].name);
+      }
+      FunctionsService.Functions.save($scope.info, function(){
+        $state.go('root.superAdmin.engine')
+      });
+      console.log($scope.info);
+    };
   }]);
 })();
 

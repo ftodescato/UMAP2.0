@@ -10,17 +10,24 @@ GET         /signOut                           controllers.ApplicationController
 POST        /test                              controllers.ApplicationController.test
 POST        /signIn                            controllers.shared.AuthController.authenticate
 GET         /api/getrole                       controllers.shared.AuthController.getRole
+
 GET         /corr                              controllers.ApplicationController.correlation
 GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
 #GET         /NB/:id                            controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
 GET         /logreg/:id                        controllers.ApplicationController.LogReg(id: java.util.UUID)
 GET         /futureV/:id                           controllers.ApplicationController.futureV(id: java.util.UUID)
 
+POST  /api/functions  controllers.superAdmin.FunctionController.addFunction
+
 #ACCOUNT
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
 PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
 PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
 PUT         /api/account/resetPasswords        controllers.shared.account.AccountController.resetPassword
+
+#ADMIN+SUPERADMIN
+POST        /api/engine/functions                        controllers.superAdmin.CompanyController.selectFunction
+GET        /api/engine/functions                        controllers.superAdmin.FunctionController.showFunctions
 
 #ADMIN
 
