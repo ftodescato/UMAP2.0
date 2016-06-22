@@ -2,7 +2,7 @@ package controllers.shared.thingType
 
 import java.util.UUID
 import javax.inject.Inject
-import models.Data
+import models.DataDouble
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator

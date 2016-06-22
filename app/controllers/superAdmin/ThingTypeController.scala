@@ -2,7 +2,7 @@ package controllers.superAdmin
 
 import java.util.UUID
 import javax.inject.Inject
-import models.Data
+import models.DataDouble
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
@@ -67,15 +67,15 @@ extends Silhouette[User, JWTAuthenticator] {
         for( companyID <- data.company ){
           companyIDList += companyID
         }
-        var dataDouble: Data = null
+        var dataDouble: DataDouble = null
         if (data.listQty(0) > 0){
           var aux = new ListBuffer[Info]()//mettere per Info col bool
           for( names <- data.listDoubleValue ){
               aux+= new Info(name = names, visible = true);
           }
-            dataDouble = Data(
+            dataDouble = DataDouble(
             inUse = true,
-            valuee = aux
+            infos = aux
           )
         }
         val thingType = ThingType(

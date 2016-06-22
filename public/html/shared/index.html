@@ -1,17 +1,16 @@
 
-<section id="index">
+<section id="index" class="container-fluid">
   <ul class="breadcrumb">
     <li class="active">Login</li>
   </ul>
   <h1 class="page-header text-center">Autenticazione</h1>
-  <div class="container-fluid">
-    <div class="row"></div>
+  <div class="row">
     <form ng-submit="login()" class="col-xs-6 col-xs-offset-3">
       <label for="emailInput">Indirizzo email</label>
       <input type="text" id="emailInput" ng-model="credentials.email" placeholder="email" class="form-control"/><br/>
       <label for="passwordInput"> Password</label>
       <input type="password" id="PasswordInput" ng-model="credentials.password" placeholder="password" class="form-control"/><br/>
       <button type="submit" class="btn btn-success">Log in</button>
-    </form><a href="#">Recupero Password</a>
-  </div>
+    </form>
+  </div><a ui-sref="root.resetPsw" class="pull-right">Recupero Password</a>
 </section>

@@ -21,10 +21,7 @@ section(id="userList" class="container-fluid" )
             strong Cognome        
         th 
           a(class="btn" ng-click="order('email')") 
-            strong Email      
-        th 
-          a(class="btn" ng-click="order('company')") 
-            strong Company           
+            strong Email              
         th 
           a(class="btn" ng-click="order('role')")
             strong  Ruolo  
@@ -34,7 +31,6 @@ section(id="userList" class="container-fluid" )
           td {{user.surname}}
           td {{user.email}}
           td {{user.role}}
-          td {{hash[user.company]}}
           td 
             button(class="btn btn-warning" ui-sref="root.admin.updateUser({id:user.userID})") Modifica
             form(ng-submit="deleteUser(user.userID)")

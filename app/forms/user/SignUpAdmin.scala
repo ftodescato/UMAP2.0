@@ -19,8 +19,7 @@ object SignUpAdmin {
       "surname" -> nonEmptyText,
       "email" -> email,
       "password" -> nonEmptyText,
-      "role" -> nonEmptyText,
-      "secretString" ->nonEmptyText
+      "role" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
@@ -30,8 +29,8 @@ object SignUpAdmin {
     surname: String,
     email: String,
     password: String,
-    role: String,
-    secretString: String)
+    role: String
+  )
 
   /**
    * The companion object.

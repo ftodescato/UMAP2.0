@@ -1,20 +1,21 @@
 package models.daos.company
 
-import java.util.UUID
-
-import models.Company
-
-import scala.collection.mutable
-import scala.concurrent.Future
-
 import javax.inject.Inject
+
 import play.api.libs.json._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 import reactivemongo.api._
 
 import play.modules.reactivemongo.json._
 import play.modules.reactivemongo.json.collection._
+
+import scala.collection.mutable
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import models.Company
+
+import java.util.UUID
 
 /**
  * Give access to the company object.
@@ -40,16 +41,17 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
     collection.find(Json.obj("companyID" -> companyID)).one[Company]
   }
   def checkExistence(companyIDs: List[UUID]): Future[Boolean] = {
-    var esiste = true;
-    var inutile = true;
+    var exist = true;
+    var aux = true;
     for( companyID <- companyIDs ){
       this.findByID(companyID).flatMap{
-        case None => Future.successful(esiste = false)
-        case Some(company) => Future.successful(inutile = true)
+        case None => Future.successful(exist = false)
+        case Some(company) => Future.successful(aux = true)
       }
     }
-    Future.successful(esiste)
+    Future.successful(exist)
   }
+
   def save(company: Company) = {
     collection.insert(company)
     Future.successful(company)

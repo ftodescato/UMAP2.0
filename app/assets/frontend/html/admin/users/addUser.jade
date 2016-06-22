@@ -7,22 +7,22 @@ section(id="users" class="container-fluid")
     li(class="active") Nuovo utente
   h1(class="text-center page-header") Aggiungi un nuovo utente
   div(class="row ")
-    form(ng-submit="addUser()" class="col-xs-6 col-xs-offset-3")
+    form(ng-submit="addUser()" name="myForm" class="col-xs-6 col-xs-offset-3")
       label(for="userNameInput" ) Nome dell'utente            
-      input(type="text" id="userNameInput" class="form-control" ng-model="user.name" placeholder="nome")
+      input(type="text" id="userNameInput" class="form-control" ng-model="user.name" placeholder="nome" required="")
       br
       label(for="userSurnameInput" ) Cognome dell'utente                    
-      input(type="text" id="userSurnameInput" class="form-control" ng-model="user.surname" placeholder="cognome")
+      input(type="text" id="userSurnameInput" class="form-control" ng-model="user.surname" placeholder="cognome" required="")
       br
       label(for="userEmailInput" ) Email dell'utente                    
-      input(type="text" class="form-control" id="userEmailInput" ng-model="user.email" placeholder="email")
+      input(type="text" class="form-control" id="userEmailInput" ng-model="user.email" placeholder="email" required="")
       br
       label(for="userPswInput" ) Password dell'utente                    
-      input(type="password" id="userPswInput" class="form-control" ng-model="user.password" placeholder="password")
+      input(type="password" id="userPswInput" class="form-control" ng-model="user.password" placeholder="password" required="")
       br
       label(for="userRoleInput" ) Ruolo dell'utente                    
-      select( class="form-control" id="userRoleInput" ng-model="user.role")
+      select( class="form-control" id="userRoleInput" ng-model="user.role" required="")
         option(value="user") User
         option(value="admin") Admin
       br
-      button(type='submit' class="btn btn-success") Aggiungi
+      button(type='submit' class="btn btn-success" ) Aggiungi

@@ -16,10 +16,17 @@ GET         /sumstat/:mv                       controllers.ApplicationController
 GET         /logreg/:id                        controllers.ApplicationController.LogReg(id: java.util.UUID)
 GET         /futureV/:id                           controllers.ApplicationController.futureV(id: java.util.UUID)
 
+
+POST  /api/functions  controllers.superAdmin.FunctionController.addFunction
 #ACCOUNT
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
 PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
 PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
+PUT         /api/account/resetPasswords        controllers.shared.account.AccountController.resetPassword
+
+#ADMIN+SUPERADMIN
+POST        /api/engine/functions                        controllers.superAdmin.CompanyController.selectFunction
+GET        /api/engine/functions                        controllers.superAdmin.FunctionController.showFunctions
 
 #ADMIN
 
@@ -38,7 +45,6 @@ GET /api/things/:id                             controllers.shared.thingType.Thi
 
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
-PUT         /api/resetPasswordsSA              controllers.shared.account.AccountController.resetPassword
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
 #POST        /api/addNewMeasurements            controllers.superAdmin.ThingController.addNewMeasurements
 #POST        /api/detectionDouble/:id          controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)

@@ -18,7 +18,7 @@ object AddCompany {
       "companyCAP" -> nonEmptyText,
       "companyPIVA" -> nonEmptyText,
       "companyDescription" -> nonEmptyText,
-      "companyLicenseExpiration" -> date,
+      "companyLicenseExpiration" -> date("yyyy-MM-dd"),
       "companyName" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )

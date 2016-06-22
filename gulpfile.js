@@ -8,9 +8,11 @@ gulp.task('js', function () {
 //  'vendor/bower_components/jquery/dist/jquery.min.js',
   'vendor/bower_components/angular/angular.js',
   'vendor/bower_components/angular-ui-router/release/angular-ui-router.js',
-  'vendor/bower_components/satellizer/satellizer.js',
   'vendor/bower_components/angular-resource/angular-resource.js',
   'vendor/bower_components/angular-cookies/angular-cookies.js',
+  'vendor/bower_components/angular-dragdrop/src/angular-dragdrop.min.js',
+  'vendor/bower_components/jquery-ui/jquery-ui.min.js',
+  'vendor/bower_components/angular-flash-alert/src/angular-flash.js',
   'app/assets/frontend/javascript/**/*.js'])
     .pipe(concat('public/js/main.js'))
     .pipe(gulp.dest('.'))
