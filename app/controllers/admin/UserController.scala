@@ -51,7 +51,6 @@ class UserController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-
   def showUsers = SecuredAction(WithServices("admin", true)).async{ implicit request =>
    val users = userDao.findByIDCompany(request.identity.company)
    users.flatMap{

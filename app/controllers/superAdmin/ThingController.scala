@@ -181,18 +181,6 @@ extends Silhouette[User, JWTAuthenticator] {
                         var dD = new DetectionDouble(nameParameterMeasurement, 1000000.0)
                         listDD += dD
                       }
-                    // else{
-                    //   var dD = new DetectionDouble(nameParameterMeasurement, valueDataSensor)
-                    //   listDD += dD
-                    //   // var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
-                    //   // listDD += dD
-                    //   //  if(lengthDataSensor > count)
-                    //   //    {boolean = true}
-                    //   //  else{
-                    //   //    boolean = false
-                    //   //  }
-                    //
-                    // }
                   }
                       val listBufferDD = listDD.toList
                       val measurements = Measurements(
