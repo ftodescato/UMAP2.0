@@ -2,7 +2,7 @@ package models
 
 import java.util.UUID
 import play.api.libs.json.Json
-
+import scala.collection.mutable.ListBuffer
 /**
  * The chart object.
  *
@@ -18,8 +18,6 @@ case class Chart(
   thingID: Option[UUID],
   thingTypeID: Option[UUID],
   infoDataName: ListBuffer[String]
-  var risultati =Array.empty[Double]
-  risultati:+"funzione dell'engine"
 )
 
 
