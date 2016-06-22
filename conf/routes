@@ -10,10 +10,11 @@ GET         /signOut                           controllers.ApplicationController
 POST        /test                              controllers.ApplicationController.test
 POST        /signIn                            controllers.shared.AuthController.authenticate
 GET         /api/getrole                       controllers.shared.AuthController.getRole
-GET         /corr                           controllers.ApplicationController.correlation
-GET         /sumstat/:mv                    controllers.ApplicationController.sumStatistic(mv:String)
-GET         /NB                             controllers.ApplicationController.NaiveBayes
-GET         /logreg                         controllers.ApplicationController.LogReg
+GET         /corr                              controllers.ApplicationController.correlation
+GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
+#GET         /NB/:id                            controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
+GET         /logreg/:id                        controllers.ApplicationController.LogReg(id: java.util.UUID)
+GET         /futureV/:id                           controllers.ApplicationController.futureV(id: java.util.UUID)
 
 #ACCOUNT
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
@@ -39,6 +40,7 @@ GET /api/things/:id                             controllers.shared.thingType.Thi
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
+#POST        /api/addNewMeasurements            controllers.superAdmin.ThingController.addNewMeasurements
 #POST        /api/detectionDouble/:id          controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
 
 

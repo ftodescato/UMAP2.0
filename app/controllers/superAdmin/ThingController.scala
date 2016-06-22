@@ -11,6 +11,7 @@ import models.Thing
 import models.User
 import models.DetectionDouble
 import models.Measurements
+import models.Engine
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
@@ -21,6 +22,8 @@ import play.api.libs.json.Json
 import play.api.mvc.Action
 import scala.collection.mutable.ListBuffer
 
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 //import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 //import com.mohiva.play.silhouette.api.services.AvatarService
@@ -28,7 +31,7 @@ import scala.collection.mutable.ListBuffer
 //import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
 import scala.concurrent.Future
-
+import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 
 class ThingController @Inject() (
   //authInfoRepository: AuthInfoRepository,
@@ -152,7 +155,8 @@ extends Silhouette[User, JWTAuthenticator] {
   }
 
   def addMeasurements = Action.async(parse.json) { implicit request =>
-    request.body.validate[AddMeasurement.Data].map { data =>
+    request.body.validate[AddMeasurement.Data].map {
+      data =>
       val thingInfo = data.thingID
       thingDao.findByID(thingInfo).flatMap{
         case Some(thingToAssign) =>
@@ -190,6 +194,17 @@ extends Silhouette[User, JWTAuthenticator] {
                           label = data.label
                       )
                       for{
+        val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))
+        yield new DetectionDouble(sensorName, valueName)
+              val measurements = Measurements(
+                  measurementsID = UUID.randomUUID(),
+                  thingID = data.thingID,
+                  dataTime = data.dataTime,
+                  sensors = listDD,
+                  label = data.label
+
+              )
+              for{
 
                         thing <- thingDao.updateMeasurements(thingInfo, measurements)
                         //measurements <- measurementsDao.add(measurements)
@@ -229,6 +244,50 @@ extends Silhouette[User, JWTAuthenticator] {
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
       }
   }
+
+// def addNewMeasurements = Action.async(parse.json) { implicit request =>
+//     request.body.validate[AddMeasurement.Data].map {
+//       data =>
+//       val thingInfo = data.thingID
+//       thingDao.findByID(thingInfo).flatMap{
+//         case Some(thingToAssign) =>
+//         val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))
+//         yield new DetectionDouble(sensorName, valueName)
+//
+//               val thingDB =thingDao.findByID(data.thingID)
+//               val thing = Await.result(thingDB, 1 seconds)
+//               val label=thingDao.findListLabel(thing.get)
+//               var dataModel=thingDao.findListArray(thing.get)
+//
+//               val e = new Engine
+//               val model:NaiveBayesModel = e.createModel(label,dataModel)
+//
+//               val dataPrediction = data.value.toArray
+//
+//               val measurements = Measurements(
+//                   measurementsID = UUID.randomUUID(),
+//                   thingID = data.thingID,
+//                   dataTime = data.dataTime,
+//                   sensors = listDD,
+//                   label = e.prediction2(dataPrediction, model)
+//
+//               )
+//               for{
+//
+//                 thing <- thingDao.updateMeasurements(thingInfo, measurements)
+//                 //measurements <- measurementsDao.add(measurements)
+//                 } yield {
+//                   Ok(Json.obj("ok" -> "ok"))
+//
+//                 }
+//         case None =>
+//           Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+//       }
+//     }.recoverTotal {
+//           case error =>
+//             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+//       }
+//   }
 
   // def addDetectionDouble(thingID: UUID) = Action.async(parse.json) { implicit request =>
   //   request.body.validate[AddDetectionDouble.Data].map { data =>
