@@ -18,13 +18,13 @@ import play.api.libs.json.Json
  */
 case class Notification(
   notificationID: UUID,
-  notificationDescription: Option[String],
+  notificationDescription: String,
   emailUser: String,
   inputType: String,
-  thingTypeID: Option[UUID],
-  thingID: Option[UUID],
-  valMin: Option[Double],
-  valMax: Option[Double]
+  thingTypeID: UUID,
+  thingID: UUID,
+  valMin: Double,
+  valMax: Double
    )
 
 

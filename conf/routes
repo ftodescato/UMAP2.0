@@ -10,24 +10,26 @@ GET         /signOut                           controllers.ApplicationController
 POST        /test                              controllers.ApplicationController.test
 POST        /signIn                            controllers.shared.AuthController.authenticate
 GET         /api/getrole                       controllers.shared.AuthController.getRole
-GET         /corr                           controllers.ApplicationController.correlation
-GET         /sumstat/:mv                    controllers.ApplicationController.sumStatistic(mv:String)
-GET         /NB                             controllers.ApplicationController.NaiveBayes
-GET         /logreg                         controllers.ApplicationController.LogReg
+GET         /corr                              controllers.ApplicationController.correlation
+GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
+GET         /NB                                controllers.ApplicationController.NaiveBayes
+GET         /logreg                            controllers.ApplicationController.LogReg
+
 #DEV
-POST  /api/functions  controllers.superAdmin.FunctionController.addFunction
+POST        /api/functions                     controllers.superAdmin.FunctionController.addFunction
+
 #ACCOUNT
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
 PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
 PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
 PUT         /api/account/resetPasswords        controllers.shared.account.AccountController.resetPassword
+POST        /api/notifications/:id             controllers.shared.account.AccountController.addNotification(id: java.util.UUID)
 
 #ADMIN+SUPERADMIN
-POST        /api/engine/functions                        controllers.superAdmin.CompanyController.selectFunction
-GET        /api/engine/functions                        controllers.superAdmin.FunctionController.showFunctions
+POST        /api/engine/functions              controllers.superAdmin.CompanyController.selectFunction
+GET         /api/engine/functions              controllers.superAdmin.FunctionController.showFunctions
 
 #ADMIN
-
 GET         /api/usersA/:id                    controllers.admin.UserController.showUserDetails(id: java.util.UUID)
 GET         /api/usersA                        controllers.admin.UserController.showUsers
 POST        /api/usersA                        controllers.admin.UserController.addUser
@@ -36,16 +38,16 @@ DELETE      /api/usersA/:id                    controllers.admin.UserController.
 POST        /api/chartA/                       controllers.admin.UserController.addChart
 
 # ADMIN+USER
+GET         /api/thingTypes                    controllers.shared.thingType.ThingTypeController.showThingType
+GET         /api/thingTypes/:id                controllers.shared.thingType.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
+GET         /api/things                        controllers.shared.thingType.ThingTypeController.showThings
+GET         /api/things/:id                    controllers.shared.thingType.ThingTypeController.showThingDetails(id: java.util.UUID)
 
-GET /api/thingTypes                            controllers.shared.thingType.ThingTypeController.showThingType
-GET /api/thingTypes/:id                        controllers.shared.thingType.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
-GET /api/things                                controllers.shared.thingType.ThingTypeController.showThings
-GET /api/things/:id                             controllers.shared.thingType.ThingTypeController.showThingDetails(id: java.util.UUID)
 
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
-#POST        /api/detectionDouble/:id          controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
+#POST       /api/detectionDouble/:id           controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
 
 
 GET         /api/thingsSA/:id                  controllers.superAdmin.ThingController.showThingDetails(id: java.util.UUID)
@@ -54,7 +56,7 @@ POST        /api/thingsSA                      controllers.superAdmin.ThingContr
 PUT         /api/thingsSA/:id                  controllers.superAdmin.ThingController.updateThing(id: java.util.UUID)
 DELETE      /api/thingsSA/:id                  controllers.superAdmin.ThingController.delete(id: java.util.UUID)
 
-GET         /api/thingTypesSA/:id                  controllers.superAdmin.ThingTypeController.showThingTypeDetails(id : java.util.UUID)
+GET         /api/thingTypesSA/:id              controllers.superAdmin.ThingTypeController.showThingTypeDetails(id : java.util.UUID)
 GET         /api/thingTypesSA                  controllers.superAdmin.ThingTypeController.showThingType
 POST        /api/thingTypesSA                  controllers.superAdmin.ThingTypeController.addThingType
 PUT         /api/thingTypesSA/:id              controllers.superAdmin.ThingTypeController.updateThingType(id: java.util.UUID)
@@ -73,7 +75,7 @@ PUT         /api/companiesSA/:id               controllers.superAdmin.CompanyCon
 DELETE      /api/companiesSA/:id               controllers.superAdmin.CompanyController.delete(id: java.util.UUID)
 
 # Dynamic part of the url
-#GET         /views/$template<.+>.html       controllers.ApplicationController.view(template)
+#GET        /views/$template<.+>.html          controllers.ApplicationController.view(template)
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                    controllers.Assets.at(path="/public", file)
+GET         /assets/*file                      controllers.Assets.at(path="/public", file)
