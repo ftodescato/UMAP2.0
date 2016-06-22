@@ -14,10 +14,11 @@ import play.api.libs.json.Json
  */
 case class Chart(
   chartID: UUID,
-  chartName: String,
+  functionName: String,
   thingID: Option[UUID],
-  thingTypeID: Option[UUID]
-   )
+  thingTypeID: Option[UUID],
+  infoDataName: ListBuffer[String]
+)
 
 
 /**
