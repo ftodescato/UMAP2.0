@@ -42,7 +42,7 @@ class ApplicationController @Inject() (
   def user = SecuredAction.async { implicit request =>
     Future.successful(Ok(Json.toJson(request.identity)))
   }
-  
+
   def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
   }
@@ -64,26 +64,6 @@ class ApplicationController @Inject() (
     Future.successful(Ok(Json.obj("Array"->aux)))
   }
 
-  // def NaiveBayes (thingID: UUID) = Action.async { implicit request =>
-  //
-  //   val thingDB =thingDao.findByID(thingID)
-  //   val thing = Await.result(thingDB, 1 seconds)
-  //   val label=thingDao.findListLabel(thing.get)
-  //   val data=thingDao.findListArray(thing.get)
-  //
-  //   val e = new Engine
-  //   val model:NaiveBayesModel = e.createModel(label,data)
-  //
-  //   //val result=e.prediction(data,model)
-  //   //val lista : Array[Double] = Array(24, 16, 34)
-  //   // lista(0)=24
-  //   // lista(1)=16
-  //   // lista(2)=34
-  //   //println(lista)
-  //   //val result:Array[Double] = e.prediction2(lista,model)
-  //   Future.successful(Ok(Json.obj("Array"->data)))
-  // }
-
   def ModelLogReg(thingID: UUID): LogRegModel ={
     // val obs: Array[Double] = Array(1.2, 2, 3)
     // val obs2: Array[Double] = Array(0, 1, 0)
@@ -103,38 +83,50 @@ class ApplicationController @Inject() (
     modello
   }
 
-  def LogReg(thingID: UUID) = Action.async { implicit request =>
-    // val obs: Array[Double] = Array(1.6, 2.1, 3)
-    // val obs2: Array[Double] = Array(0, 1, 0)
-    // val obs3: Array[Double] = Array(3.6,5.9,6.7)
-    // val obs4: Array[Double] = Array(1.2, 2.5, 3)
-    // val obs5: Array[Double] = Array(0.3, 1.1, 0.1)
-    // val obs6: Array[Double] = Array(3.7,5.6,6.6)
-    // val obs7: Array[Double] = Array(1.2, 2, 3)
-    // val obs8: Array[Double] = Array(0.1, 1, 0.1)
-    // val obs9: Array[Double] = Array(3.6,5.9,6.7)
-    //
-    // val obs10: Array[Double] = Array(1.6, 2.1, 3)
-    // val obs11: Array[Double] = Array(0, 1, 0)
-    // val obs12: Array[Double] = Array(3.6,5.9,6.6)
-    // val obs13: Array[Double] = Array(1.2, 2.6, 3.1)
-    // val obs14: Array[Double] = Array(0.3, 1.1, 0.1)
-    // val obs15: Array[Double] = Array(3.7,5.6,6.6)
-    // val obs16: Array[Double] = Array(1.2, 2, 3.2)
-    // val obs17: Array[Double] = Array(0.2, 1.2, 0.1)
-    // val obs18: Array[Double] = Array(3.6,5.8,6.9)
-    // val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4,obs5,obs6,obs7,obs8,obs9,obs10,obs11,obs12,obs13,obs14,obs15,obs16,obs17,obs18)
+  def LogReg(thingID: UUID, data: Array[Double]) = Action.async { implicit request =>
 
     val thingDB =thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 3 seconds)
     val label=thingDao.findListLabel(thing.get)
-    val data=thingDao.findListArray(thing.get)
-
-    val e = new Engine
-    val modello:LogRegModel = ModelLogReg(thingID)
-    val predizione:Array[Double] = e.getLogRegPrediction(modello,data)
-    Future.successful(Ok(Json.obj("Label nel DB"->label,"Array"->predizione)))
+    // val data=thingDao.findListArray(thing.get)
+    //
+    // val e = new Engine
+    // val modello:LogRegModel = ModelLogReg(thingID)
+    // val predizione = e.getLogRegPrediction(modello,data)
+    Future.successful(Ok(Json.obj("Label nel DB"->label)))
   }
+  // def LogReg(thingID: UUID) = Action.async { implicit request =>
+  //   // val obs: Array[Double] = Array(1.6, 2.1, 3)
+  //   // val obs2: Array[Double] = Array(0, 1, 0)
+  //   // val obs3: Array[Double] = Array(3.6,5.9,6.7)
+  //   // val obs4: Array[Double] = Array(1.2, 2.5, 3)
+  //   // val obs5: Array[Double] = Array(0.3, 1.1, 0.1)
+  //   // val obs6: Array[Double] = Array(3.7,5.6,6.6)
+  //   // val obs7: Array[Double] = Array(1.2, 2, 3)
+  //   // val obs8: Array[Double] = Array(0.1, 1, 0.1)
+  //   // val obs9: Array[Double] = Array(3.6,5.9,6.7)
+  //   //
+  //   // val obs10: Array[Double] = Array(1.6, 2.1, 3)
+  //   // val obs11: Array[Double] = Array(0, 1, 0)
+  //   // val obs12: Array[Double] = Array(3.6,5.9,6.6)
+  //   // val obs13: Array[Double] = Array(1.2, 2.6, 3.1)
+  //   // val obs14: Array[Double] = Array(0.3, 1.1, 0.1)
+  //   // val obs15: Array[Double] = Array(3.7,5.6,6.6)
+  //   // val obs16: Array[Double] = Array(1.2, 2, 3.2)
+  //   // val obs17: Array[Double] = Array(0.2, 1.2, 0.1)
+  //   // val obs18: Array[Double] = Array(3.6,5.8,6.9)
+  //   // val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4,obs5,obs6,obs7,obs8,obs9,obs10,obs11,obs12,obs13,obs14,obs15,obs16,obs17,obs18)
+  //
+  //   val thingDB =thingDao.findByID(thingID)
+  //   val thing = Await.result(thingDB, 3 seconds)
+  //   val label=thingDao.findListLabel(thing.get)
+  //   val data=thingDao.findListArray(thing.get)
+  //
+  //   val e = new Engine
+  //   val modello:LogRegModel = ModelLogReg(thingID)
+  //   val predizione = e.getLogRegPrediction(modello,data)
+  //   Future.successful(Ok(Json.obj("Label nel DB"->label,"Array"->predizione)))
+  // }
 
   def futureV(thingID: UUID) =Action.async { implicit request =>
       // val obs: Array[Double] = Array(1, 4, 2)
