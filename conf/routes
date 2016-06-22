@@ -33,6 +33,7 @@ GET         /api/usersA                        controllers.admin.UserController.
 POST        /api/usersA                        controllers.admin.UserController.addUser
 PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
 DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
+POST        /api/chartA/                       controllers.admin.UserController.addChart
 
 # ADMIN+USER
 

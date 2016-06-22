@@ -19,7 +19,7 @@ trait ChartDAO {
    */
 
 
-  def find(chartName: String): Future[Option[Chart]]
+  def findByID(chartID: UUID): Future[Option[Chart]]
   def findAll(): Future[List[Chart]]
 
   /**

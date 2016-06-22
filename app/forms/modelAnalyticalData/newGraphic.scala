@@ -1,4 +1,4 @@
-package forms.modelAnalyticData
+package forms.modelAnalyticalData
 
 import play.api.data.Form
 import play.api.data.Forms._
@@ -16,7 +16,8 @@ object newGraphic {
     mapping(
       "functionName" -> nonEmptyText,
       "objectID" -> uuid,
-      "datas" -> list(uuid)
+      "thingOrModel" -> nonEmptyText,
+      "datas" -> list(text)
     )(Data.apply)(Data.unapply)
   )
 
@@ -24,7 +25,8 @@ object newGraphic {
   case class Data(
     functionName: String,
     objectID: UUID,
-    datas: List[UUID]
+    thingOrModel: String,
+    datas: List[String]
     )
 
 
