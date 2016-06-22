@@ -167,30 +167,32 @@ extends Silhouette[User, JWTAuthenticator] {
               if (!(listParametersthingType.equals(data.sensor)))
                 {
                   val listDD = new ListBuffer[DetectionDouble]
-                  var count: Int = 1
-                  var boolean = true
-                  var valueDataSensor = "vuota"
-                  var lengthDataSensor = data.sensor.length
-                  for (nameParameterMeasurement <- listParametersthingType; valueDataSensor <- data.sensor if boolean == true)
+                  var count: Int = 0
+                  var dataSensor = data.sensor
+                  for (nameParameterMeasurement <- listParametersthingType)
                   {
-                    if(boolean==false)
-                      valueDataSensor = nameParameterMeasurement
-                    if(nameParameterMeasurement != valueDataSensor)
+                    if(dataSensor.contains(nameParameterMeasurement))
                       {
-                        var dD = new DetectionDouble(nameParameterMeasurement, 100000000.0)
+                        var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
                         listDD += dD
-                        boolean = false
+                        count = count + 1
                       }
-                    else{
-                      var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
-                      listDD += dD
-                      if(lengthDataSensor > count)
-                        {boolean = true}
                       else{
-                        boolean = false
+                        var dD = new DetectionDouble(nameParameterMeasurement, 1000000.0)
+                        listDD += dD
                       }
-                      count = count + 1
-                    }
+                    // else{
+                    //   var dD = new DetectionDouble(nameParameterMeasurement, valueDataSensor)
+                    //   listDD += dD
+                    //   // var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
+                    //   // listDD += dD
+                    //   //  if(lengthDataSensor > count)
+                    //   //    {boolean = true}
+                    //   //  else{
+                    //   //    boolean = false
+                    //   //  }
+                    //
+                    // }
                   }
                       val listBufferDD = listDD.toList
                       val measurements = Measurements(
