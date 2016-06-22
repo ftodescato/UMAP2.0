@@ -18,6 +18,8 @@ case class Chart(
   thingID: Option[UUID],
   thingTypeID: Option[UUID],
   infoDataName: ListBuffer[String]
+  var risultati =Array.empty[Double]
+  risultati:+"funzione dell'engine"
 )
 
 
@@ -30,5 +32,4 @@ object Chart {
    * Converts the [Chart] object to Json and vice versa.
    */
   implicit val jsonFormatChart = Json.format[Chart]
-
 }
