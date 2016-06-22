@@ -42,15 +42,16 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
   }
   def checkExistence(companyIDs: List[UUID]): Future[Boolean] = {
     var exist = true;
-    var inutile = true;
+    var aux = true;
     for( companyID <- companyIDs ){
       this.findByID(companyID).flatMap{
         case None => Future.successful(exist = false)
-        case Some(company) => Future.successful(inutile = true)
+        case Some(company) => Future.successful(aux = true)
       }
     }
     Future.successful(exist)
   }
+
   def save(company: Company) = {
     collection.insert(company)
     Future.successful(company)
