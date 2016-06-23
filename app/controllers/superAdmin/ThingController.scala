@@ -245,56 +245,149 @@ extends Silhouette[User, JWTAuthenticator] {
       }
   }
 
-def addNewMeasurements = Action.async(parse.json) { implicit request =>
-    request.body.validate[AddNewMeasurement.Data].map {
+//da sistemare in modo tale che la label venga calcolata automaticamente
+//richiamando le funzioni di logistic regression su engine
+  def addNewMeasurements = Action.async(parse.json) { implicit request =>
+    request.body.validate[AddMeasurement.Data].map {
       data =>
       val thingInfo = data.thingID
       thingDao.findByID(thingInfo).flatMap{
         case Some(thingToAssign) =>
+        thingTypeDao.findByID(thingToAssign.thingTypeID).flatMap{
+          case Some(thingType) =>
+            var dataThingType = thingType.doubleValue
+            var listParametersthingType = new ListBuffer[String]
+            for(infoThingType <- dataThingType.infos)
+              {
+                listParametersthingType += infoThingType.name
+              }
+              if (!(listParametersthingType.equals(data.sensor)))
+                {
+                  val listDD = new ListBuffer[DetectionDouble]
+                  var count: Int = 1
+                  for ((nameParameterMeasurement, valueDataSensor) <- (listParametersthingType zip data.sensor))
+                  {
+                    if(nameParameterMeasurement != valueDataSensor)
+                      {
+                        var dD = new DetectionDouble(nameParameterMeasurement, 100000000.0)
+                        listDD += dD
+                      }
+                    else{
+                      var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
+                      listDD += dD
+                    }
+                    count = count + 1
+                  }
+                      val listBufferDD = listDD.toList
+                      val measurements = Measurements(
+                          measurementsID = UUID.randomUUID(),
+                          thingID = data.thingID,
+                          dataTime = data.dataTime,
+                          sensors = listBufferDD,
+                          label = data.label
+                      )
+                      for{
         val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))
         yield new DetectionDouble(sensorName, valueName)
-              //
-              // val thingDB =thingDao.findByID(data.thingID)
-              // val thing = Await.result(thingDB, 1 seconds)
-              // val label=thingDao.findListLabel(thing.get)
-              // var dataModel=thingDao.findListArray(thing.get)
-
-              //val e = new Engine
-              //val model:NaiveBayesModel = e.createModel(label,dataModel)
-            val thingDB =thingDao.findByID(thingInfo)
-            val thing = Await.result(thingDB, 1 seconds)
-            val label=thingDao.findListLabel(thing.get)
-            val data=thingDao.findListArray(thing.get)
-
-            val e = new Engine
-            val modello:LogRegModel = e.getLogRegModel(label,data)
-
-            val dataPrediction = data.value.toArray
-
-            val measurements = Measurements(
+              val measurements = Measurements(
                   measurementsID = UUID.randomUUID(),
                   thingID = data.thingID,
                   dataTime = data.dataTime,
                   sensors = listDD,
-                  label = e.getLogRegPrediction(modello, dataPrediction)
+                  label = data.label
 
               )
               for{
 
-                thing <- thingDao.updateMeasurements(thingInfo, measurements)
-                //measurements <- measurementsDao.add(measurements)
-                } yield {
-                  Ok(Json.obj("ok" -> "ok"))
+                        thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                        //measurements <- measurementsDao.add(measurements)
+                        } yield {
+                          Ok(Json.obj("ok" -> "ok"))
 
+                        }
                 }
+              else
+              {
+                val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
+                yield new DetectionDouble(sensorName, valueDouble)
+                      val measurements = Measurements(
+                          measurementsID = UUID.randomUUID(),
+                          thingID = data.thingID,
+                          dataTime = data.dataTime,
+                          sensors = listDD,
+                          label = data.label
+                      )
+                      for{
+
+                        thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                        //measurements <- measurementsDao.add(measurements)
+                        } yield {
+                          Ok(Json.obj("ok" -> "ok"))
+
+                        }
+              }
+          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
+
+        }
         case None =>
-          Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       }
     }.recoverTotal {
           case error =>
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
       }
   }
+
+// def addNewMeasurements = Action.async(parse.json) { implicit request =>
+//     request.body.validate[AddNewMeasurement.Data].map {
+//       data =>
+//       val thingInfo = data.thingID
+//       thingDao.findByID(thingInfo).flatMap{
+//         case Some(thingToAssign) =>
+//         val listDD = for((sensorName, valueName) <- (data.sensor zip data.value))
+//         yield new DetectionDouble(sensorName, valueName)
+//               //
+//               // val thingDB =thingDao.findByID(data.thingID)
+//               // val thing = Await.result(thingDB, 1 seconds)
+//               // val label=thingDao.findListLabel(thing.get)
+//               // var dataModel=thingDao.findListArray(thing.get)
+//
+//               //val e = new Engine
+//               //val model:NaiveBayesModel = e.createModel(label,dataModel)
+//             val thingDB =thingDao.findByID(thingInfo)
+//             val thing = Await.result(thingDB, 1 seconds)
+//             val label=thingDao.findListLabel(thing.get)
+//             val data=thingDao.findListArray(thing.get)
+//
+//             val e = new Engine
+//             val modello:LogRegModel = e.getLogRegModel(label,data)
+//
+//             val dataPrediction = data.value.toArray
+//
+//             val measurements = Measurements(
+//                   measurementsID = UUID.randomUUID(),
+//                   thingID = data.thingID,
+//                   dataTime = data.dataTime,
+//                   sensors = listDD,
+//                   label = e.getLogRegPrediction(modello, dataPrediction)
+//
+//               )
+//               for{
+//
+//                 thing <- thingDao.updateMeasurements(thingInfo, measurements)
+//                 //measurements <- measurementsDao.add(measurements)
+//                 } yield {
+//                   Ok(Json.obj("ok" -> "ok"))
+//
+//                 }
+//         case None =>
+//           Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+//       }
+//     }.recoverTotal {
+//           case error =>
+//             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+//       }
+//   }
 
   // def addDetectionDouble(thingID: UUID) = Action.async(parse.json) { implicit request =>
   //   request.body.validate[AddDetectionDouble.Data].map { data =>

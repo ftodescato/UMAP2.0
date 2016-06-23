@@ -93,7 +93,7 @@ class Engine{
   //   prediction.collect.toArray
   // }
 
-//classifica l'array in input e ritorna la label risultato
+//classifica l'array in input (uno solo) e ritorna la label risultato
   def getLogRegPrediction(modello: LogRegModel, data: Array[Double]) : Double = {
 
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
@@ -102,7 +102,7 @@ class Engine{
     //val vecMeasureArray = measureArray.map(Vectors.dense(_))
     //val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
     val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(modello.getWeights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
-    val prediction = loadedModel.predict(data)
+    val prediction = loadedModel.predict(data) //la predict può prendere un input anche un Vector, non è necessario l'RDD
     prediction
   }
 

@@ -64,6 +64,7 @@ class ApplicationController @Inject() (
     Future.successful(Ok(Json.obj("Array"->aux)))
   }
 
+
   def ModelLogReg(thingID: UUID): LogRegModel ={
     // val obs: Array[Double] = Array(1.2, 2, 3)
     // val obs2: Array[Double] = Array(0, 1, 0)
