@@ -22,9 +22,10 @@ import models.daos._
 import models.daos.user._
 import models.daos.password._
 import models.daos.company._
+import models.daos.chart._
 import models.daos.thing._
 import models.daos.function._
-// import models.daos.measurements._
+import models.daos.notification._
 import models.daos.thingType._
 
 import models.services.{ UserService, UserServiceImpl }
@@ -67,7 +68,8 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[ThingDAO].to[ThingDAOImpl]
     bind[ThingTypeDAO].to[ThingTypeDAOImpl]
     bind[FunctionDAO].to[FunctionDAOImpl]
-    // bind[MeasurementsDAO].to[MeasurementsDAOImpl]
+    bind[NotificationDAO].to[NotificationDAOImpl]
+    bind[ChartDAO].to[ChartDAOImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]

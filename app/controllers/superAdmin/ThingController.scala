@@ -167,19 +167,20 @@ extends Silhouette[User, JWTAuthenticator] {
               if (!(listParametersthingType.equals(data.sensor)))
                 {
                   val listDD = new ListBuffer[DetectionDouble]
-                  var count: Int = 1
-                  for ((nameParameterMeasurement, valueDataSensor) <- (listParametersthingType zip data.sensor))
+                  var count: Int = 0
+                  var dataSensor = data.sensor
+                  for (nameParameterMeasurement <- listParametersthingType)
                   {
-                    if(nameParameterMeasurement != valueDataSensor)
+                    if(dataSensor.contains(nameParameterMeasurement))
                       {
-                        var dD = new DetectionDouble(nameParameterMeasurement, 100000000.0)
+                        var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
+                        listDD += dD
+                        count = count + 1
+                      }
+                      else{
+                        var dD = new DetectionDouble(nameParameterMeasurement, 1000000.0)
                         listDD += dD
                       }
-                    else{
-                      var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
-                      listDD += dD
-                    }
-                    count = count + 1
                   }
                       val listBufferDD = listDD.toList
                       val measurements = Measurements(
