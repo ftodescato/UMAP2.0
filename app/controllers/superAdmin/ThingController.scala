@@ -15,23 +15,20 @@ import models.Engine
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
-// import models.daos.measurements.MeasurementsDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
-import scala.collection.mutable.ListBuffer
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
+import scala.collection.mutable.ListBuffer
+import scala.concurrent.Future
+
 
 //import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 //import com.mohiva.play.silhouette.api.services.AvatarService
 //import com.mohiva.play.silhouette.api.util.PasswordHasher
 //import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
-import scala.concurrent.Future
-import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 
 class ThingController @Inject() (
   //authInfoRepository: AuthInfoRepository,
@@ -41,7 +38,6 @@ class ThingController @Inject() (
   val env: Environment[User, JWTAuthenticator],
   thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
-  // measurementsDao: MeasurementsDAO,
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
@@ -77,17 +73,6 @@ extends Silhouette[User, JWTAuthenticator] {
     request.body.validate[EditThing.Data].map { data =>
           thingDao.findByID(thingID).flatMap{
             case Some(thingTypeToAssign) =>
-              // var detectionInitial = Detection(
-              //     sensor = "",
-              //     value = 0
-              // )
-              // var listDetectionInitial = List(detectionInitial)
-              // var datasInitial = Measurements(
-              //   dataTime = null,
-              //   sensors = listDetectionInitial,
-              //   healty = false
-              // )
-              // var listMeasurements = List(datasInitial)
               val thing2 = Thing(
                   thingID = thingTypeToAssign.thingID,
                   name = data.name,

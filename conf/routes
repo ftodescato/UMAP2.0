@@ -25,7 +25,7 @@ GET         /api/account                       controllers.shared.account.Accoun
 PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
 PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
 PUT         /api/account/resetPasswords        controllers.shared.account.AccountController.resetPassword
-POST        /api/notifications/:id             controllers.shared.account.AccountController.addNotification(id: java.util.UUID)
+POST        /api/notifications/:id             controllers.shared.NotificationController.addNotification(id: java.util.UUID)
 
 #ADMIN+SUPERADMIN
 POST        /api/engine/functions              controllers.superAdmin.CompanyController.selectFunction
@@ -37,7 +37,8 @@ GET         /api/usersA                        controllers.admin.UserController.
 POST        /api/usersA                        controllers.admin.UserController.addUser
 PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
 DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
-POST        /api/chartA/                       controllers.admin.UserController.addChart
+POST        /api/chartA/                       controllers.admin.ChartController.addChart
+POST        /api/engine/functions              controllers.admin.FunctionController.selectFunction
 
 # ADMIN+USER
 GET         /api/thingTypes                    controllers.shared.thingType.ThingTypeController.showThingType
