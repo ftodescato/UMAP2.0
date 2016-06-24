@@ -39,18 +39,14 @@
       listFunction: []
     }
     $scope.infoC = [];
-    $scope.funSelected = [true, false, true];
     $scope.selected ;
-    $scope.aux;
     CompanyService.query().$promise.then(function(companies){
       $scope.hash = {}
-      $scope.funAvailable = {};
       for (var i = 0; i < companies.length; i++) {
         $scope.infoC.push({companyID: companies[i].companyID, functions:[]});
         $scope.hash[companies[i].companyID] = companies[i];
       }
       $scope.companies = companies;
-      $scope.companyInUse = companies[0];
     });
     FunctionsService.Functions.query().$promise.then(function(functions){
       $scope.functions = functions
@@ -72,7 +68,6 @@
         if($scope.infoC[$scope.selected].functions[i].inUse)
           $scope.info.listFunction.push($scope.infoC[$scope.selected].functions[i].name);
       }
-      console.log($scope.info);
       FunctionsService.Functions.save($scope.info, function(){
         $state.go('root.superAdmin.engine')
       });

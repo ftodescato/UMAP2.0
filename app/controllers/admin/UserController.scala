@@ -67,6 +67,13 @@ class UserController @Inject() (
       Future.successful(Ok(Json.toJson(users)))
     }
   }
+  def getMyCompany = SecuredAction(WithServices("admin", true)).async{ implicit request =>
+    val company = companyDao.findByID(request.identity.company)
+    company.flatMap{
+     company =>
+      Future.successful(Ok(Json.toJson(company)))
+    }
+  }
 
   //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
   def showUsersBySurname(userSurname: String) = SecuredAction(WithServices("admin", true)).async{ implicit request =>

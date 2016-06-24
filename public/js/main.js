@@ -36776,7 +36776,7 @@ app.provider('Flash', function() {
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ngFlash','ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.superAdmin.engine','umap.login','umap.admin','umap.admin.user','umap.admin.analisi','umap.adminUser.thingTypes','umap.adminUser.things','umap.user']);
+  var umap = angular.module('umap', ['ngFlash','ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.superAdmin.engine','umap.login','umap.admin','umap.admin.user','umap.admin.analisi','umap.admin.engine','umap.adminUser.thingTypes','umap.adminUser.things','umap.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   $urlRouterProvider.otherwise('/');
@@ -37010,6 +37010,61 @@ app.provider('Flash', function() {
     $scope.test = function(stuff, stuff2, obj){
       console.log('$scope.drop = '+$scope.drop);
     }
+  }]);
+})();
+
+(function(){
+  'use strict';
+  var umap = angular.module('umap.admin.engine',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.engine', {
+      url: '/engine',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/engine/functions.html',
+              controller:  'EngineFunctionsController'
+            }
+        }
+    });
+}]);
+umap.factory('MyCompanyService', function($resource) {
+  return  $resource('/api/getMyCompany/:id',{id: "@id", isArray: false},{
+    query: {
+          method: 'GET',
+          isArray: false
+        }
+    })
+});
+
+  umap.controller('EngineFunctionsController',['$scope','$state','FunctionsService','MyCompanyService', function($scope,$state, FunctionsService, MyCompanyService){
+    $scope.info = {
+      listFunction: []
+    }
+    $scope.infoC = [];
+      MyCompanyService.query().$promise.then(function(company){
+        $scope.infoC = company.functionAlgList;
+      });
+
+    FunctionsService.Functions.query().$promise.then(function(functions){
+      for (var j = 0; j < functions.length; j++) {
+        if($scope.infoC.indexOf(functions[j].name) != -1)
+          $scope.info.listFunction.push({name:functions[j].name, inUse: true});
+        else
+          $scope.info.listFunction.push({name:functions[j].name, inUse: false});
+      }
+    });
+    $scope.send = function ( ){
+      $scope.payload = {
+        listFunction : []
+      };
+      for (var i = 0; i < $scope.info.listFunction.length; i++) {
+        if($scope.info.listFunction[i].inUse)
+          $scope.payload.listFunction.push($scope.info.listFunction[i].name);
+      }/*
+      FunctionsService.Functions.save($scope.payload, function(){
+        $state.go('root.admin.engine')
+      });*/
+    };
   }]);
 })();
 
@@ -37468,18 +37523,14 @@ app.provider('Flash', function() {
       listFunction: []
     }
     $scope.infoC = [];
-    $scope.funSelected = [true, false, true];
     $scope.selected ;
-    $scope.aux;
     CompanyService.query().$promise.then(function(companies){
       $scope.hash = {}
-      $scope.funAvailable = {};
       for (var i = 0; i < companies.length; i++) {
         $scope.infoC.push({companyID: companies[i].companyID, functions:[]});
         $scope.hash[companies[i].companyID] = companies[i];
       }
       $scope.companies = companies;
-      $scope.companyInUse = companies[0];
     });
     FunctionsService.Functions.query().$promise.then(function(functions){
       $scope.functions = functions
@@ -37501,7 +37552,6 @@ app.provider('Flash', function() {
         if($scope.infoC[$scope.selected].functions[i].inUse)
           $scope.info.listFunction.push($scope.infoC[$scope.selected].functions[i].name);
       }
-      console.log($scope.info);
       FunctionsService.Functions.save($scope.info, function(){
         $state.go('root.superAdmin.engine')
       });
