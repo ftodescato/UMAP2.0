@@ -1,32 +1,31 @@
-package forms.modelAnalyticalData
+package forms.notification
 
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+import play.api.data.format.Formats._
 
-import java.util.UUID
 
-
-object newGraphic {
+object EditNotification {
 
   /**
    * A play framework form.
    */
   val form = Form(
     mapping(
-      "functionName" -> nonEmptyText,
-      "objectID" -> uuid,
-      "thingOrModel" -> nonEmptyText,
-      "datas" -> list(text)
+      "description" -> nonEmptyText,
+      "parameter" -> nonEmptyText,
+      "minValue" -> of(doubleFormat),
+      "maxValue" -> of(doubleFormat)
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
-    functionName: String,
-    objectID: UUID,
-    thingOrModel: String,
-    datas: List[String]
+    description: String,
+    parameter: String,
+    minValue: Double,
+    maxValue: Double
     )
 
 

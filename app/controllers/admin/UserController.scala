@@ -14,14 +14,17 @@ import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
 import forms.user._
+import forms.modelAnalyticalData._
 
 import models._
 import models.services._
 import models.daos.user._
+import models.daos.chart._
 import models.daos.password._
 import models.daos.company._
 import models.User
 import models.Company
+import models.Chart
 
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -29,6 +32,8 @@ import play.api.libs.json.Json
 import play.api.mvc.Action
 
 import scala.concurrent.Future
+import scala.collection.mutable.ListBuffer
+
 
 
 class UserController @Inject() (
@@ -36,6 +41,7 @@ class UserController @Inject() (
   val env: Environment[User, JWTAuthenticator],
   mailer: MailerClient,
   userService: UserService,
+  chartDao: ChartDAO,
   userDao: UserDAO,
   companyDao: CompanyDAO,
   passwordInfoDao: PasswordInfoDAO,
@@ -43,7 +49,6 @@ class UserController @Inject() (
   avatarService: AvatarService,
   passwordHasher: PasswordHasher)
   extends Silhouette[User, JWTAuthenticator] {
-
 
 
   def showUsers = SecuredAction(WithServices("admin", true)).async{ implicit request =>
@@ -184,4 +189,57 @@ def updateUser(userID: UUID) = SecuredAction(WithServices("admin", true)).async(
         Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
     }
   }
+
+
+  def addChart = Action.async(parse.json) { implicit request =>
+    request.body.validate[newGraphic.Data].map { data =>
+      var dataList = new ListBuffer[String]
+      for(nameData <- data.datas){
+        dataList += nameData
+      }
+      if(data.thingOrModel == "Oggetto")
+        {val chart = Chart(
+          chartID = UUID.randomUUID(),
+          functionName = data.functionName,
+          thingID = data.objectID,
+          thingTypeID = null,
+          infoDataName = dataList
+        )
+        for{
+          chart <- chartDao.save(chart)
+          //user <- userService.save(user.copy(avatarURL = avatar))
+          //authInfo <- authInfoRepository.add(loginInfo, authInfo)
+          //authenticator <- env.authenticatorService.create(loginInfo)
+          //token <- env.authenticatorService.init(authenticator)
+        } yield {
+            //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+            Ok(Json.obj("ok" -> "ok"))
+          }
+        }
+      else{
+        val chart = Chart(
+          chartID = UUID.randomUUID(),
+          functionName = data.functionName,
+          thingID = null,
+          thingTypeID = data.objectID,
+          infoDataName = dataList
+        )
+        for{
+          chart <- chartDao.save(chart)
+          //user <- userService.save(user.copy(avatarURL = avatar))
+          //authInfo <- authInfoRepository.add(loginInfo, authInfo)
+          //authenticator <- env.authenticatorService.create(loginInfo)
+          //token <- env.authenticatorService.init(authenticator)
+        } yield {
+            //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+            //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+            Ok(Json.obj("ok" -> "ok"))
+          }
+      }
+    }.recoverTotal {
+        case error =>
+          Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+      }
+    }
 }

@@ -9,22 +9,16 @@
     <div class="col-xs-6 col-xs-offset-3 text-center"> 
       <h2>Scegli una Company </h2>
       <label for="CompanyInput">Company selezionata                 </label>
-      <select id="CompanyInput" ng-model="info.companyID" class="form-control">
-        <option ng-repeat="company in companies" value="{{company.companyID}}">{{company.companyName}}</option>
+      <select id="CompanyInput" ng-model="selected" class="form-control">
+        <option ng-repeat="company in companies" value="{{$index}}">{{company.companyName}}</option>
       </select>
     </div>
   </div>
   <div class="row">
     <div class="col-sm-6 text-center"> 
       <h2>Funzioni Disponibili </h2>
-      <div ng-repeat=" fun in functions track by $index"><span>{{fun.name}}
-          <input type="checkbox" ng-model="funSelected[$index]"/></span></div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-6 text-center"> 
-      <h2>Funzioni In Uso dalla Company </h2>
-      <div ng-repeat=" fun in companyInUse.functionAlgList track by $index"><span>{{fun.name}}</span></div>
+      <div ng-repeat=" fun in infoC[selected].functions track by $index"><span>{{fun.name}}
+          <input type="checkbox" ng-model="fun.inUse"/></span></div>
     </div>
   </div>
   <form ng-submit="send()">

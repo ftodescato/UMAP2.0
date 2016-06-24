@@ -29,8 +29,8 @@ class ChartDAOImpl @Inject() (db : DB) extends ChartDAO {
    * @param chartName The name of the chart to find.
    * @return The found chart or None if no chart for the given name could be found.
    */
-  def find(chartName: String): Future[Option[Chart]] = {
-    collection.find(Json.obj("chartName" -> chartName)).one[Chart]
+  def findByID(chartID: UUID): Future[Option[Chart]] = {
+    collection.find(Json.obj("chartID" -> chartID)).one[Chart]
   }
 
   def findAll(): Future[List[Chart]] = {

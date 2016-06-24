@@ -3,6 +3,7 @@ package models
 import java.util.UUID
 import play.api.libs.json.Json
 import scala.collection.mutable.ListBuffer
+
 /**
  * The chart object.
  *
@@ -15,11 +16,12 @@ import scala.collection.mutable.ListBuffer
 case class Chart(
   chartID: UUID,
   functionName: String,
-  thingID: Option[UUID],
-  thingTypeID: Option[UUID],
+  thingID: UUID,
+  thingTypeID: UUID,
   infoDataName: ListBuffer[String]
-)
+  //risultati: Array[Double]
 
+)
 
 /**
  * The companion object.
