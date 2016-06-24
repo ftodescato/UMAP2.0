@@ -45,10 +45,10 @@ umap.factory('MyCompanyService', function($resource) {
       for (var i = 0; i < $scope.info.listFunction.length; i++) {
         if($scope.info.listFunction[i].inUse)
           $scope.payload.listFunction.push($scope.info.listFunction[i].name);
-      }/*
-      FunctionsService.Functions.save($scope.payload, function(){
-        $state.go('root.admin.engine')
-      });*/
+      }
+      FunctionsService.Admin.save($scope.payload, function(){
+        $state.go('root.admin')
+      });
     };
   }]);
 })();

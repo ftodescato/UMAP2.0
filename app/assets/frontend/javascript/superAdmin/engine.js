@@ -27,6 +27,11 @@
         update: {
           method: 'PUT' // this method issues a PUT request
         }
+      }),
+      Admin: $resource('/api/engineA/functions/:id', {id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
       })
     }
   });

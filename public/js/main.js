@@ -37060,10 +37060,10 @@ umap.factory('MyCompanyService', function($resource) {
       for (var i = 0; i < $scope.info.listFunction.length; i++) {
         if($scope.info.listFunction[i].inUse)
           $scope.payload.listFunction.push($scope.info.listFunction[i].name);
-      }/*
-      FunctionsService.Functions.save($scope.payload, function(){
-        $state.go('root.admin.engine')
-      });*/
+      }
+      FunctionsService.Admin.save($scope.payload, function(){
+        $state.go('root.admin')
+      });
     };
   }]);
 })();
@@ -37508,6 +37508,11 @@ umap.factory('MyCompanyService', function($resource) {
   umap.factory('FunctionsService', function($resource) {
     return {
       Functions: $resource('/api/engine/functions/:id',{id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      }),
+      Admin: $resource('/api/engineA/functions/:id', {id: "@id"},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }

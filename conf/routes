@@ -39,7 +39,7 @@ DELETE      /api/usersA/:id                    controllers.admin.UserController.
 GET /api/getMyCompany controllers.admin.UserController.getMyCompany
 
 POST        /api/chartA/                       controllers.admin.ChartController.addChart
-POST        /api/engine/functions              controllers.admin.FunctionController.selectFunction
+POST        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
 
 # ADMIN+USER
 GET         /api/thingTypes                    controllers.shared.thingType.ThingTypeController.showThingType
