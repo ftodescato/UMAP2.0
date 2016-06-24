@@ -199,7 +199,7 @@ def updateUser(userID: UUID) = SecuredAction(WithServices("admin", true)).async(
 
 
   def addChart = Action.async(parse.json) { implicit request =>
-    request.body.validate[newGraphic.Data].map { data =>
+    request.body.validate[NewChart.Data].map { data =>
       var dataList = new ListBuffer[String]
       for(nameData <- data.datas){
         dataList += nameData

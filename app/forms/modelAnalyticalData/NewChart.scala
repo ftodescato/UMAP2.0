@@ -7,7 +7,7 @@ import play.api.libs.json.Json
 import java.util.UUID
 
 
-object newGraphic {
+object NewChart {
 
   /**
    * A play framework form.
