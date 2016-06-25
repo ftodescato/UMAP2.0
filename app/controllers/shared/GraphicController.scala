@@ -47,14 +47,14 @@ class GraphicController @Inject() (
       chart.flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
         case Some (chart) =>
-          val thing = thingDaoByID.find(chartID)
+          val thing = thingDao.findByID(chartID)
           thing.flatMap{
             case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
             case Some (thing) =>
               var listMeasurement = thing.datas
               for(measurement <- listMeasurement)
               {
-                val
+                valueX += measurement.dataTime
                   for(sensors <- measurement.sensors)
                   {
                     if(sensors.sensor == chart.infoDataName){
@@ -62,15 +62,17 @@ class GraphicController @Inject() (
                     }
                   }
               }
+              val listArray = new ListBuffer[Array]
+              val functionName = chart.functionName
+              functionName match {
+                case "Media" => {
+                  engine.sumStatistic( ,"Mean")
+
+
+                }
           }
 
-          val functionName = chart.functionName
-          functionName match {
-            case "Media" => {
-              engine.sumStatistic( ,"Mean")
 
-
-            }
 
           }
 
