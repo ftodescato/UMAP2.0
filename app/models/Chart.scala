@@ -2,7 +2,6 @@ package models
 
 import java.util.UUID
 import play.api.libs.json.Json
-
 import scala.collection.mutable.ListBuffer
 
 
@@ -12,6 +11,7 @@ case class Chart(
   thingID: UUID,
   infoDataName: String
   //risultati: Array[Double]
+
 )
 
 /**

@@ -11,6 +11,7 @@ import models.Thing
 import models.User
 import models.DetectionDouble
 import models.Measurements
+import models.Engine
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
@@ -22,11 +23,11 @@ import play.api.mvc.Action
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 
+
 //import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 //import com.mohiva.play.silhouette.api.services.AvatarService
 //import com.mohiva.play.silhouette.api.util.PasswordHasher
 //import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-
 
 
 class ThingController @Inject() (
@@ -139,7 +140,8 @@ extends Silhouette[User, JWTAuthenticator] {
   }
 
   def addMeasurements = Action.async(parse.json) { implicit request =>
-    request.body.validate[AddMeasurement.Data].map { data =>
+    request.body.validate[AddMeasurement.Data].map {
+      data =>
       val thingInfo = data.thingID
       thingDao.findByID(thingInfo).flatMap{
         case Some(thingToAssign) =>
