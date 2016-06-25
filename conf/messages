@@ -11,6 +11,7 @@ parameters.notCorrect = Parameters of measurements not correct!
 measurements.notExists = Measurements does not exists!
 notification.notExists = Notification does not exists!
 thing.notExists = Thing does not exists!
+chart.notExists = Chart's structure does not exists!
 thingType.notExists = ThingType does not exists!
 function.notExists = Function does not exists!
 company.notExists = Company does not exists!
