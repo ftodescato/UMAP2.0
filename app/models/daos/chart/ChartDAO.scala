@@ -20,6 +20,7 @@ trait ChartDAO {
 
 
   def findByID(chartID: UUID): Future[Option[Chart]]
+
   def findAll(): Future[List[Chart]]
 
   /**
