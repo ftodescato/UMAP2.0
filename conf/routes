@@ -26,6 +26,7 @@ PUT         /api/account/resetPasswords        controllers.shared.account.Accoun
 POST        /api/notifications/:id             controllers.shared.NotificationController.addNotification(id: java.util.UUID)
 
 #ADMIN+SUPERADMIN
+PUT        /api/engine/datasTT                controllers.superAdmin.CompanyController.selectDataFromThingType
 POST        /api/engine/functions              controllers.superAdmin.CompanyController.selectFunction
 GET         /api/engine/functions              controllers.superAdmin.FunctionController.showFunctions
 
@@ -51,7 +52,6 @@ DELETE      /api/notification/:id              controllers.shared.NotificationCo
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
-#POST       /api/detectionDouble/:id           controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
 
 
 GET         /api/thingsSA/:id                  controllers.superAdmin.ThingController.showThingDetails(id: java.util.UUID)

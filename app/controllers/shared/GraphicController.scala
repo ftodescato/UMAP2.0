@@ -37,46 +37,46 @@ class GraphicController @Inject() (
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
 
-    def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
-      var futureV = false
-      var valueForX: Double = 0
-      var valueY = new Array[Double]
-      var valueX = new Array[Date]
-
-      val chart = chartDao.findByID(chartID)
-      chart.flatMap{
-        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
-        case Some (chart) =>
-          val thing = thingDao.findByID(chartID)
-          thing.flatMap{
-            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-            case Some (thing) =>
-              var listMeasurement = thing.datas
-              for(measurement <- listMeasurement)
-              {
-                valueX += measurement.dataTime
-                  for(sensors <- measurement.sensors)
-                  {
-                    if(sensors.sensor == chart.infoDataName){
-                        valueY += sensors.value
-                    }
-                  }
-              }
-              val listArray = new ListBuffer[Array]
-              val functionName = chart.functionName
-              functionName match {
-                case "Media" => {
-                  engine.sumStatistic( ,"Mean")
-
-
-                }
-          }
-
-
-
-          }
-
-        Future.successful(Ok(Json.toJson(graphic)))
-      }
-  }
+  //   def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
+  //     var futureV = false
+  //     var valueForX: Double = 0
+  //     var valueY = new Array[Double]
+  //     var valueX = new Array[Date]
+  //
+  //     val chart = chartDao.findByID(chartID)
+  //     chart.flatMap{
+  //       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
+  //       case Some (chart) =>
+  //         val thing = thingDao.findByID(chartID)
+  //         thing.flatMap{
+  //           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+  //           case Some (thing) =>
+  //             var listMeasurement = thing.datas
+  //             for(measurement <- listMeasurement)
+  //             {
+  //               valueX += measurement.dataTime
+  //                 for(sensors <- measurement.sensors)
+  //                 {
+  //                   if(sensors.sensor == chart.infoDataName){
+  //                       valueY += sensors.value
+  //                   }
+  //                 }
+  //             }
+  //
+  //             val functionName = chart.functionName
+  //             functionName match {
+  //               case "Media" => {
+  //                 engine.sumStatistic( ,"Mean")
+  //
+  //
+  //               }
+  //         }
+  //
+  //
+  //
+  //         }
+  //
+  //       Future.successful(Ok(Json.toJson(graphic)))
+  //     }
+  // }
 }
