@@ -145,7 +145,7 @@ class ApplicationController @Inject() (
       Future.successful(Ok(Json.obj("Dati"->data,
                                     "Array"->sol)))
   }
-
+  
   def index = UserAwareAction.async { implicit request =>
     Future.successful(Ok(Json.obj("test"->"contenuto")))
 }
