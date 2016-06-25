@@ -19,7 +19,7 @@ import models.Chart
 import models.Engine
 import models.daos.chart._
 import models.daos.thing._
-
+import controllers._
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -32,10 +32,36 @@ import scala.collection.mutable.ListBuffer
 class GraphicController @Inject() (
   val messagesApi: MessagesApi,
   chartDao: ChartDAO,
-  engine: Engine,
+  engine: ApplicationController,
   thingDao: ThingDAO,
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
+
+
+
+    def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
+      var futureV = false
+      var valueForX: Double = 0
+      var valueY = new Array[Double]
+      var valueX = new Array[Date]
+      val chart = chartDao.findByID(chartID)
+      chart.flatMap{
+        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
+        case Some (chart) =>
+         val thing = thingDao.findByID(chartID)
+         thing.flatMap{
+           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+           case Some (thing) =>
+           val functionName = chart.functionName
+             functionName match {
+                       case "Media" => {
+                           engine.sumStatistic( ,"Mean")
+
+            Future.successful(Ok(Json.toJson(graphic)))
+         }
+      }
+    }
+
 
   //   def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
   //     var futureV = false
