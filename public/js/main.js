@@ -36986,14 +36986,14 @@ app.provider('Flash', function() {
     //$scope.item = { testo:'stocazzo' } ;
     $scope.drop;
     $scope.functions = [
-      {functionId:'1', functionName:'func uno'},
-      {functionId:'2', functionName:'func due'},
-      {functionId:'3', functionName:'func tre'}
+      {functionId:'1', functionName:'func uno', selected: false},
+      {functionId:'2', functionName:'func due', selected: false},
+      {functionId:'3', functionName:'func tre', selected: false}
     ];
     $scope.charts = [
-      {chartId:'1', chartName:'chart uno'},
-      {chartId:'2', chartName:'chart due'},
-      {chartId:'3', chartName:'chart tre'}
+      {chartId:'0', chartName:'chart uno', selected: false},
+      {chartId:'1', chartName:'chart due', selected: false},
+      {chartId:'2', chartName:'chart tre', selected: false}
     ];
     //['func uno','func due', 'func tre'];
   //  $scope.charts = ['chart uno','chart due', 'chart tre'];
@@ -37004,11 +37004,13 @@ app.provider('Flash', function() {
   //  }
     $scope.final = {
       fun: {},
-      chart: {},
+      chart: [],
       thingTypes: {}
     }
-    $scope.test = function(stuff, stuff2, obj){
-      console.log('$scope.drop = '+$scope.drop);
+    $scope.test = function(index){
+      console.log(index);
+      $scope.charts[index].selected = true;
+      console.log($scope.final);
     }
   }]);
 })();

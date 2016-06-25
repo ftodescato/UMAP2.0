@@ -8,15 +8,18 @@ section(id="analisi" class="container-fluid" )
     div(class="col-sm-4")
       h2 Funzioni Disponibili
       div(ng-repeat=" item in functions track by $index")
-        span( data-jqyoui-options="{revert: true, cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.functionName}}
+        span( data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="functions") {{item.functionName}}
         br
     div(class="col-sm-4")
       h2 Grafici Disponibili
       div(ng-repeat=" item in charts track by $index")
-        span( data-jqyoui-options="{revert: true}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.chartName}}
+        span(ng-if="!item.selected" data-jqyoui-options="{revert: 'invalid'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.chartName}}
         br
   div(class="row")
     div(class="col-sm-4")
-      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="fun.fun") {{fun.fun.functionName}}
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.fun") {{final.fun.functionName}}
     div(class="col-sm-4")
-      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="fun.chart") {{fun.chart.chartName}}
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.chart") {{final.chart.chartName}}
+        div(ng-repeat=" item in final.chart track by $index")
+          span( data-jqyoui-options="{revert: true}" data-drag="true" jqyoui-draggable="{placeholder:'keep', onDrop: test(item.chartId)}" ng-model="item") {{item.chartName}}
+  button.btn.btn-success(ng-click="test()") stampa
