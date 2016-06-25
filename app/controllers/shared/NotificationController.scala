@@ -44,6 +44,45 @@ class NotificationController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
+    def showNotificationDetails(notificationID: UUID) = Action.async(parse.json) { implicit request =>
+      val notification = notificationDao.find(notificationID)
+      notification.flatMap{
+        notification =>
+        Future.successful(Ok(Json.toJson(notification)))
+      }
+    }
+
+    def showNotificationOfThingType(thingTypeID: UUID) = Action.async(parse.json) { implicit request =>
+      val notifications = notificationDao.find(thingTypeID)
+      notifications.flatMap{
+        notifications =>
+        Future.successful(Ok(Json.toJson(notifications)))
+      }
+    }
+
+    def showNotifications = Action.async{ implicit request =>
+     val notifications = notificationDao.findAll()
+     notifications.flatMap{
+      notifications =>
+       Future.successful(Ok(Json.toJson(notifications)))
+     }
+   }
+
+   def delete(notificationID: UUID) = Action.async{ implicit request =>
+     notificationDao.find(notificationID).flatMap{
+       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("notification.notExists"))))
+       case Some (notification) =>
+         for{
+           notification <- notificationDao.remove(notificationID)
+         }yield{
+           //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
+           //env.eventBus.publish(LoginEvent(user, request, request2Messages))
+           Ok(Json.obj("ok" -> "ok"))
+          }
+     }
+   }
+
+
   def addNotification(userID: UUID) = Action.async(parse.json) { implicit request =>
     request.body.validate[AddNotification.Data].map { data =>
       userDao.findByID(userID).flatMap{

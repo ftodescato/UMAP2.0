@@ -16,8 +16,7 @@ object NewChart {
     mapping(
       "functionName" -> nonEmptyText,
       "objectID" -> uuid,
-      "thingOrModel" -> nonEmptyText,
-      "datas" -> list(text)
+      "datas" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
@@ -25,8 +24,7 @@ object NewChart {
   case class Data(
     functionName: String,
     objectID: UUID,
-    thingOrModel: String,
-    datas: List[String]
+    parameter: String
     )
 
 

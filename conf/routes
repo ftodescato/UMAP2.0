@@ -36,8 +36,6 @@ POST        /api/usersA                        controllers.admin.UserController.
 PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
 DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
 
-GET /api/getMyCompany controllers.admin.UserController.getMyCompany
-
 POST        /api/chartA/                       controllers.admin.ChartController.addChart
 POST        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
 
@@ -46,7 +44,10 @@ GET         /api/thingTypes                    controllers.shared.thingType.Thin
 GET         /api/thingTypes/:id                controllers.shared.thingType.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
 GET         /api/things                        controllers.shared.thingType.ThingTypeController.showThings
 GET         /api/things/:id                    controllers.shared.thingType.ThingTypeController.showThingDetails(id: java.util.UUID)
-
+GET         /api/notification/:id              controllers.shared.NotificationController.showNotificationDetails(id: java.util.UUID)
+GET         /api/notifications                 controllers.shared.NotificationController.showNotifications
+GET         /api/notificationsOfTT/:id         controllers.shared.NotificationController.showNotificationOfThingType(id: java.util.UUID)
+DELETE      /api/notification/:id              controllers.shared.NotificationController.delete(id: java.util.UUID)
 
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)

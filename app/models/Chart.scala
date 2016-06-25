@@ -5,21 +5,12 @@ import play.api.libs.json.Json
 
 import scala.collection.mutable.ListBuffer
 
-/**
- * The chart object.
- *
- * @param chartID The unique ID of the chart.
- * @param chartName Maybe the chart's name.
- * @param thingID Maybe the thingID.
- * @param thingTypeID Maybe the thingTypeID.
- *
- */
+
 case class Chart(
   chartID: UUID,
   functionName: String,
   thingID: UUID,
-  thingTypeID: UUID,
-  infoDataName: ListBuffer[String]
+  infoDataName: String
   //risultati: Array[Double]
 )
 
