@@ -98,13 +98,11 @@ class Engine{
 
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
-    //val measureArray = measureList.toArray
     val vecMeasureArray = data.map(Vectors.dense(_))
-    val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
     val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(modello.getWeights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
-    val prediction = loadedModel.predict(test2)
-    val sol=prediction.collect.toArray
-    sol(0)
+    val inputData=Vectors.dense(data)
+    val prediction = loadedModel.predict(inputData)
+    prediction
   }
 
   def getFuture(lista:List[Array[Double]]):Array[Double] ={

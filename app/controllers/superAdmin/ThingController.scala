@@ -29,6 +29,12 @@ import scala.concurrent.Future
 //import com.mohiva.play.silhouette.api.util.PasswordHasher
 //import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
+///da togliere dopo (chiedi Fede)
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import scala.language.postfixOps
+
+
 
 class ThingController @Inject() (
   //authInfoRepository: AuthInfoRepository,
@@ -219,6 +225,25 @@ extends Silhouette[User, JWTAuthenticator] {
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
       }
   }
+
+def addNewMeasurement(thingID: UUID) = Action.async { implicit request =>
+
+    //prendo i dati dal db
+    val thingDB =thingDao.findByID(thingID)
+    val thing = Await.result(thingDB, 3 seconds)
+    val data=thingDao.findListArray(thing.get)
+    val label=thingDao.findListLabel(thing.get)
+    //creo il modello con quei dati
+    val e = new Engine
+    val modello:LogRegModel = e.getLogRegModel(label, data)
+
+    //preparo array per la previsione e eseguo la previsione
+    val a: Array[Double] = Array(23, 15, 33)
+    val sol=e.getLogRegPrediction(modello, a)
+
+    Future.successful(Ok(Json.obj("Label prevista"->sol)))
+}
+
 
   // def addDetectionDouble(thingID: UUID) = Action.async(parse.json) { implicit request =>
   //   request.body.validate[AddDetectionDouble.Data].map { data =>
