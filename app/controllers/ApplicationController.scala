@@ -55,13 +55,14 @@ class ApplicationController @Inject() (
     Future.successful(Ok(Json.obj("coeff"->aux)))
   }
   // SUMSTATISTIC
-  def sumStatistic(mv: String) = Action.async { implicit request =>
+  def sumStatistic(mv: String): Array[Double] = {
     val obs: Array[Double] = Array(1.2, 2, 3, 3, 3, 3)
     val obs2: Array[Double] = Array(0, 1, 0, 3, 3, 3)
     val lista: List[Array[Double]] =List(obs,obs2)
     val e = new Engine
     val aux: Array[Double] = e.sumStatistic(lista, mv)
     Future.successful(Ok(Json.obj("Array"->aux)))
+    aux
   }
 
   def ModelLogReg(thingID: UUID): LogRegModel ={

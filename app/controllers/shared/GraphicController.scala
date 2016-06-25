@@ -42,8 +42,9 @@ class GraphicController @Inject() (
     def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
       var futureV = false
       var valueForX: Double = 0
-      var valueY = new Array[Double]
-      var valueX = new Array[Date]
+      var valueY = Array.empty[Double]
+      var valueX = Array.empty[Date]
+      var arrayDouble = Array.empty[Double]
       val chart = chartDao.findByID(chartID)
       chart.flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
@@ -54,14 +55,21 @@ class GraphicController @Inject() (
            case Some (thing) =>
            val functionName = chart.functionName
              functionName match {
-                       case "Media" => {
-                           engine.sumStatistic( ,"Mean")
+                       case "Media" =>
+                           arrayDouble = engine.sumStatistic("Mean")
+          valueForX =arrayDouble(0)
+           val graphic = Graphic(
+             futureV = futureV,
+             valuesY = valueY,
+             valuesX = valueX,
+             resultFunction = valueForX
+           )
 
             Future.successful(Ok(Json.toJson(graphic)))
          }
       }
     }
-
+  }
 
   //   def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
   //     var futureV = false
