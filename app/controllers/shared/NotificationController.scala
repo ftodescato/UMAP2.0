@@ -1,13 +1,7 @@
 package controllers.shared
 
-//import java.io.File
-
-//import org.apache.commons.mail.EmailAttachment
-import play.api.libs.mailer._
-
 import java.util.UUID
 import javax.inject.Inject
-//import play.api.libs.mailer._
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -15,16 +9,14 @@ import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-//import forms.user._
-//import forms.password._
+
 import forms.notification._
 import models._
 import models.User
 import models.services._
 import models.daos.user._
 import models.daos.notification._
-//import models.daos.password._
-//import models.daos.company._
+
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -34,12 +26,8 @@ import scala.concurrent.Future
 
 class NotificationController @Inject() (
   val messagesApi: MessagesApi,
-  //mailer: MailerClient,
   userDao: UserDAO,
-  //companyDao: CompanyDAO,
   notificationDao: NotificationDAO,
-  //passwordInfoDao: PasswordInfoDAO,
-  //passwordHasher: PasswordHasher,
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
 

@@ -13,7 +13,7 @@ import play.api.libs.json._
 object Info {
 
    /**
-    * Converts the [Detection] object to Json and vice versa.
+    * Converts the [Info] object to Json and vice versa.
     */
    implicit val jsonFormatDetection = Json.format[Info]
 }

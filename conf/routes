@@ -11,12 +11,14 @@ POST        /test                              controllers.ApplicationController
 POST        /signIn                            controllers.shared.AuthController.authenticate
 GET         /api/getrole                       controllers.shared.AuthController.getRole
 GET         /corr                              controllers.ApplicationController.correlation
-GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
-GET         /NB                                controllers.ApplicationController.NaiveBayes
-GET         /logreg                            controllers.ApplicationController.LogReg
+#GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
 
-#DEV
-POST        /api/functions                     controllers.superAdmin.FunctionController.addFunction
+#GET         /NB/:id                            controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
+#GET         /logreg/:id                        controllers.ApplicationController.LogReg(id: java.util.UUID)
+GET          /futureV/:id                       controllers.ApplicationController.futureV(id: java.util.UUID)
+
+
+POST        /api/functions                      controllers.superAdmin.FunctionController.addFunction
 
 #ACCOUNT
 GET         /api/account                       controllers.shared.account.AccountController.getInfo
@@ -30,6 +32,7 @@ GET        /api/notifications/:id        controllers.shared.NotificationControll
 DELETE        /api/notifications/:id             controllers.shared.NotificationController.delete(id: java.util.UUID)
 
 #ADMIN+SUPERADMIN
+PUT        /api/engine/datasTT                controllers.superAdmin.CompanyController.selectDataFromThingType
 POST        /api/engine/functions              controllers.superAdmin.CompanyController.selectFunction
 GET         /api/engine/functions              controllers.superAdmin.FunctionController.showFunctions
 
@@ -56,7 +59,7 @@ DELETE      /api/notification/:id              controllers.shared.NotificationCo
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
-#POST       /api/detectionDouble/:id           controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
+
 
 POST /api/thingTypeVisibility  controllers.superAdmin.CompanyController.selectDataFromThingType
 

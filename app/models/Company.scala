@@ -17,7 +17,6 @@ case class Company(
   companyLicenseExpiration: Date,
   functionAlgList: ListBuffer[String],
   companyName: Option[String]
-
    )
 
 
