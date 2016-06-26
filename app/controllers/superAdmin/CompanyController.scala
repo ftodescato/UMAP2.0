@@ -187,44 +187,44 @@ class CompanyController @Inject() (
 
   def selectDataFromThingType = Action.async(parse.json) { implicit request =>
     request.body.validate[SelectData.Data].map { data =>
-      thingTypeDao.findByName(data.thingTypeName).flatMap{
+      thingTypeDao.findByID(data.thingTypeID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
         case Some(thingType) =>
-          val dataList = new ListBuffer[String]
+          val dataList = new ListBuffer[String]   //list con valori temp etc spuntati
           for( thingTypeDate <- data.listData ){
             dataList += thingTypeDate
           }
-          var count = 1
-          var listDataTT = thingType.doubleValue.infos
+          var count = 0
+          var listDataTT = thingType.doubleValue.infos  //string e bool
           var newListDataTT = new ListBuffer[Info]
           for (allData <- listDataTT)
           {
-            if (!(dataList.contains(allData)))
+            if (!(dataList.contains(allData.name)))
               {
                 var name = listDataTT(count).name
                 var newInfo = new Info(name, false)
+                newListDataTT += newInfo
+              }
+              else{
+                var name = listDataTT(count).name
+                var newInfo = new Info(name, true)
                 newListDataTT += newInfo
               }
               count = count + 1
           }
           var dataDouble = DataDouble(
           inUse = true,
-          infos = listDataTT
+          infos = newListDataTT
           )
           val newThingType = ThingType(
             thingTypeID = thingType.thingTypeID,
             thingTypeName = thingType.thingTypeName,
             companyID = thingType.companyID,
             doubleValue = dataDouble
-            // valuesString = null,
-            // valuesFloat = null,
-            // valuesDouble = null
           )
         for{
           thingType <- thingTypeDao.update(thingType.thingTypeID, newThingType)
         }yield {
-          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
           Ok(Json.obj("ok" -> "ok"))
          }
         }

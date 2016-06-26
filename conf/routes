@@ -11,7 +11,7 @@ POST        /test                              controllers.ApplicationController
 POST        /signIn                            controllers.shared.AuthController.authenticate
 GET         /api/getrole                       controllers.shared.AuthController.getRole
 GET         /corr                              controllers.ApplicationController.correlation
-GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
+#GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
 
 #GET         /NB/:id                            controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
 #GET         /logreg/:id                        controllers.ApplicationController.LogReg(id: java.util.UUID)
@@ -28,6 +28,7 @@ PUT         /api/account/resetPasswords        controllers.shared.account.Accoun
 POST        /api/notifications/:id             controllers.shared.NotificationController.addNotification(id: java.util.UUID)
 
 #ADMIN+SUPERADMIN
+PUT        /api/engine/datasTT                controllers.superAdmin.CompanyController.selectDataFromThingType
 POST        /api/engine/functions              controllers.superAdmin.CompanyController.selectFunction
 GET         /api/engine/functions              controllers.superAdmin.FunctionController.showFunctions
 
@@ -37,7 +38,7 @@ GET         /api/usersA                        controllers.admin.UserController.
 POST        /api/usersA                        controllers.admin.UserController.addUser
 PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
 DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
-POST        /api/chartA/                       controllers.admin.ChartController.addChart
+POST        /api/chartA                        controllers.admin.ChartController.addChart
 POST        /api/engine/functions              controllers.admin.FunctionController.selectFunction
 
 # ADMIN+USER
@@ -45,12 +46,14 @@ GET         /api/thingTypes                    controllers.shared.thingType.Thin
 GET         /api/thingTypes/:id                controllers.shared.thingType.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
 GET         /api/things                        controllers.shared.thingType.ThingTypeController.showThings
 GET         /api/things/:id                    controllers.shared.thingType.ThingTypeController.showThingDetails(id: java.util.UUID)
-
+GET         /api/notification/:id              controllers.shared.NotificationController.showNotificationDetails(id: java.util.UUID)
+GET         /api/notifications                 controllers.shared.NotificationController.showNotifications
+GET         /api/notificationsOfTT/:id         controllers.shared.NotificationController.showNotificationOfThingType(id: java.util.UUID)
+DELETE      /api/notification/:id              controllers.shared.NotificationController.delete(id: java.util.UUID)
 
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
-#POST       /api/detectionDouble/:id           controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
 
 
 

@@ -3,7 +3,7 @@ package forms.engine
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
-//import scala.collection.mutable.ListBuffer
+import java.util.UUID
 
 
 object SelectData {
@@ -13,14 +13,14 @@ object SelectData {
    */
   val form = Form(
     mapping(
-      "thingTypeName" -> nonEmptyText,
+      "thingTypeID" -> uuid,
       "listData" -> list(text)
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
-    thingTypeName: String,
+    thingTypeID: UUID,
     listData: List[String]
     )
 

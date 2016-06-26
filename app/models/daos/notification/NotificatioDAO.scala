@@ -17,10 +17,10 @@ trait NotificationDAO {
   def findAll(): Future[List[Notification]]
 
   def find(notificationID: UUID): Future[Option[Notification]]
-  
+
   def save(notification: Notification): Future[Notification]
 
   def update(notificationID: UUID, notification2: Notification)
 
-  def remove(notificationID: UUID)
+  def remove(notificationID: UUID): Future[List[Notification]]
 }
