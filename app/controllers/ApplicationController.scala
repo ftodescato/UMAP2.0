@@ -47,21 +47,40 @@ class ApplicationController @Inject() (
   Future.successful(Ok(Json.obj("test"->"test")))
   }
 
-  def correlation = Action.async { implicit request =>
-    val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
-    val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
+  def correlation(thingID: UUID, datatype: Int):Array[Double] ={ implicit request =>
+    // val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
+    // val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
+    val thingDB =thingDao.findByID(thingID)
+    val thing = Await.result(thingDB, 1 seconds)
+    val data=thingDao.findListArray(thing.get)
+    val datalength=data.length
+    var chosendata=Array.empty[Double]
+    var iterator:Int=0
+    for (iterator<-0 until datalength){
+      chosendata=chosendata:+data(iterator)(datatype)
+    }
     val e = new Engine
-    val aux: Double = e.getCorrelation(a,b)
-    Future.successful(Ok(Json.obj("coeff"->aux)))
+    var r:Array[Double]=e.getPointsOnR(chosendata)
+    val sol: Double = e.getCorrelation(chosendata,r)
+    sol
   }
   // SUMSTATISTIC
-  def sumStatistic(mv: String): Array[Double] = {
-    val obs: Array[Double] = Array(1.2, 2, 3, 3, 3, 3)
-    val obs2: Array[Double] = Array(0, 1, 0, 3, 3, 3)
-    val lista: List[Array[Double]] =List(obs,obs2)
+  def sumStatistic(thingID: UUID, mv: String, datatype: Int): Array[Double] = {
+    // val obs: Array[Double] = Array(1.2, 2, 3, 3, 3, 3)
+    // val obs2: Array[Double] = Array(0, 1, 0, 3, 3, 3)
+    // val lista: List[Array[Double]] =List(obs,obs2)
+    val thingDB =thingDao.findByID(thingID)
+    val thing = Await.result(thingDB, 1 seconds)
+    val data=thingDao.findListArray(thing.get)
+    val datalength=data.length
+    var chosendata=Array.empty[Double]
+    var iterator:Int=0
+    for (iterator<-0 until datalength){
+      chosendata=chosendata:+data(iterator)(datatype)
+    }
     val e = new Engine
-    val aux: Array[Double] = e.sumStatistic(lista, mv)
-    Future.successful(Ok(Json.obj("Array"->aux)))
+    val aux: Array[Double] = e.sumStatistic(chosendata, mv)
+    // Future.successful(Ok(Json.obj("Array"->aux)))
     aux
   }
 
@@ -129,7 +148,7 @@ class ApplicationController @Inject() (
   //   Future.successful(Ok(Json.obj("Label nel DB"->label,"Array"->predizione)))
   // }
 
-  def futureV(thingID: UUID) =Action.async { implicit request =>
+  def futureV(thingID: UUID) = Array[Double]{ implicit request =>
       // val obs: Array[Double] = Array(1, 4, 2)
       // val obs2: Array[Double] = Array(2, 3, 4)
       // val obs3: Array[Double] = Array(3,2,6)
@@ -143,10 +162,11 @@ class ApplicationController @Inject() (
       //val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4)
       val e = new Engine
       val sol=e.getFuture(data)
-      Future.successful(Ok(Json.obj("Dati"->data,
-                                    "Array"->sol)))
+      // Future.successful(Ok(Json.obj("Dati"->data,
+      //                               "Array"->sol)))
+      sol
   }
-  
+
   def index = UserAwareAction.async { implicit request =>
     Future.successful(Ok(Json.obj("test"->"contenuto")))
 }

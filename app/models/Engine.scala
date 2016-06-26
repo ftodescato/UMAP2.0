@@ -28,6 +28,35 @@ class Engine{
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
     correlation
   }
+
+  def getPointsOnR(lista:Array[Double]): Array[Double]={
+    var pointsOnR =Array.empty[Double]
+    val listlength = lista.length
+    var listiterator:Int =0
+    var sumxy:Double =0
+    for (listiterator <- 0 until n){
+      sumxy=sumxy+(data(listiterator)*(listiterator+1))
+    }
+    var sumx:Double =0;
+    for(listiterator <- 1 until listlength+1){
+      sumx=sumx+listiterator
+    }
+    var sumy:Double =0;
+    for(listiterator<-0 until listlength){
+      sumy=sumy+lista(listiterator)
+    }
+    var sumsqx:Double=0;
+    for(listiterator<- 1 until listlength+1){
+      sumsqx=sumsqx+(listiterator*listiterator)
+    }
+    val slope=(((listlength*sumxy)-(sumx*sumy))/((listlength*sumsqx)-(sumx*sumx)))
+    val offset=((sumy-(slope*sumx))/listlength)
+    for (listiterator<-0 until listlength){
+      pointsOnR=pointsOnR:+((slope*(listiterator+1))+offset)
+    }
+    pointsOnR
+  }
+
   //SUMSTATISTIC (FUNZIONI BASE)
   def sumStatistic(lista: List[Array[Double]], mv: String) : Array[Double] = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
