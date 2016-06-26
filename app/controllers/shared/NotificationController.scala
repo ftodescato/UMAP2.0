@@ -53,7 +53,14 @@ class NotificationController @Inject() (
     }
 
     def showNotificationOfThingType(thingTypeID: UUID) = Action.async(parse.json) { implicit request =>
-      val notifications = notificationDao.find(thingTypeID)
+      val notifications = notificationDao.findNotificationOfThingType(thingTypeID)
+      notifications.flatMap{
+        notifications =>
+        Future.successful(Ok(Json.toJson(notifications)))
+      }
+    }
+    def showNotificationOfThing(thing: UUID) = Action.async(parse.json) { implicit request =>
+      val notifications = notificationDao.findNotificationOfThing(thing)
       notifications.flatMap{
         notifications =>
         Future.successful(Ok(Json.toJson(notifications)))
@@ -83,9 +90,9 @@ class NotificationController @Inject() (
    }
 
 
-  def addNotification(userID: UUID) = Action.async(parse.json) { implicit request =>
+  def addNotification = SecuredAction(WithServicesMultiple("admin","user", true)).async(parse.json) { implicit request =>
     request.body.validate[AddNotification.Data].map { data =>
-      userDao.findByID(userID).flatMap{
+      userDao.findByID(request.identity.userID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notExists"))))
         case Some(user) =>
       if(data.modelOrThing == "Oggetto"){
@@ -94,8 +101,8 @@ class NotificationController @Inject() (
         notificationDescription = data.description,
         emailUser = user.email,
         inputType = data.parameter,
-        thingTypeID = null,
-        thingID = data.objectID,
+        thingTypeID = None,
+        thingID = Some(data.objectID),
         valMin = data.minValue,
         valMax = data.maxValue
       )
@@ -111,8 +118,8 @@ class NotificationController @Inject() (
           notificationDescription = data.description,
           emailUser =user.email,
           inputType = data.parameter,
-          thingTypeID = data.objectID,
-          thingID = null,
+          thingTypeID = Some(data.objectID),
+          thingID = None,
           valMin = data.minValue,
           valMax = data.maxValue
         )

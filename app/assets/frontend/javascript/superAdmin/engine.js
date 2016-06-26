@@ -20,6 +20,15 @@
             }
         }
     });
+    $stateProvider.state('root.superAdmin.engine.parameters', {
+      url: '/parameters',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/engine/parameters.html',
+              controller:  'EngineParametersController'
+            }
+        }
+    });
 }]);
   umap.factory('FunctionsService', function($resource) {
     return {
@@ -29,6 +38,11 @@
         }
       }),
       Admin: $resource('/api/engineA/functions/:id', {id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      }),
+      Parameters: $resource('/api/thingTypeVisibility', {id: "@id"},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -78,4 +92,32 @@
       });
     };
   }]);
+
+
+  umap.controller('EngineParametersController',['$scope','$state', 'FunctionsService','ThingTypeService', function($scope, $state, FunctionsService, ThingTypeService){
+    $scope.selected = '';
+    ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypesHash = {}
+      for (var i = 0; i < thingTypes.length; i++) {
+        $scope.thingTypesHash[thingTypes[i].thingTypeID] = thingTypes[i];
+      }
+      $scope.thingTypes = thingTypes;
+    });
+    $scope.log = function(){
+      $scope.info = {
+        thingTypeID: '',
+        listData: []
+      }
+      $scope.info.thingTypeID = $scope.selected;
+      for (var i = 0; i < $scope.thingTypesHash[$scope.selected].doubleValue.infos.length; i++) {
+        if($scope.thingTypesHash[$scope.selected].doubleValue.infos[i].visible)
+          $scope.info.listData.push($scope.thingTypesHash[$scope.selected].doubleValue.infos[i].name)
+      }
+      console.log($scope.info);
+      FunctionsService.Parameters.save($scope.info, function(){
+        $state.go('root.superAdmin.engine')
+      });
+    }
+  }]);
+
 })();

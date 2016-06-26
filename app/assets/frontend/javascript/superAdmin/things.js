@@ -113,7 +113,8 @@
     };
 
     $scope.addThingType = function (){
-      ThingTypeService.ThingType.save($scope.newThingType, function(){
+      $scope.item = $scope.newThingType;
+      ThingTypeService.ThingType.save($scope.item, function(){
         $state.go('root.superAdmin.things');
       })
       //console.log($scope.newThingType);

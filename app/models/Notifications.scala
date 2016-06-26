@@ -21,8 +21,8 @@ case class Notification(
   notificationDescription: String,
   emailUser: String,
   inputType: String,
-  thingTypeID: UUID,
-  thingID: UUID,
+  thingTypeID: Option[UUID],
+  thingID: Option[UUID],
   valMin: Double,
   valMax: Double
    )

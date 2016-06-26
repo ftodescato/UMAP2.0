@@ -12,7 +12,8 @@ import scala.concurrent.Future
 trait NotificationDAO {
 
 
-  def findNotificationOfThingType(thingTypeID: UUID): Future[Option[Notification]]
+  def findNotificationOfThingType(thingTypeID: UUID): Future[List[Notification]]
+  def findNotificationOfThing(thingID: UUID): Future[List[Notification]]
 
   def findAll(): Future[List[Notification]]
 

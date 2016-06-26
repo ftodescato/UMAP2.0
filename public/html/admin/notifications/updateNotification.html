@@ -1,0 +1,20 @@
+
+<section id="updateNotification" class="container-fluid">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.admin()">Home</a></li>
+    <li><a ui-sref="root.admin.notification()">Gestione Notifiche</a></li>
+    <li class="active">Modifica Notifica</li>
+  </ul>
+  <h1 class="text-center page-header">Modifica le impostazioni di notifica  </h1>
+  <div class="row">   
+    <form ng-submit="editNotification()" class="col-sm-6 col-sm-offset-3">
+      <label for="descrizione">Descrizione</label>
+      <textarea type="text" id="descrizione" ng-model="info.description" placeholder="descrizione" value="{{notification.name}}" class="form-control"></textarea><br/>
+      <label for="minValue">Soglia Minima</label>
+      <input type="text" id="minValue" ng-model="info.minValue" placeholder="soglia minima" value="{{notification.minValue}}" class="form-control"/><br/>
+      <label for="maxValue">Soglia Massima</label>
+      <input type="text" id="maxValue" ng-model="info.maxValue" placeholder="soglia massima" value="{{notification.maxValue}}" class="form-control"/><br/>
+      <button type="submit" class="btn btn-success">Modifica</button>
+    </form>
+  </div>
+</section>

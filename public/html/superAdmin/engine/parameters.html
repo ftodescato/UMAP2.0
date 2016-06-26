@@ -1,0 +1,28 @@
+
+<section id="thyngTypesParameters" class="container-fluid">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.superAdmin()">Home</a></li>
+    <li><a ui-sref="root.superAdmin.engine()">Gestione Engine</a></li>
+    <li class="active">Gestione Parametri Modelli</li>
+  </ul>
+  <h1 class="page-header text-center">Gestione Parametri Modelli</h1>
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3 text-center"> 
+      <h2>Scegli una Modello </h2>
+      <label for="ThyngTypeInput">Modello selezionato               </label>
+      <select id="ThyngTypeInput" ng-model="selected" class="form-control">
+        <option ng-repeat="thingType in thingTypes" value="{{thingType.thingTypeID}}">{{thingType.thingTypeName}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3 text-center"> 
+      <h2>Dati visibili  </h2>
+      <div ng-repeat=" info in thingTypesHash[selected].doubleValue.infos track by $index"><span>{{info.name}}
+          <input type="checkbox" ng-model="info.visible"/></span></div>
+      <form ng-submit="log()">
+        <button type="submit" class="btn btn-success">manda</button>
+      </form>
+    </div>
+  </div>
+</section>

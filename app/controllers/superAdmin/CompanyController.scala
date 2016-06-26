@@ -187,14 +187,14 @@ class CompanyController @Inject() (
 
   def selectDataFromThingType = Action.async(parse.json) { implicit request =>
     request.body.validate[SelectData.Data].map { data =>
-      thingTypeDao.findByName(data.thingTypeName).flatMap{
+      thingTypeDao.findByID(data.thingTypeID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
         case Some(thingType) =>
           val dataList = new ListBuffer[String]
           for( thingTypeDate <- data.listData ){
             dataList += thingTypeDate
           }
-          var count = 1
+          var count = 0
           var listDataTT = thingType.doubleValue.infos
           var newListDataTT = new ListBuffer[Info]
           for (allData <- listDataTT)

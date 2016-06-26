@@ -23,7 +23,11 @@ GET         /api/account                       controllers.shared.account.Accoun
 PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
 PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
 PUT         /api/account/resetPasswords        controllers.shared.account.AccountController.resetPassword
-POST        /api/notifications/:id             controllers.shared.NotificationController.addNotification(id: java.util.UUID)
+
+POST        /api/notifications             controllers.shared.NotificationController.addNotification
+GET        /api/notifications             controllers.shared.NotificationController.showNotifications
+GET        /api/notifications/:id        controllers.shared.NotificationController.showNotificationDetails(id: java.util.UUID)
+DELETE        /api/notifications/:id             controllers.shared.NotificationController.delete(id: java.util.UUID)
 
 #ADMIN+SUPERADMIN
 POST        /api/engine/functions              controllers.superAdmin.CompanyController.selectFunction
@@ -35,7 +39,7 @@ GET         /api/usersA                        controllers.admin.UserController.
 POST        /api/usersA                        controllers.admin.UserController.addUser
 PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
 DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
-
+GET /api/getMyCompany controllers.admin.UserController.getMyCompany
 POST        /api/chartA/                       controllers.admin.ChartController.addChart
 POST        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
 
@@ -54,6 +58,7 @@ PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordCo
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
 #POST       /api/detectionDouble/:id           controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
 
+POST /api/thingTypeVisibility  controllers.superAdmin.CompanyController.selectDataFromThingType
 
 GET         /api/thingsSA/:id                  controllers.superAdmin.ThingController.showThingDetails(id: java.util.UUID)
 GET         /api/thingsSA                      controllers.superAdmin.ThingController.showThing

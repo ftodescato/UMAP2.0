@@ -1,0 +1,48 @@
+
+<section id="addNotification" class="container-fluid">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.user()">Home</a></li>
+    <li><a ui-sref="root.user.notifications()">Gestione Notifiche</a></li>
+    <li class="active">Nuova Notifica</li>
+  </ul>
+  <h1 class="text-center page-header">Aggiungi una nuva notifica</h1>
+  <div class="row ">
+    <form ng-submit="send()" name="myForm" class="col-xs-6 col-xs-offset-3">
+      <div class="row">
+        <label for="modelRadio" class="col-xs-5 col-xs-offset-1">Per Modello
+          <input type="radio" id="modelRadio" ng-model="which" value="Modello"/>
+        </label>
+        <label for="thingRadio" class="col-xs-5 col-xs-offset-1">Per Oggetto
+          <input type="radio" id="thingRadio" ng-model="which" value="Oggetto"/>
+        </label>
+      </div>
+      <div ng-show="which === 'Modello'">
+        <label for="modelloId">Nome Modello                    </label>
+        <select id="modelloId" ng-model="idModelloselected" class="form-control">
+          <option ng-repeat="thingType in thingTypesHash" value="{{thingType.thingTypeID}}">{{thingType.thingTypeName}}        </option>
+        </select><br/>
+        <label for="campoModello">Parametro                    </label>
+        <select id="campoModello" ng-model="parameterSelected" class="form-control">
+          <option ng-repeat="a in availableParametersHash[idModelloselected] track by $index" value="{{a}}">{{a}}        </option>
+        </select><br/>
+      </div>
+      <div ng-show="which === 'Oggetto'">
+        <label for="oggettoId">Numero di serie oggetto                    </label>
+        <select id="oggettoId" ng-model="idOggettoSelected" class="form-control">
+          <option ng-repeat="o in thingsHash" value="{{o.thingID}}">{{o.serialNumber}}        </option>
+        </select><br/>
+        <label for="campoOggetto">Parametro                    </label>
+        <select id="campoOggetto" ng-model="parameterSelected" class="form-control">
+          <option ng-repeat="a in availableParametersHash[thingsHash[idOggettoSelected].thingTypeID] track by $index" value="{{a}}">{{a}}        </option>
+        </select><br/>
+      </div>
+      <label for="description">Descrizione          </label>
+      <textarea type="text" id="description" ng-model="info.description" placeholder="descrizione" class="form-control"></textarea><br/>
+      <label for="minValue">Soglia Minima                 </label>
+      <input type="number" id="minValue" ng-model="info.minValue" placeholder="soglia minima" required="" class="form-control"/><br/>
+      <label for="maxValue">Soglia Massima                 </label>
+      <input type="number" id="maxValue" ng-model="info.maxValue" placeholder="soglia massima" required="" class="form-control"/><br/>
+      <button type="submit" class="btn btn-success">Aggiungi</button>
+    </form>
+  </div>
+</section>

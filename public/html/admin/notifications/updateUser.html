@@ -1,0 +1,26 @@
+
+<section id="updateUser" class="container-fluid">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.admin()">Home</a></li>
+    <li><a ui-sref="root.admin.users()">Gestione Utenti</a></li>
+    <li class="active">Modifica Utente</li>
+  </ul>
+  <h1 class="text-center page-header">Modifica un profilo utente    </h1>
+  <div class="row">   
+    <form ng-submit="editUser()" class="col-sm-6 col-sm-offset-3">
+      <label for="userNameInput">Nome dell'Utente</label>
+      <input type="text" id="userNameInput" ng-model="user.name" placeholder="nome" value="{{user.name}}" class="form-control"/><br/>
+      <label for="userSurnameInput">Cognome dell'Utente</label>
+      <input type="text" id="userSurnameInput" ng-model="user.surname" placeholder="cognome" value="{{user.surname}}" class="form-control"/><br/>
+      <label for="userEmailInput">Email dell'Utente</label>
+      <input type="text" id="userEmailInput" ng-model="user.email" placeholder="email" value="{{user.email}}" class="form-control"/><br/>
+      <input type="hidden" ng-model="user.company" value="{{user.company}}" class="form-control"/>
+      <label for="userRoleInput">Ruolo dell'utente                    </label>
+      <select id="userRoleInput" ng-model="user.role" class="form-control">
+        <option value="user">User</option>
+        <option value="admin">Admin</option>
+      </select><br/>
+      <button type="submit" class="btn btn-success">Modifica</button>
+    </form>
+  </div>
+</section>

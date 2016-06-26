@@ -1,0 +1,22 @@
+section(id="thyngTypesParameters" class="container-fluid")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.superAdmin()") Home
+    li
+      a(ui-sref="root.superAdmin.engine()") Gestione Engine
+    li(class="active") Gestione Parametri Modelli
+  h1(class="page-header text-center") Gestione Parametri Modelli
+  div(class="row")
+    div(class="col-xs-6 col-xs-offset-3 text-center") 
+      h2 Scegli una Modello 
+      label(for="ThyngTypeInput" ) Modello selezionato               
+      select( class="form-control" id="ThyngTypeInput" ng-model="selected")
+        option(ng-repeat="thingType in thingTypes"  value="{{thingType.thingTypeID}}") {{thingType.thingTypeName}}
+  div(class="row")
+    div(class="col-xs-6 col-xs-offset-3 text-center") 
+      h2 Dati visibili  
+      div(ng-repeat=" info in thingTypesHash[selected].doubleValue.infos track by $index")
+        span {{info.name}}
+          input(type="checkbox" ng-model="info.visible") 
+      form(ng-submit="log()")
+        button(class="btn btn-success" type="submit") manda

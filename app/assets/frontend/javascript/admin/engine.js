@@ -7,7 +7,7 @@
       views: {
             'content@': {
               templateUrl: 'assets/html/admin/engine/functions.html',
-              controller:  'EngineFunctionsController'
+              controller:  'EngineFunctionsAController'
             }
         }
     });
@@ -21,7 +21,7 @@ umap.factory('MyCompanyService', function($resource) {
     })
 });
 
-  umap.controller('EngineFunctionsController',['$scope','$state','FunctionsService','MyCompanyService', function($scope,$state, FunctionsService, MyCompanyService){
+  umap.controller('EngineFunctionsAController',['$scope','$state','FunctionsService','MyCompanyService', function($scope,$state, FunctionsService, MyCompanyService){
     $scope.info = {
       listFunction: []
     }
