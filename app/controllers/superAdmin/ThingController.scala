@@ -15,6 +15,7 @@ import models.Engine
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
+import controllers.ApplicationController
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -38,7 +39,9 @@ class ThingController @Inject() (
   val env: Environment[User, JWTAuthenticator],
   thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
-  companyDao: CompanyDAO)
+  companyDao: CompanyDAO,
+  val appcontroller:ApplicationController
+  )
 extends Silhouette[User, JWTAuthenticator] {
 
   def showThing = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
@@ -210,6 +213,86 @@ extends Silhouette[User, JWTAuthenticator] {
               }
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
 
+        }
+        case None =>
+        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+      }
+    }.recoverTotal {
+          case error =>
+            Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+      }
+  }
+
+
+  def addNewMeasurements = Action.async(parse.json) { implicit request =>
+    request.body.validate[AddNewMeasurement.Data].map {
+      data =>
+      val thingInfo = data.thingID
+      thingDao.findByID(thingInfo).flatMap{
+        case Some(thingToAssign) =>
+          thingTypeDao.findByID(thingToAssign.thingTypeID).flatMap{
+            case Some(thingType) =>
+              var dataThingType = thingType.doubleValue
+              var listParametersthingType = new ListBuffer[String]
+              for(infoThingType <- dataThingType.infos){
+                listParametersthingType += infoThingType.name
+              }
+              if (!(listParametersthingType.equals(data.sensor))){
+                  val listDD = new ListBuffer[DetectionDouble]
+                  var count: Int = 0
+                  var dataSensor = data.sensor
+                  for (nameParameterMeasurement <- listParametersthingType){
+                    if(dataSensor.contains(nameParameterMeasurement)){
+                        var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
+                        listDD += dD
+                        count = count + 1
+                      }
+                    else{
+                        var dD = new DetectionDouble(nameParameterMeasurement, 1000000.0)
+                        listDD += dD
+                      }
+                    }
+                  val listBufferDD = listDD.toList
+                  var arrayDouble = Array.empty[Double]
+                  for(it <- listDD){
+                    arrayDouble:+it.value
+                  }
+                  var newlabel:Double = appcontroller.LogReg(data.thingID,arrayDouble)
+                  val measurements = Measurements(
+                      measurementsID = UUID.randomUUID(),
+                      thingID = data.thingID,
+                      dataTime = data.dataTime,
+                      sensors = listBufferDD,
+                      label = newlabel
+                      )
+                  for{
+                    thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                    // measurements <- measurementsDao.add(measurements)
+                  } yield { Ok(Json.obj("ok" -> "ok")) }
+                }
+              else{
+                val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
+                yield new DetectionDouble(sensorName, valueDouble)
+
+                var arrayDouble = Array.empty[Double]
+                for(it <- listDD){
+                  arrayDouble:+it.value
+                }
+                var newlabel:Double = appcontroller.LogReg(data.thingID,arrayDouble)
+
+                val measurements = Measurements(
+                  measurementsID = UUID.randomUUID(),
+                  thingID = data.thingID,
+                  dataTime = data.dataTime,
+                  sensors = listDD,
+                  label = newlabel
+                )
+                for{
+                  thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                  //measurements <- measurementsDao.add(measurements)
+                  } yield { Ok(Json.obj("ok" -> "ok")) }
+                }
+          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
         }
         case None =>
         Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))

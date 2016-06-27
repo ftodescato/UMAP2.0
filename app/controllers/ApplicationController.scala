@@ -113,17 +113,25 @@ class ApplicationController @Inject() (
     modello
   }
 
-  def LogReg(thingID: UUID, data: Array[Double]) = Action.async { implicit request =>
+  def LogReg(thingID: UUID, data: Array[Double]):Double = {
 
     val thingDB =thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 3 seconds)
     val label=thingDao.findListLabel(thing.get)
     // val data=thingDao.findListArray(thing.get)
-    //
-    // val e = new Engine
+    val e = new Engine
+
+    // recupero il modello con l'ID della thing
     // val modello:LogRegModel = ModelLogReg(thingID)
+
+    // faccio la predizione della nuova label
     // val predizione = e.getLogRegPrediction(modello,data)
-    Future.successful(Ok(Json.obj("Label nel DB"->label)))
+
+    // ritorno la label come double
+    // predizione
+    //return temporaneo
+    val temp:Double=0
+    temp
   }
   // def LogReg(thingID: UUID) = Action.async { implicit request =>
   //   // val obs: Array[Double] = Array(1.6, 2.1, 3)
