@@ -105,10 +105,10 @@ class AccountController @Inject() (
              case Some(psw) =>
              if(user.secretString == data.newSecretString){
              var authInfo = passwordHasher.hash(data.newPassword)
-             userDao.confirmedMail(user)
+
 
                for{
-
+                 user <- userDao.confirmedMail(user)
                  authInfo <- passwordInfoDao.update(loginInfo, authInfo)
                }yield {
                  Ok(Json.obj("token" -> "ok"))

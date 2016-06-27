@@ -7,6 +7,8 @@ import java.util.{Date, Locale}
 import java.text.DateFormat
 import java.text.DateFormat._
 import java.util.Date
+import java.time.format.DateTimeFormatter
+import java.time.LocalDate
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -38,79 +40,64 @@ class GraphicController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-  // commento temporaneo
-  //   def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
-  //     var futureV = false
-  //     var valueForX: Double = 0
-  //     var valueY = Array.empty[Double]
-  //     var valueX = Array.empty[Date]
-  //     var arrayDouble = Array.empty[Double]
-  //     val chart = chartDao.findByID(chartID)
-  //     chart.flatMap{
-  //       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
-  //       case Some (chart) =>
-  //        val thing = thingDao.findByID(chartID)
-  //        thing.flatMap{
-  //          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-  //          case Some (thing) =>
-  //          val functionName = chart.functionName
-  //            functionName match {
-  //                      case "Media" =>
-  //                          arrayDouble = engine.sumStatistic("Mean")
-  //         valueForX =arrayDouble(0)
-  //          val graphic = Graphic(
-  //            futureV = futureV,
-  //            valuesY = valueY,
-  //            valuesX = valueX,
-  //            resultFunction = valueForX
-  //          )
-  //
-  //           Future.successful(Ok(Json.toJson(graphic)))
-  //        }
-  //     }
-  //   }
-  // }
 
-  //   def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
-  //     var futureV = false
-  //     var valueForX: Double = 0
-  //     var valueY = new Array[Double]
-  //     var valueX = new Array[Date]
-  //
-  //     val chart = chartDao.findByID(chartID)
-  //     chart.flatMap{
-  //       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
-  //       case Some (chart) =>
-  //         val thing = thingDao.findByID(chartID)
-  //         thing.flatMap{
-  //           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-  //           case Some (thing) =>
-  //             var listMeasurement = thing.datas
-  //             for(measurement <- listMeasurement)
-  //             {
-  //               valueX += measurement.dataTime
-  //                 for(sensors <- measurement.sensors)
-  //                 {
-  //                   if(sensors.sensor == chart.infoDataName){
-  //                       valueY += sensors.value
-  //                   }
-  //                 }
-  //             }
-  //
-  //             val functionName = chart.functionName
-  //             functionName match {
-  //               case "Media" => {
-  //                 engine.sumStatistic( ,"Mean")
-  //
-  //
-  //               }
-  //         }
-  //
-  //
-  //
-  //         }
-  //
-  //       Future.successful(Ok(Json.toJson(graphic)))
-  //     }
-  // }
+    def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
+      var futureV = false
+      var valueForX: Double = 0
+      var valueY = Array.empty[Double]
+      var valueX = Array.empty[Date]
+      var arrayDouble = Array.empty[Double]
+      val chart = chartDao.findByID(chartID)
+      chart.flatMap{
+        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
+        case Some (chart) =>
+         val thing = thingDao.findByID(chartID)
+         thing.flatMap{
+           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+           case Some (thing) =>
+           val functionName = chart.functionName
+           var countForIndex = 0
+           var index = 0
+           var countForDate = 0
+           var listMeasurement = thing.datas
+           for(measurement <- listMeasurement)
+           {countForDate = countForDate + 1
+             valueX :+ measurement.dataTime
+               for (sensors <- measurement.sensors if index == 0){
+                 if(sensors.sensor == chart.infoDataName)
+                    {index = countForIndex}
+                  countForIndex = countForIndex + 1
+               }
+            }
+             functionName match {
+                case "Media" =>
+                    valueForX = engine.sumStatistic(thing.thingID, "Mean", index)
+                case "Minimo" =>
+                    valueForX = engine.sumStatistic(thing.thingID, "Min", index)
+                case "Massimo" =>
+                    valueForX = engine.sumStatistic(thing.thingID, "Max", index)
+                case "Varianza" =>
+                    valueForX = engine.sumStatistic(thing.thingID, "Variance", index)
+                case "Future" =>
+                    valueForX = engine.futureV(thing.thingID, index)
+                }
+           var lastDateMeasurement = thing.datas(countForDate).dataTime.toString()
+           val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+           val oldDate = LocalDate.parse(lastDateMeasurement, formatter)
+           var secondLastDateMeasurement = thing.datas(countForDate - 1).dataTime.toString()
+           val newDate = LocalDate.parse(secondLastDateMeasurement, formatter)
+           var differenceForDate = newDate.toEpochDay() - oldDate.toEpochDay()
+           var nextDate = lastDateMeasurement + differenceForDate
+           valueX :+ nextDate
+           val graphic = Graphic(
+             futureV = futureV,
+             valuesY = valueY,
+             valuesX = valueX,
+             resultFunction = valueForX
+           )
+
+            Future.successful(Ok(Json.toJson(graphic)))
+      }
+    }
+  }
 }
