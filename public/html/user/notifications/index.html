@@ -1,0 +1,83 @@
+
+<section id="notificationList" class="container-fluid">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.user()">Home</a></li>
+    <li class="active">Gestione Notifiche</li>
+  </ul>
+  <h1 class="text-center page-header">Lista delle notifiche presenti</h1>
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-1">
+      <button ui-sref="root.user.notifications.addNotification()" class="btn btn-success">Nuovo</button>
+    </div>
+  </div>
+  <h2 class="text-center">Modelli</h2>
+  <div class="row">
+    <div class="col-xs-12">
+      <input ng-model="searchThingTypes.$" placeholder="cerca con qualsiasi valore" class="form-control"/>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <th> <a ng-click="order('notificationID')" class="btn"> <strong>ID </strong></a></th>
+        <th> <a ng-click="order('emailUser')" class="btn"> <strong>Email        </strong></a></th>
+        <th> <a ng-click="order('notificationDescription')" class="btn"> <strong>Descrizione       </strong></a></th>
+        <th> <a ng-click="order('thingTypeID')" class="btn"> <strong>ID Modello  </strong></a></th>
+        <th> <a ng-click="order('valMin')" class="btn"> <strong>Val min  </strong></a></th>
+        <th> <a ng-click="order('valMax')" class="btn"> <strong>Val max  </strong></a></th>
+        <th>Azioni     </th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="not in notificationThingType |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ">
+          <td>{{not.notificationID}}</td>
+          <td>{{not.emailUser}}</td>
+          <td>{{not.notificationDescription}}</td>
+          <td>{{not.thingTypeID}}</td>
+          <td>{{not.valMin}}</td>
+          <td>{{not.valMax}}</td>
+          <td> <a ui-sref="root.user.notificationDetails({id:not.notificationID})"> 
+              <button class="btn btn-warning">Modifica</button></a>
+            <form ng-submit="deleteNotification(not.notificationID)">
+              <button type="submit" class="btn btn-danger">Elimina </button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <h2 class="text-center">Oggetti</h2>
+  <div class="row">
+    <div class="col-xs-12">
+      <input ng-model="searchThings.$" placeholder="cerca con qualsiasi valore" class="form-control"/>
+    </div>
+  </div>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <th> <a ng-click="order('notificationID')" class="btn"> <strong>ID </strong></a></th>
+        <th> <a ng-click="order('emailUser')" class="btn"> <strong>Email        </strong></a></th>
+        <th> <a ng-click="order('notificationDescription')" class="btn"> <strong>Descrizione       </strong></a></th>
+        <th> <a ng-click="order('thingID')" class="btn"> <strong>ID Oggetto  </strong></a></th>
+        <th> <a ng-click="order('valMin')" class="btn"> <strong>Val min  </strong></a></th>
+        <th> <a ng-click="order('valMax')" class="btn"> <strong>Val max  </strong></a></th>
+        <th>Azioni     </th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="not in notificationThing |  orderBy:predicate:reverse | filter:searchThings:strict track by $index ">
+          <td>{{not.notificationID}}</td>
+          <td>{{not.emailUser}}</td>
+          <td>{{not.notificationDescription}}</td>
+          <td>{{not.thingID}}</td>
+          <td>{{not.valMin}}</td>
+          <td>{{not.valMax}}</td>
+          <td> <a ui-sref="root.user.notificationDetails({id:not.notificationID})"> 
+              <button class="btn btn-warning">Modifica           </button></a>
+            <form ng-submit="deleteNotification(not.notificationID)">
+              <button type="submit" class="btn btn-danger">Elimina            </button>
+            </form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

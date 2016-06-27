@@ -1,0 +1,20 @@
+section(id="updateNotification" class="container-fluid")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.admin()") Home
+    li
+      a(ui-sref="root.admin.notification()") Gestione Notifiche
+    li(class="active") Modifica Notifica
+  h1(class="text-center page-header") Modifica le impostazioni di notifica  
+  div(class="row")    
+    form(ng-submit="editNotification()" class="col-sm-6 col-sm-offset-3")
+      label(for="descrizione") Descrizione
+      textarea(type="text" id="descrizione" class="form-control" ng-model="info.description" placeholder="descrizione" value="{{notification.name}}")
+      br
+      label(for="minValue") Soglia Minima
+      input(type="text" id="minValue" class="form-control" ng-model="info.minValue" placeholder="soglia minima" value="{{notification.minValue}}")
+      br
+      label(for="maxValue") Soglia Massima
+      input(type="text" id="maxValue" class="form-control" ng-model="info.maxValue" placeholder="soglia massima" value="{{notification.maxValue}}")
+      br
+      button(type='submit' class="btn btn-success") Modifica

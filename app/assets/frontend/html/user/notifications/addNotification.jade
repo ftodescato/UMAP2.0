@@ -1,0 +1,43 @@
+section(id="addNotification" class="container-fluid")
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.user()") Home
+    li
+      a(ui-sref="root.user.notifications()") Gestione Notifiche
+    li(class="active") Nuova Notifica
+  h1(class="text-center page-header") Aggiungi una nuva notifica
+  div(class="row ")
+      form(ng-submit="send()" name="myForm" class="col-xs-6 col-xs-offset-3")
+        .row
+          label.col-xs-5.col-xs-offset-1(for="modelRadio") Per Modello
+            input(type="radio" id="modelRadio" ng-model="which" value="Modello")
+          label.col-xs-5.col-xs-offset-1(for="thingRadio") Per Oggetto
+            input(type="radio" id="thingRadio" ng-model="which" value="Oggetto")
+        div(ng-show="which === 'Modello'")
+          label(for="modelloId" ) Nome Modello                    
+          select( class="form-control" id="modelloId" ng-model="idModelloselected")
+            option(ng-repeat="thingType in thingTypesHash"  value="{{thingType.thingTypeID}}") {{thingType.thingTypeName}}        
+          br
+          label(for="campoModello" ) Parametro                    
+          select( class="form-control" id="campoModello" ng-model="parameterSelected")
+            option(ng-repeat="a in availableParametersHash[idModelloselected] track by $index"  value="{{a}}") {{a}}        
+          br
+        div(ng-show="which === 'Oggetto'")
+          label(for="oggettoId" ) Numero di serie oggetto                    
+          select( class="form-control" id="oggettoId" ng-model="idOggettoSelected")
+            option(ng-repeat="o in thingsHash"  value="{{o.thingID}}") {{o.serialNumber}}        
+          br
+          label(for="campoOggetto" ) Parametro                    
+          select( class="form-control" id="campoOggetto" ng-model="parameterSelected")
+            option(ng-repeat="a in availableParametersHash[thingsHash[idOggettoSelected].thingTypeID] track by $index"  value="{{a}}") {{a}}        
+          br
+        label(for="description" ) Descrizione          
+        textarea(type="text" id="description" class="form-control" ng-model="info.description" placeholder="descrizione" )
+        br
+        label(for="minValue" ) Soglia Minima                 
+        input(type="number" class="form-control" id="minValue" ng-model="info.minValue" placeholder="soglia minima" required="")
+        br
+        label(for="maxValue" ) Soglia Massima                 
+        input(type="number" class="form-control" id="maxValue" ng-model="info.maxValue" placeholder="soglia massima" required="")
+        br
+        button(type='submit' class="btn btn-success" ) Aggiungi

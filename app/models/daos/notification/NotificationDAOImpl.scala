@@ -23,8 +23,11 @@ class NotificationDAOImpl @Inject() (db : DB) extends NotificationDAO {
 
   def collection: JSONCollection = db.collection[JSONCollection]("notification")
 
-  def findNotificationOfThingType(thingTypeID: UUID): Future[Option[Notification]] = {
-    collection.find(Json.obj("thingTypeID" -> thingTypeID)).one[Notification]
+  def findNotificationOfThingType(thingTypeID: UUID): Future[List[Notification]] = {
+    collection.find(Json.obj("thingTypeID" -> thingTypeID)).cursor[Notification]().collect[List]()
+  }
+  def findNotificationOfThing(thingID: UUID): Future[List[Notification]] = {
+    collection.find(Json.obj("thingID" -> thingID)).cursor[Notification]().collect[List]()
   }
 
   def findAll(): Future[List[Notification]] = {

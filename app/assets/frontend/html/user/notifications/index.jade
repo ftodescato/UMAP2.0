@@ -1,0 +1,90 @@
+section(id="notificationList" class="container-fluid" )
+  ul(class="breadcrumb")
+    li
+      a(ui-sref="root.user()") Home
+    li(class="active") Gestione Notifiche
+  h1(class="text-center page-header") Lista delle notifiche presenti
+  .row
+    .col-xs-6.col-xs-offset-1
+      button.btn.btn-success(ui-sref="root.user.notifications.addNotification()") Nuovo
+  h2.text-center Modelli
+  div(class="row")
+    div(class="col-xs-12")
+      input(class="form-control" ng-model="searchThingTypes.$" placeholder="cerca con qualsiasi valore")
+  div(class="table-responsive")
+    table(class="table")
+      thead
+        th 
+          a(class="btn" ng-click="order('notificationID')") 
+            strong ID 
+        th 
+          a(class="btn" ng-click="order('emailUser')") 
+            strong Email        
+        th 
+          a(class="btn" ng-click="order('notificationDescription')") 
+            strong Descrizione       
+        th 
+          a(class="btn" ng-click="order('thingTypeID')") 
+            strong ID Modello  
+        th 
+          a(class="btn" ng-click="order('valMin')") 
+            strong Val min  
+        th 
+          a(class="btn" ng-click="order('valMax')") 
+            strong Val max  
+        th Azioni     
+      tbody
+        tr(ng-repeat="not in notificationThingType |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
+          td {{not.notificationID}}
+          td {{not.emailUser}}
+          td {{not.notificationDescription}}
+          td {{not.thingTypeID}}
+          td {{not.valMin}}
+          td {{not.valMax}}
+          td 
+            a(ui-sref="root.user.notificationDetails({id:not.notificationID})") 
+              button.btn.btn-warning Modifica
+            
+            form(ng-submit="deleteNotification(not.notificationID)")
+              button(class="btn btn-danger" type='submit') Elimina 
+            
+  
+  h2.text-center Oggetti
+  div(class="row")
+    div(class="col-xs-12")
+      input(class="form-control" ng-model="searchThings.$" placeholder="cerca con qualsiasi valore")
+  div(class="table-responsive")
+    table(class="table")
+      thead
+        th 
+          a(class="btn" ng-click="order('notificationID')") 
+            strong ID 
+        th 
+          a(class="btn" ng-click="order('emailUser')") 
+            strong Email        
+        th 
+          a(class="btn" ng-click="order('notificationDescription')") 
+            strong Descrizione       
+        th 
+          a(class="btn" ng-click="order('thingID')") 
+            strong ID Oggetto  
+        th 
+          a(class="btn" ng-click="order('valMin')") 
+            strong Val min  
+        th 
+          a(class="btn" ng-click="order('valMax')") 
+            strong Val max  
+        th Azioni     
+      tbody
+        tr(ng-repeat="not in notificationThing |  orderBy:predicate:reverse | filter:searchThings:strict track by $index ")
+          td {{not.notificationID}}
+          td {{not.emailUser}}
+          td {{not.notificationDescription}}
+          td {{not.thingID}}
+          td {{not.valMin}}
+          td {{not.valMax}}
+          td 
+            a(ui-sref="root.user.notificationDetails({id:not.notificationID})") 
+              button.btn.btn-warning Modifica           
+            form(ng-submit="deleteNotification(not.notificationID)")
+              button(class="btn btn-danger" type='submit') Elimina            

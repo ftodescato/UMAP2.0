@@ -1,0 +1,21 @@
+
+<section id="companiesList" class="container-fluid">
+  <ul class="breadcrumb">
+    <li><a ui-sref="root.admin()">Home</a></li>
+    <li class="active">Gestione Engine</li>
+  </ul>
+  <h1 class="page-header text-center">Gestione Engine</h1>
+  <div class="row">
+    <div class="col-xs-6 col-xs-offset-3 text-center"> </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 text-center"> 
+      <h2>Funzioni Disponibili </h2>
+      <div ng-repeat=" fun in info.listFunction track by $index"><span>{{fun.name}}
+          <input type="checkbox" ng-model="fun.inUse"/></span></div>
+    </div>
+  </div>
+  <form ng-submit="send()">
+    <button type="submit" class="btn btn-success">manda</button>
+  </form>
+</section>

@@ -36776,7 +36776,7 @@ app.provider('Flash', function() {
 (function(){
   'use strict';
 
-  var umap = angular.module('umap', ['ngFlash','ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.superAdmin.engine','umap.login','umap.admin','umap.admin.user','umap.admin.analisi','umap.adminUser.thingTypes','umap.adminUser.things','umap.user']);
+  var umap = angular.module('umap', ['ngFlash','ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.superAdmin.engine','umap.login','umap.admin','umap.admin.user','umap.admin.analisi','umap.admin.engine','umap.adminUser.thingTypes','umap.adminUser.things','umap.adminUser.notifications','umap.user']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
   function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
   $urlRouterProvider.otherwise('/');
@@ -36986,14 +36986,14 @@ app.provider('Flash', function() {
     //$scope.item = { testo:'stocazzo' } ;
     $scope.drop;
     $scope.functions = [
-      {functionId:'1', functionName:'func uno'},
-      {functionId:'2', functionName:'func due'},
-      {functionId:'3', functionName:'func tre'}
+      {functionId:'1', functionName:'func uno', selected: false},
+      {functionId:'2', functionName:'func due', selected: false},
+      {functionId:'3', functionName:'func tre', selected: false}
     ];
     $scope.charts = [
-      {chartId:'1', chartName:'chart uno'},
-      {chartId:'2', chartName:'chart due'},
-      {chartId:'3', chartName:'chart tre'}
+      {chartId:'0', chartName:'chart uno', selected: false},
+      {chartId:'1', chartName:'chart due', selected: false},
+      {chartId:'2', chartName:'chart tre', selected: false}
     ];
     //['func uno','func due', 'func tre'];
   //  $scope.charts = ['chart uno','chart due', 'chart tre'];
@@ -37004,12 +37004,69 @@ app.provider('Flash', function() {
   //  }
     $scope.final = {
       fun: {},
-      chart: {},
+      chart: [],
       thingTypes: {}
     }
-    $scope.test = function(stuff, stuff2, obj){
-      console.log('$scope.drop = '+$scope.drop);
+    $scope.test = function(index){
+      console.log(index);
+      $scope.charts[index].selected = true;
+      console.log($scope.final);
     }
+  }]);
+})();
+
+(function(){
+  'use strict';
+  var umap = angular.module('umap.admin.engine',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.engine', {
+      url: '/engine',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/engine/functions.html',
+              controller:  'EngineFunctionsAController'
+            }
+        }
+    });
+}]);
+umap.factory('MyCompanyService', function($resource) {
+  return  $resource('/api/getMyCompany/:id',{id: "@id", isArray: false},{
+    query: {
+          method: 'GET',
+          isArray: false
+        }
+    })
+});
+
+  umap.controller('EngineFunctionsAController',['$scope','$state','FunctionsService','MyCompanyService', function($scope,$state, FunctionsService, MyCompanyService){
+    $scope.info = {
+      listFunction: []
+    }
+    $scope.infoC = [];
+      MyCompanyService.query().$promise.then(function(company){
+        $scope.infoC = company.functionAlgList;
+      });
+
+    FunctionsService.Functions.query().$promise.then(function(functions){
+      for (var j = 0; j < functions.length; j++) {
+        if($scope.infoC.indexOf(functions[j].name) != -1)
+          $scope.info.listFunction.push({name:functions[j].name, inUse: true});
+        else
+          $scope.info.listFunction.push({name:functions[j].name, inUse: false});
+      }
+    });
+    $scope.send = function ( ){
+      $scope.payload = {
+        listFunction : []
+      };
+      for (var i = 0; i < $scope.info.listFunction.length; i++) {
+        if($scope.info.listFunction[i].inUse)
+          $scope.payload.listFunction.push($scope.info.listFunction[i].name);
+      }
+      FunctionsService.Admin.save($scope.payload, function(){
+        $state.go('root.admin')
+      });
+    };
   }]);
 })();
 
@@ -37224,6 +37281,132 @@ app.provider('Flash', function() {
           $state.go('root')
         });
       }
+    }
+  }]);
+})();
+
+(function(){
+  "use strict";
+  var umap = angular.module('umap.adminUser.notifications',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.notifications', {
+      url: '/notifications',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/notifications/index.html',
+              controller:  'NotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.user.notifications', {
+      url: '/notifications',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/notifications/index.html',
+              controller:  'NotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.admin.notifications.addNotification', {
+      url: '/addNotification',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/notifications/addNotification.html',
+              controller:  'AddNotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.user.notifications.addNotification', {
+      url: '/addNotification',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/notifications/addNotification.html',
+              controller:  'AddNotificationController'
+            }
+        }
+    });
+  }]);
+
+  umap.factory('NotificationService', function($resource){
+    return{
+        Notification: $resource('/api/notifications/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+      })
+    }
+  });
+  umap.controller('NotificationController',['$state', '$scope','$window','NotificationService'  ,function($state, $scope,$window, NotificationService){
+    $scope.notificationThingType = [];
+    $scope.notificationThing = [];
+    NotificationService.Notification.query().$promise.then(function(notifications){
+      console.log(notifications);
+      for (var i = 0; i < notifications.length; i++) {
+        if(notifications[i].thingTypeID)
+          $scope.notificationThingType.push(notifications[i]);
+        else
+          $scope.notificationThing.push(notifications[i]);
+      }
+    });
+    $scope.predicate = 'notificationID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
+    $scope.deleteNotification = function(id){
+      var deleteNot = $window.confirm('Sei sicuro ?');
+      if(deleteNot){
+        NotificationService.Notification.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
+    }
+  }]);
+  umap.controller('AddNotificationController',['$state', '$scope','$stateParams','NotificationService','ThingTypeServiceAU', function($state, $scope, $stateParams, NotificationService, ThingTypeServiceAU){
+    $scope.which = "Modello";
+    $scope.info = {};
+    $scope.parameterSelected = '';
+    //$scope.parameterSelected2 = '';
+    $scope.idModelloselected = '';
+    $scope.idOggettoSelected = '';
+    ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypesHash = {};
+      $scope.availableParametersHash = {};
+      for (var i = 0; i < thingTypes.length; i++) {
+        $scope.thingTypesHash[thingTypes[i].thingTypeID] = thingTypes[i];
+        $scope.availableParametersHash[thingTypes[i].thingTypeID] = [];
+        for (var j = 0; j < thingTypes[i].doubleValue.infos.length; j++) {
+          if(thingTypes[i].doubleValue.infos[j].visible)
+            $scope.availableParametersHash[thingTypes[i].thingTypeID].push( thingTypes[i].doubleValue.infos[j].name);
+        }
+      }
+    });
+    ThingTypeServiceAU.Thing.query().$promise.then(function(things){
+      $scope.thingsHash = {};
+      for (var i = 0; i < things.length; i++) {
+        $scope.thingsHash[things[i].thingID] = things[i];
+      }
+    });
+    $scope.send = function(){
+      var infos = {
+        description: $scope.info.description,
+        objectID: '',
+        modelOrThing: $scope.which,
+        parameter: $scope.parameterSelected,
+        minValue: $scope.info.minValue,
+        maxValue: $scope.info.maxValue
+      }
+      if($scope.which === 'Oggetto')
+        infos.objectID = $scope.idOggettoSelected;
+      else
+        infos.objectID = $scope.idModelloselected;
+
+      NotificationService.Notification.save(infos).$promise.then(function(d){
+        console.log(d);
+        $state.go('root.admin.notifications');
+      });
+
     }
   }]);
 })();
@@ -37449,10 +37632,29 @@ app.provider('Flash', function() {
             }
         }
     });
+    $stateProvider.state('root.superAdmin.engine.parameters', {
+      url: '/parameters',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/superAdmin/engine/parameters.html',
+              controller:  'EngineParametersController'
+            }
+        }
+    });
 }]);
   umap.factory('FunctionsService', function($resource) {
     return {
       Functions: $resource('/api/engine/functions/:id',{id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      }),
+      Admin: $resource('/api/engineA/functions/:id', {id: "@id"},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      }),
+      Parameters: $resource('/api/thingTypeVisibility', {id: "@id"},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -37468,18 +37670,14 @@ app.provider('Flash', function() {
       listFunction: []
     }
     $scope.infoC = [];
-    $scope.funSelected = [true, false, true];
     $scope.selected ;
-    $scope.aux;
     CompanyService.query().$promise.then(function(companies){
       $scope.hash = {}
-      $scope.funAvailable = {};
       for (var i = 0; i < companies.length; i++) {
         $scope.infoC.push({companyID: companies[i].companyID, functions:[]});
         $scope.hash[companies[i].companyID] = companies[i];
       }
       $scope.companies = companies;
-      $scope.companyInUse = companies[0];
     });
     FunctionsService.Functions.query().$promise.then(function(functions){
       $scope.functions = functions
@@ -37501,12 +37699,39 @@ app.provider('Flash', function() {
         if($scope.infoC[$scope.selected].functions[i].inUse)
           $scope.info.listFunction.push($scope.infoC[$scope.selected].functions[i].name);
       }
-      console.log($scope.info);
       FunctionsService.Functions.save($scope.info, function(){
         $state.go('root.superAdmin.engine')
       });
     };
   }]);
+
+
+  umap.controller('EngineParametersController',['$scope','$state', 'FunctionsService','ThingTypeService', function($scope, $state, FunctionsService, ThingTypeService){
+    $scope.selected = '';
+    ThingTypeService.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypesHash = {}
+      for (var i = 0; i < thingTypes.length; i++) {
+        $scope.thingTypesHash[thingTypes[i].thingTypeID] = thingTypes[i];
+      }
+      $scope.thingTypes = thingTypes;
+    });
+    $scope.log = function(){
+      $scope.info = {
+        thingTypeID: '',
+        listData: []
+      }
+      $scope.info.thingTypeID = $scope.selected;
+      for (var i = 0; i < $scope.thingTypesHash[$scope.selected].doubleValue.infos.length; i++) {
+        if($scope.thingTypesHash[$scope.selected].doubleValue.infos[i].visible)
+          $scope.info.listData.push($scope.thingTypesHash[$scope.selected].doubleValue.infos[i].name)
+      }
+      console.log($scope.info);
+      FunctionsService.Parameters.save($scope.info, function(){
+        $state.go('root.superAdmin.engine')
+      });
+    }
+  }]);
+
 })();
 
 (function(){
@@ -37660,7 +37885,8 @@ app.provider('Flash', function() {
     };
 
     $scope.addThingType = function (){
-      ThingTypeService.ThingType.save($scope.newThingType, function(){
+      $scope.item = $scope.newThingType;
+      ThingTypeService.ThingType.save($scope.item, function(){
         $state.go('root.superAdmin.things');
       })
       //console.log($scope.newThingType);

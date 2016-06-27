@@ -8,19 +8,22 @@
   <div class="row">
     <div class="col-sm-4">
       <h2>Funzioni Disponibili</h2>
-      <div ng-repeat=" item in functions track by $index"><span data-jqyoui-options="{revert: true, cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item">{{item.functionName}}</span><br/></div>
+      <div ng-repeat=" item in functions track by $index"><span data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="functions">{{item.functionName}}</span><br/></div>
     </div>
     <div class="col-sm-4">
       <h2>Grafici Disponibili</h2>
-      <div ng-repeat=" item in charts track by $index"><span data-jqyoui-options="{revert: true}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item">{{item.chartName}}</span><br/></div>
+      <div ng-repeat=" item in charts track by $index"><span ng-if="!item.selected" data-jqyoui-options="{revert: 'invalid'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item">{{item.chartName}}</span><br/></div>
     </div>
   </div>
   <div class="row">
     <div class="col-sm-4">
-      <div data-drop="true" data-jqyoui-options="data-jqyoui-options" jqyoui-droppable="{multiple: false}" style="height:50px; border: 1px solid red;" ng-model="fun.fun">{{fun.fun.functionName}}</div>
+      <div data-drop="true" data-jqyoui-options="data-jqyoui-options" jqyoui-droppable="{multiple: false}" style="height:50px; border: 1px solid red;" ng-model="final.fun">{{final.fun.functionName}}</div>
     </div>
     <div class="col-sm-4">
-      <div data-drop="true" data-jqyoui-options="data-jqyoui-options" jqyoui-droppable="{multiple: false}" style="height:50px; border: 1px solid red;" ng-model="fun.chart">{{fun.chart.chartName}}</div>
+      <div data-drop="true" data-jqyoui-options="data-jqyoui-options" jqyoui-droppable="{multiple: false}" style="height:50px; border: 1px solid red;" ng-model="final.chart">{{final.chart.chartName}}
+        <div ng-repeat=" item in final.chart track by $index"><span data-jqyoui-options="{revert: true}" data-drag="true" jqyoui-draggable="{placeholder:'keep', onDrop: test(item.chartId)}" ng-model="item">{{item.chartName}}</span></div>
+      </div>
     </div>
   </div>
+  <button ng-click="test()" class="btn btn-success">stampa</button>
 </section>
