@@ -64,6 +64,7 @@ class FunctionController @Inject() (
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("function.notExists"))))
         case Some (function) =>
           val newFunction = Function(
+              functionID = UUID.randomUUID(),
               name = data.functionName
           )
           for{
@@ -84,7 +85,8 @@ class FunctionController @Inject() (
     request.body.validate[AddFunction.Data].map { data =>
       //val authInfo = passwordHasher.hash(data.password)
       val function = Function(
-          name = data.functionName
+        functionID = UUID.randomUUID(),
+        name = data.functionName
       )
       for{
         function <- functionDao.save(function)

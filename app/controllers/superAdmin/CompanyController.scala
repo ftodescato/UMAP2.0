@@ -13,8 +13,10 @@ import models.User
 import models.Function
 import models.daos.user.UserDAO
 import models.daos.thingType.ThingTypeDAO
+import models.daos.thing.ThingDAO
 import models.daos.function.FunctionDAO
 import models.daos.company.CompanyDAO
+
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -38,6 +40,9 @@ class CompanyController @Inject() (
   companyDao: CompanyDAO,
   functionDao: FunctionDAO,
   thingTypeDao: ThingTypeDAO,
+  thingDao: ThingDAO,
+  thingTypeController: ThingTypeController,
+  thingController: ThingController,
   userDao: UserDAO)
   extends Silhouette[User, JWTAuthenticator] {
 
@@ -62,12 +67,37 @@ class CompanyController @Inject() (
     companyDao.findByID(companyID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
       case Some (company) =>
+      var listThingTypeWithThisC = new ListBuffer[ThingType]
+      var listThingWithThisC = new ListBuffer[Thing]
+      for (thingTypeWithThisC <- thingTypeDao.findByCompanyID(companyID))
+      {
+        for(thingType <- thingTypeWithThisC)
+        {
+          listThingTypeWithThisC += thingType
+        }
+      }
+      for (thingType <-listThingTypeWithThisC)
+      {
+          thingTypeController.delete(thingType.thingTypeID)
+      }
+
+      //delete thing
+      for (thingWithThisC <- thingDao.findByCompanyID(companyID))
+      {
+        for(thing <- thingWithThisC)
+        {
+          listThingWithThisC += thing
+        }
+      }
+      for (thing <-listThingWithThisC)
+      {
+          thingController.delete(thing.thingID)
+      }
+
         for{
           company <- userDao.remove(companyID)
         }yield{
           companyDao.remove(companyID)
-          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
           Ok(Json.obj("ok" -> "ok"))
          }
     }

@@ -15,6 +15,8 @@ import models.Engine
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
+import models.daos.chart.ChartDAO
+import models.daos.notification.NotificationDAO
 import controllers.ApplicationController
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -40,6 +42,8 @@ class ThingController @Inject() (
   thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
   companyDao: CompanyDAO,
+  chartDao: ChartDAO,
+  notificationDao: NotificationDAO,
   val appcontroller:ApplicationController
   )
 extends Silhouette[User, JWTAuthenticator] {
@@ -65,6 +69,8 @@ extends Silhouette[User, JWTAuthenticator] {
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       case Some (thing) =>
         for{
+          notification <- notificationDao.removeByThing(thingID)
+          chart <- chartDao.removeByThing(thingID)
           thing <- thingDao.remove(thingID)
         }yield{
           Ok(Json.obj("ok" -> "ok"))

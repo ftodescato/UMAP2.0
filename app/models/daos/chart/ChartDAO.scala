@@ -32,7 +32,7 @@ trait ChartDAO {
    */
   def find(chartID: UUID): Future[Option[Chart]]
 
-  def findByThingID(thingID: UUID): Future[Option[Chart]]
+  def findByThingID(thingID: UUID): Future[List[Chart]]
 
 
   /**
@@ -47,4 +47,7 @@ trait ChartDAO {
   def update(chartID: UUID, chart2: Chart)
 
   def remove(chartID: UUID): Future[List[Chart]]
+
+  def removeByThing(thingID: UUID): Future[List[Chart]]
+
 }
