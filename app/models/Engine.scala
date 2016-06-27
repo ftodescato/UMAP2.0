@@ -14,6 +14,7 @@ import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticR
 import org.apache.spark.mllib.evaluation._
 import org.apache.spark.mllib.util._
 import models._
+import collection.breakOut
 
 class Engine{
   //CORRELATION
@@ -127,9 +128,10 @@ class Engine{
 
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
-    //val measureArray = measureList.toArray
+
     val vecMeasureArray = data.map(Vectors.dense(_))
     val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
+
     val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(modello.getWeights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
     val prediction = loadedModel.predict(test2)
     val sol=prediction.collect.toArray

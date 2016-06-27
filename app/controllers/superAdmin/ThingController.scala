@@ -12,6 +12,7 @@ import models.User
 import models.DetectionDouble
 import models.Measurements
 import models.Engine
+import controllers.ApplicationController
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
@@ -177,8 +178,9 @@ extends Silhouette[User, JWTAuthenticator] {
                           thingID = data.thingID,
                           dataTime = data.dataTime,
                           sensors = listBufferDD,
-                          label = data.label
+                          label = 0
                       )
+                      // val finalLabel:Double = LogReg(measurements.measurementsID,)
                       for{
 
                         thing <- thingDao.updateMeasurements(thingInfo, measurements)
