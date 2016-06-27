@@ -17,7 +17,7 @@ import models._
 
 class Engine{
   //CORRELATION
-  def getCorrelation(a: List[Double], b: List[Double]) : Double = {
+  def getCorrelation(a: Array[Double], b: Array[Double]) : Double = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
@@ -34,8 +34,8 @@ class Engine{
     val listlength = lista.length
     var listiterator:Int =0
     var sumxy:Double =0
-    for (listiterator <- 0 until n){
-      sumxy=sumxy+(data(listiterator)*(listiterator+1))
+    for (listiterator <- 0 until listlength){
+      sumxy=sumxy+(lista(listiterator)*(listiterator+1))
     }
     var sumx:Double =0;
     for(listiterator <- 1 until listlength+1){

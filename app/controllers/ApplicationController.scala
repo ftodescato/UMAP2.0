@@ -47,7 +47,7 @@ class ApplicationController @Inject() (
   Future.successful(Ok(Json.obj("test"->"test")))
   }
 
-  def correlation(thingID: UUID, datatype: Int):Array[Double] ={ implicit request =>
+  def correlation(thingID: UUID, datatype: Int): Double ={
     // val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
     // val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
     val thingDB =thingDao.findByID(thingID)
@@ -65,23 +65,33 @@ class ApplicationController @Inject() (
     sol
   }
   // SUMSTATISTIC
-  def sumStatistic(thingID: UUID, mv: String, datatype: Int): Array[Double] = {
+  def sumStatistic(thingID: UUID, mv: String, datatype: Int): Double = {
     // val obs: Array[Double] = Array(1.2, 2, 3, 3, 3, 3)
     // val obs2: Array[Double] = Array(0, 1, 0, 3, 3, 3)
     // val lista: List[Array[Double]] =List(obs,obs2)
+
+    // recupero list[array[double]] dal db tramite ID
     val thingDB =thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 1 seconds)
     val data=thingDao.findListArray(thing.get)
-    val datalength=data.length
-    var chosendata=Array.empty[Double]
-    var iterator:Int=0
-    for (iterator<-0 until datalength){
-      chosendata=chosendata:+data(iterator)(datatype)
-    }
+
+    // // seleziono solo un tipo di dato list[array[datatype,1,2]]
+    // //                                    [array[datatype,1,2]]
+    // val datalength=data.length
+    // var chosendata=Array.empty[Double]
+    // var iterator:Int=0
+    // for (iterator<-0 until datalength){
+    //   chosendata=chosendata:+data(iterator)(datatype)
+    // }
+
+    // chiamo l'engine per calcolarmi le statistiche sui dati
     val e = new Engine
-    val aux: Array[Double] = e.sumStatistic(chosendata, mv)
+    val aux: Array[Double] = e.sumStatistic(data, mv)
+
+    //ciclo in cerca dell valore che mi interessa
+    var sol:Double=aux(datatype)
     // Future.successful(Ok(Json.obj("Array"->aux)))
-    aux
+    sol
   }
 
   def ModelLogReg(thingID: UUID): LogRegModel ={
@@ -148,7 +158,7 @@ class ApplicationController @Inject() (
   //   Future.successful(Ok(Json.obj("Label nel DB"->label,"Array"->predizione)))
   // }
 
-  def futureV(thingID: UUID) = Array[Double]{ implicit request =>
+  def futureV(thingID: UUID): Array[Double] = {
       // val obs: Array[Double] = Array(1, 4, 2)
       // val obs2: Array[Double] = Array(2, 3, 4)
       // val obs3: Array[Double] = Array(3,2,6)
