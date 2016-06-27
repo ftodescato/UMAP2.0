@@ -166,7 +166,7 @@ class ApplicationController @Inject() (
   //   Future.successful(Ok(Json.obj("Label nel DB"->label,"Array"->predizione)))
   // }
 
-  def futureV(thingID: UUID): Array[Double] = {
+  def futureV(thingID: UUID, datatype:Int): Double = {
       // val obs: Array[Double] = Array(1, 4, 2)
       // val obs2: Array[Double] = Array(2, 3, 4)
       // val obs3: Array[Double] = Array(3,2,6)
@@ -182,7 +182,7 @@ class ApplicationController @Inject() (
       val sol=e.getFuture(data)
       // Future.successful(Ok(Json.obj("Dati"->data,
       //                               "Array"->sol)))
-      sol
+      sol(datatype)
   }
 
   def index = UserAwareAction.async { implicit request =>
