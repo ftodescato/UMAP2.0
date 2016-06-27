@@ -34,7 +34,7 @@ class NotificationDAOImpl @Inject() (db : DB) extends NotificationDAO {
     collection.find(Json.obj()).cursor[Notification]().collect[List]()
   }
 
-  def find(notificationID: UUID) : Future[Option[Notification]] = {
+  def findByID(notificationID: UUID) : Future[Option[Notification]] = {
     collection.find(Json.obj("notificationID" -> notificationID)).one[Notification]
   }
 
@@ -43,12 +43,21 @@ class NotificationDAOImpl @Inject() (db : DB) extends NotificationDAO {
     Future.successful(notification)
   }
 
-  def update(notificationID: UUID, notification2: Notification) = {
-    collection.update(Json.obj("notificationID" -> notificationID), notification2)
+  def update(notificationID: UUID, newNotification: Notification): Future[Notification] = {
+    collection.update(Json.obj("notificationID" -> notificationID), newNotification)
+    Future.successful(newNotification)
   }
 
   def remove(notificationID: UUID):  Future[List[Notification]] = {
     collection.remove(Json.obj("notificationID" -> notificationID))
+    collection.find(Json.obj()).cursor[Notification]().collect[List]()
+  }
+
+  def removeList(notificationList: List[Notification]):  Future[List[Notification]] = {
+    for (notification <- notificationList)
+    {
+      collection.remove(Json.obj("notificationID" -> notification.notificationID))
+    }
     collection.find(Json.obj()).cursor[Notification]().collect[List]()
   }
 }

@@ -24,7 +24,8 @@ case class Notification(
   thingTypeID: Option[UUID],
   thingID: Option[UUID],
   valMin: Double,
-  valMax: Double
+  valMax: Double,
+  isThing: Boolean
    )
 
 

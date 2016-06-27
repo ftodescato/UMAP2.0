@@ -13,15 +13,19 @@ trait NotificationDAO {
 
 
   def findNotificationOfThingType(thingTypeID: UUID): Future[List[Notification]]
+
   def findNotificationOfThing(thingID: UUID): Future[List[Notification]]
 
   def findAll(): Future[List[Notification]]
 
-  def find(notificationID: UUID): Future[Option[Notification]]
+  def findByID(notificationID: UUID): Future[Option[Notification]]
 
   def save(notification: Notification): Future[Notification]
 
-  def update(notificationID: UUID, notification2: Notification)
+  def update(notificationID: UUID, notification2: Notification) : Future[Notification]
 
   def remove(notificationID: UUID): Future[List[Notification]]
+
+  def removeList(notificationList: List[Notification]): Future[List[Notification]]
+
 }

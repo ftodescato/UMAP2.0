@@ -3,6 +3,7 @@ package models.daos.chart
 import java.util.UUID
 
 import models.Chart
+import models.Thing
 
 import scala.collection.mutable
 import scala.concurrent.Future
@@ -47,6 +48,11 @@ class ChartDAOImpl @Inject() (db : DB) extends ChartDAO {
     collection.find(Json.obj("chartID" -> chartID)).one[Chart]
   }
 
+  def findByThingID(thingID: UUID): Future[Option[Chart]] = {
+    collection.find(Json.obj("thingID" -> thingID)).one[Chart]
+  }
+
+
   /**
    * Saves a chart.
    *
@@ -65,9 +71,10 @@ class ChartDAOImpl @Inject() (db : DB) extends ChartDAO {
   }
 
 
-  def remove(chartID: UUID) = {
+  def remove(chartID: UUID): Future[List[Chart]] = {
     collection.remove(Json.obj("chartID" -> chartID))
-    Future.successful(true)
+    collection.find(Json.obj()).cursor[Chart]().collect[List]()
+
   }
 
 }

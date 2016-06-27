@@ -3,6 +3,7 @@ package models.daos.chart
 import java.util.UUID
 
 import models.Chart
+import models.Thing
 
 import scala.concurrent.Future
 
@@ -31,6 +32,9 @@ trait ChartDAO {
    */
   def find(chartID: UUID): Future[Option[Chart]]
 
+  def findByThingID(thingID: UUID): Future[Option[Chart]]
+
+
   /**
    * Saves a chart.
    *
@@ -42,5 +46,5 @@ trait ChartDAO {
 
   def update(chartID: UUID, chart2: Chart)
 
-  def remove(chartID: UUID)
+  def remove(chartID: UUID): Future[List[Chart]]
 }

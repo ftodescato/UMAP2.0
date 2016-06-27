@@ -67,7 +67,7 @@ class FunctionController @Inject() (
               name = data.functionName
           )
           for{
-            function <- functionDao.update(name,newFunction)
+            function <- functionDao.update(name, newFunction)
           }yield {
             //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
             //env.eventBus.publish(LoginEvent(user, request, request2Messages))

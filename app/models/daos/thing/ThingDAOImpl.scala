@@ -30,7 +30,6 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     collection.find(Json.obj("name" -> thingName)).one[Thing]
   }
 
-
   def findAll(): Future[List[Thing]] = {
     collection.find(Json.obj()).cursor[Thing]().collect[List]()
   }
@@ -73,11 +72,6 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
   def find(serialNumber: String) : Future[Option[Thing]] = {
     collection.find(Json.obj("serialNumber" -> serialNumber)).one[Thing]
   }
-
-  // def findMeasuremets(thing: Thing, measurementsID: UUID) : Future[Measurements] = {
-  //   val measurementsFind = collection.find(Json.obj("datas" -> measurementsID)).one[Measurements]
-  //     Future.successful(measurementsFind)
-  //   }
 
   def save(thing: Thing): Future[Thing] = {
     collection.insert(thing)

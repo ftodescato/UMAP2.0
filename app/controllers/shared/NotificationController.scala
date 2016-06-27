@@ -33,7 +33,7 @@ class NotificationController @Inject() (
 
 
     def showNotificationDetails(notificationID: UUID) = Action.async(parse.json) { implicit request =>
-      val notification = notificationDao.find(notificationID)
+      val notification = notificationDao.findByID(notificationID)
       notification.flatMap{
         notification =>
         Future.successful(Ok(Json.toJson(notification)))
@@ -63,15 +63,61 @@ class NotificationController @Inject() (
      }
    }
 
+   def update(notificationID: UUID) = Action.async(parse.json){ implicit request =>
+     request.body.validate[EditNotification.Data].map { data =>
+       notificationDao.findByID(notificationID).flatMap{
+         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("notification.notExists"))))
+         case Some (notification) =>
+         if(notification.isThing == true)
+          {  val newNotification = Notification(
+             notificationID = notification.notificationID,
+             notificationDescription = data.description,
+             emailUser = notification.emailUser,
+             inputType = data.parameter,
+             thingID = notification.thingID,
+             thingTypeID = null,
+             valMin = data.minValue,
+             valMax= data.maxValue,
+             isThing = notification.isThing
+           )
+           for{
+             notification <- notificationDao.update(notificationID, newNotification)
+           }yield {
+             Ok(Json.obj("ok" -> "ok"))
+            }
+         }
+         else{
+           val newNotification = Notification(
+              notificationID = notification.notificationID,
+              notificationDescription = data.description,
+              emailUser = notification.emailUser,
+              inputType = data.parameter,
+              thingID = null,
+              thingTypeID = notification.thingTypeID,
+              valMin = data.minValue,
+              valMax= data.maxValue,
+              isThing = notification.isThing
+            )
+           for{
+             notification <- notificationDao.update(notificationID, newNotification)
+           }yield {
+             Ok(Json.obj("ok" -> "ok"))
+            }
+          }
+       }
+     }.recoverTotal {
+         case error =>
+           Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+       }
+     }
+
    def delete(notificationID: UUID) = Action.async{ implicit request =>
-     notificationDao.find(notificationID).flatMap{
+     notificationDao.findByID(notificationID).flatMap{
        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("notification.notExists"))))
        case Some (notification) =>
          for{
            notification <- notificationDao.remove(notificationID)
          }yield{
-           //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-           //env.eventBus.publish(LoginEvent(user, request, request2Messages))
            Ok(Json.obj("ok" -> "ok"))
           }
      }
@@ -92,7 +138,8 @@ class NotificationController @Inject() (
         thingTypeID = None,
         thingID = Some(data.objectID),
         valMin = data.minValue,
-        valMax = data.maxValue
+        valMax = data.maxValue,
+        isThing = true
       )
       for{
         notification <- notificationDao.save(notification)
@@ -109,7 +156,8 @@ class NotificationController @Inject() (
           thingTypeID = Some(data.objectID),
           thingID = None,
           valMin = data.minValue,
-          valMax = data.maxValue
+          valMax = data.maxValue,
+          isThing = false
         )
         for{
           notification <- notificationDao.save(notification)
