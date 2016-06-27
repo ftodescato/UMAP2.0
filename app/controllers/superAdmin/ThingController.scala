@@ -12,11 +12,8 @@ import models.User
 import models.DetectionDouble
 import models.Measurements
 import models.Engine
-import controllers.ApplicationController
 import models.daos.company.CompanyDAO
-import models.daos.chart.ChartDAO
 import models.daos.thingType.ThingTypeDAO
-import models.daos.notification.NotificationDAO
 import models.daos.thing.ThingDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -40,9 +37,7 @@ class ThingController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
   thingDao: ThingDAO,
-  chartDao: ChartDAO,
   thingTypeDao: ThingTypeDAO,
-  notificationDao: NotificationDAO,
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
@@ -63,28 +58,9 @@ extends Silhouette[User, JWTAuthenticator] {
   }
 
   def delete(thingID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
-    chartDao.findByThingID(thingID).flatMap{
-      case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notForThing"))))
-      case Some (chart) =>
-      for{
-        chart <- chartDao.remove(chart.chartID)
-      }yield{
-        Ok(Json.obj("ok" -> "ok"))
-       }
-    }
-    notificationDao.findNotificationOfThing(thingID).flatMap{
-      notificationList =>
-      for{
-        notification <- notificationDao.removeList(notificationList)
-      }yield{
-        Ok(Json.obj("ok" -> "ok"))
-       }
-    }
-
     thingDao.findByID(thingID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       case Some (thing) =>
-
         for{
           thing <- thingDao.remove(thingID)
         }yield{
@@ -201,9 +177,8 @@ extends Silhouette[User, JWTAuthenticator] {
                           thingID = data.thingID,
                           dataTime = data.dataTime,
                           sensors = listBufferDD,
-                          label = 0
+                          label = data.label
                       )
-                      // val finalLabel:Double = LogReg(measurements.measurementsID,)
                       for{
 
                         thing <- thingDao.updateMeasurements(thingInfo, measurements)
