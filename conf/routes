@@ -50,7 +50,7 @@ GET         /api/things/:id                    controllers.shared.thingType.Thin
 #SUPERADMIN
 PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
-GET        /api/addNewMeasurements/:id                  controllers.superAdmin.ThingController.addNewMeasurement(id: java.util.UUID)
+POST        /api/addNewMeasurements/:id                  controllers.superAdmin.ThingController.addNewMeasurements(id: java.util.UUID)
 #POST       /api/detectionDouble/:id           controllers.superAdmin.ThingController.addDetectionDouble(id: java.util.UUID)
 
 
