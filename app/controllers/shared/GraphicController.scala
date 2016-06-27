@@ -38,38 +38,38 @@ class GraphicController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-
-    def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
-      var futureV = false
-      var valueForX: Double = 0
-      var valueY = Array.empty[Double]
-      var valueX = Array.empty[Date]
-      var arrayDouble = Array.empty[Double]
-      val chart = chartDao.findByID(chartID)
-      chart.flatMap{
-        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
-        case Some (chart) =>
-         val thing = thingDao.findByID(chartID)
-         thing.flatMap{
-           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-           case Some (thing) =>
-           val functionName = chart.functionName
-             functionName match {
-                       case "Media" =>
-                           arrayDouble = engine.sumStatistic("Mean")
-          valueForX =arrayDouble(0)
-           val graphic = Graphic(
-             futureV = futureV,
-             valuesY = valueY,
-             valuesX = valueX,
-             resultFunction = valueForX
-           )
-
-            Future.successful(Ok(Json.toJson(graphic)))
-         }
-      }
-    }
-  }
+  // commento temporaneo
+  //   def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
+  //     var futureV = false
+  //     var valueForX: Double = 0
+  //     var valueY = Array.empty[Double]
+  //     var valueX = Array.empty[Date]
+  //     var arrayDouble = Array.empty[Double]
+  //     val chart = chartDao.findByID(chartID)
+  //     chart.flatMap{
+  //       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
+  //       case Some (chart) =>
+  //        val thing = thingDao.findByID(chartID)
+  //        thing.flatMap{
+  //          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+  //          case Some (thing) =>
+  //          val functionName = chart.functionName
+  //            functionName match {
+  //                      case "Media" =>
+  //                          arrayDouble = engine.sumStatistic("Mean")
+  //         valueForX =arrayDouble(0)
+  //          val graphic = Graphic(
+  //            futureV = futureV,
+  //            valuesY = valueY,
+  //            valuesX = valueX,
+  //            resultFunction = valueForX
+  //          )
+  //
+  //           Future.successful(Ok(Json.toJson(graphic)))
+  //        }
+  //     }
+  //   }
+  // }
 
   //   def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
   //     var futureV = false

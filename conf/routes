@@ -10,12 +10,13 @@ GET         /signOut                           controllers.ApplicationController
 POST        /test                              controllers.ApplicationController.test
 POST        /signIn                            controllers.shared.AuthController.authenticate
 GET         /api/getrole                       controllers.shared.AuthController.getRole
-GET         /corr                              controllers.ApplicationController.correlation
-#GET         /sumstat/:mv                      controllers.ApplicationController.sumStatistic(mv:String)
 
-#GET         /NB/:id                           controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
-#GET         /logreg/:id                       controllers.ApplicationController.LogReg(id: java.util.UUID)
-GET          /futureV/:id                      controllers.ApplicationController.futureV(id: java.util.UUID)
+
+#GET         /corr                              controllers.ApplicationController.correlation
+#GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
+#GET         /NB                                controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
+#GET         /logreg                            controllers.ApplicationController.LogReg(id: java.util.UUID)
+#GET         /futureV                           controllers.ApplicationController.futureV(id: java.util.UUID)
 
 
 POST        /api/functions                     controllers.superAdmin.FunctionController.addFunction
