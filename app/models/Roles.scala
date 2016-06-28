@@ -28,7 +28,15 @@ import play.api.mvc.RequestHeader
     if(mail)
      Future.successful((user.role == role || user.role == role2) && user.mailConfirmed == true)
     else
-     Future.successful(user.role == role)
+     Future.successful(user.role == role || user.role == role2)
+  }
+}
+ case class WithServicesMultipleAll(role: String, role2: String, role3: String, mail: Boolean) extends Authorization[User, JWTAuthenticator] {
+   def isAuthorized[B](user: User, authenticator: JWTAuthenticator)(implicit r: Request[B], m: Messages)  = {
+    if(mail)
+     Future.successful((user.role == role || user.role == role2 || user.role == role3) && user.mailConfirmed == true)
+    else
+     Future.successful(user.role == role || user.role == role2 || user.role == role3)
   }
  }
 

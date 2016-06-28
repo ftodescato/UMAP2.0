@@ -42,7 +42,7 @@ section(id="notificationList" class="container-fluid" )
           td {{not.valMin}}
           td {{not.valMax}}
           td 
-            a(ui-sref="root.admin.notificationDetails({id:not.notificationID})") 
+            a(ui-sref="root.admin.notifications.updateNotification({id:not.notificationID})") 
               button.btn.btn-warning Modifica
             
             form(ng-submit="deleteNotification(not.notificationID)")
@@ -84,7 +84,7 @@ section(id="notificationList" class="container-fluid" )
           td {{not.valMin}}
           td {{not.valMax}}
           td 
-            a(ui-sref="root.admin.notificationDetails({id:not.notificationID})") 
+            a(ui-sref="root.admin.notifications.updateNotification({id:not.notificationID})") 
               button.btn.btn-warning Modifica           
             form(ng-submit="deleteNotification(not.notificationID)")
               button(class="btn btn-danger" type='submit') Elimina            

@@ -7,7 +7,7 @@ section(id="addNotification" class="container-fluid")
     li(class="active") Nuova Notifica
   h1(class="text-center page-header") Aggiungi una nuva notifica
   div(class="row ")
-      form(ng-submit="send()" name="myForm" class="col-xs-6 col-xs-offset-3")
+      form(ng-submit="send(false)" name="myForm" class="col-xs-6 col-xs-offset-3")
         .row
           label.col-xs-5.col-xs-offset-1(for="modelRadio") Per Modello
             input(type="radio" id="modelRadio" ng-model="which" value="Modello")
