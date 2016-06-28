@@ -17,7 +17,7 @@ trait ThingTypeDAO {
 
   def findByID(thingTypeID: UUID): Future[Option[ThingType]]
 
-  def findByCompany(companyID: UUID): Future[List[ThingType]]
+  def findByCompanyID(companyID: UUID): Future[List[ThingType]]
 
   def save(thingType: ThingType): Future[ThingType]
 

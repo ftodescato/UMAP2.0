@@ -5,6 +5,7 @@ import play.api.libs.json.Json
 
 
 case class Function(
+  functionID: UUID,
   name: String
    )
 

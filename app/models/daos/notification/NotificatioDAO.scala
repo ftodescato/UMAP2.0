@@ -26,6 +26,10 @@ trait NotificationDAO {
 
   def remove(notificationID: UUID): Future[List[Notification]]
 
+  def removeByThing(thingID: UUID):  Future[List[Notification]]
+
+  def removeByThingType(thingTypeID: UUID):  Future[List[Notification]]
+
   def removeList(notificationList: List[Notification]): Future[List[Notification]]
 
 }

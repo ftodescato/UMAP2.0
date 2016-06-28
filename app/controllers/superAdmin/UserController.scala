@@ -142,7 +142,7 @@ class UserController @Inject() (
               mailConfirmed = false,
               token = "vuoto",
               role = data.role,
-              secretString = data.password 
+              secretString = data.password
             )
               val email = Email(
                 "Password d'autenticazione",
@@ -165,7 +165,7 @@ class UserController @Inject() (
               Ok(Json.obj("token" -> "ok"))
             }
             case None =>
-              Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+              Future.successful(BadRequest(Json.obj("message" -> Messages("user.notExists"))))
           }
       }
   }.recoverTotal {

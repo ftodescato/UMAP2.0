@@ -13,6 +13,7 @@ import models.Thing
 import models.User
 import models.Info
 import models.daos.company.CompanyDAO
+import models.daos.notification.NotificationDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
 import play.api.i18n.{ MessagesApi, Messages }
@@ -35,8 +36,10 @@ class ThingTypeController @Inject() (
   //passwordHasher: PasswordHasher,
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
+  thingController: ThingController,
   thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
+  notificationDao: NotificationDAO,
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
@@ -62,7 +65,6 @@ extends Silhouette[User, JWTAuthenticator] {
         case false =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
         case true =>
-        //val authInfo = passwordHasher.hash(data.password)
         val companyIDList = new ListBuffer[UUID]
         for( companyID <- data.company ){
           companyIDList += companyID
@@ -83,19 +85,10 @@ extends Silhouette[User, JWTAuthenticator] {
           thingTypeName = data.thingTypeName,
           companyID = companyIDList,
           doubleValue = dataDouble
-          // valuesString = null,
-          // valuesFloat = null,
-          // valuesDouble = null
         )
         for {
-          //user <- userService.save(user.copy(avatarURL = avatar))
           thingType <- thingTypeDao.save(thingType)
-          // authInfo <- authInfoRepository.add(loginInfo, authInfo)
-          // authenticator <- env.authenticatorService.create(loginInfo)
-          // token <- env.authenticatorService.init(authenticator)
         } yield {
-          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
           Ok(Json.obj("ok" -> "ok"))
         }
       }
@@ -110,9 +103,23 @@ def delete(thingTypeID: UUID) = SecuredAction(WithServices("superAdmin", true)).
     thingTypeDao.findByID(thingTypeID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
       case Some (thingType) =>
+      var listThingWithThisTT = new ListBuffer[Thing]
+      for (thingWithThisTT <- thingDao.findByThingTypeID(thingTypeID))
+      {
+        for(thing <- thingWithThisTT)
+        {
+          listThingWithThisTT += thing
+        }
+      }
+      for (thing <-listThingWithThisTT)
+      {
+          thingController.delete(thing.thingID)
+      }
         for{
-          thing <- thingDao.removeByThingTypeID(thingTypeID)
+          notification <- notificationDao.removeByThingType(thingTypeID)
+          //thing <- thingDao.removeByThingTypeID(thingTypeID)
           thingType <- thingTypeDao.remove(thingTypeID)
+
         }yield {
             Ok(Json.obj("ok" -> "ok"))
           }
@@ -129,7 +136,6 @@ def delete(thingTypeID: UUID) = SecuredAction(WithServices("superAdmin", true)).
         thingTypeDao.findByID(id).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
           case Some(thingType) =>
-          //val authInfo = passwordHasher.hash(data.password)
           val companyIDList = new ListBuffer[UUID]
           for( companyID <- data.company ){
             companyIDList += companyID
@@ -139,15 +145,10 @@ def delete(thingTypeID: UUID) = SecuredAction(WithServices("superAdmin", true)).
             thingTypeName = data.thingTypeName,
             companyID = companyIDList,
             doubleValue = thingType.doubleValue
-            // valuesString = null,
-            // valuesFloat = null,
-            // valuesDouble = null
           )
           for {
             thingType <- thingTypeDao.update(id,thingType2)
             } yield {
-            //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            //env.eventBus.publish(LoginEvent(user, request, request2Messages))
             Ok(Json.obj("ok" -> "ok"))
           }
           }
