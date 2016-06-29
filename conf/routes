@@ -34,6 +34,8 @@ POST       /api/engine/functions               controllers.superAdmin.CompanyCon
 GET        /api/engine/functions               controllers.superAdmin.FunctionController.showFunctions
 
 #ADMIN
+POST /api/charts controllers.admin.ChartController.addChart
+
 GET         /api/usersA/:id                    controllers.admin.UserController.showUserDetails(id: java.util.UUID)
 GET         /api/usersA                        controllers.admin.UserController.showUsers
 POST        /api/usersA                        controllers.admin.UserController.addUser
