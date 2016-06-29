@@ -27,13 +27,12 @@
     }
   });
 
-  umap.controller('AnalisiController',['$scope','$state','AnalisiService','FunctionsService','ThingTypeServiceAU','Flash', function($scope, $state, AnalisiService, FunctionsService, ThingTypeServiceAU, Flash){
+  umap.controller('AnalisiController',['$scope','$state','AnalisiService','MyCompanyService','ThingTypeServiceAU','Flash', function($scope, $state, AnalisiService, MyCompanyService, ThingTypeServiceAU, Flash){
     //$scope.item = { testo:'stocazzo' } ;
     $scope.drop;
     $scope.errore = '';
-    FunctionsService.Functions.query().$promise.then(function(functions){
-      console.log(functions);
-      $scope.functions = functions;
+    MyCompanyService.query().$promise.then(function(company){
+      $scope.functions = company.functionAlgList;
     });
     AnalisiService.Things.query().$promise.then(function(things){
       $scope.thingsHash = {};
@@ -46,7 +45,6 @@ ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
     for (var i = 0; i < thingTypes.length; i++) {
       $scope.thingTypeHash[thingTypes[i].thingTypeID] = thingTypes[i];
     }
-    console.log(thingTypes[0]);
 })
     $scope.final = {
       fun: '',
@@ -58,11 +56,11 @@ ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
     }
     $scope.test = function(){
       var aux = {
-        functionName: $scope.final.fun.name,
+        functionName: $scope.final.fun,
         objectID: $scope.final.thingID.thingID,
         parameter: $scope.final.par.name
       }
-      if(!aux.functionName || !aux.objectID || !aux.parameter)
+      if((!aux.functionName || !aux.objectID || !aux.parameter) )
         //$scope.errore = 'completa tutti i campi !'
         Flash.create('danger', '<h2 class="text-center"> completa tutti i campi</h2>');
       else{

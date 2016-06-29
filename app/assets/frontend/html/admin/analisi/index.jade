@@ -9,7 +9,7 @@ section(id="analisi" class="container-fluid" )
     div(class="col-sm-4")
       h2 Funzioni Disponibili
       div(ng-repeat=" item in functions track by $index")
-        span( data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.name}}
+        span( data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item}}
         br
     div(class="col-sm-4")
       h2 Oggetti Disponibili
@@ -23,7 +23,7 @@ section(id="analisi" class="container-fluid" )
         br
   div(class="row")
     div(class="col-sm-4")
-      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.fun") {{final.fun.name}}
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.fun") {{final.fun}}
     div(class="col-sm-4")
       div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false, onDrop: dropped()}"  style='height:50px; border: 1px solid red;' ng-model="final.thingID") {{final.thingID.name}}
     div(class="col-sm-4")

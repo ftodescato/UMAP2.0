@@ -9,7 +9,7 @@
   <div class="row">
     <div class="col-sm-4">
       <h2>Funzioni Disponibili</h2>
-      <div ng-repeat=" item in functions track by $index"><span data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item">{{item.name}}</span><br/></div>
+      <div ng-repeat=" item in functions track by $index"><span data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item">{{item}}</span><br/></div>
     </div>
     <div class="col-sm-4">
       <h2>Oggetti Disponibili</h2>
@@ -22,7 +22,7 @@
   </div>
   <div class="row">
     <div class="col-sm-4">
-      <div data-drop="true" data-jqyoui-options="data-jqyoui-options" jqyoui-droppable="{multiple: false}" style="height:50px; border: 1px solid red;" ng-model="final.fun">{{final.fun.name}}</div>
+      <div data-drop="true" data-jqyoui-options="data-jqyoui-options" jqyoui-droppable="{multiple: false}" style="height:50px; border: 1px solid red;" ng-model="final.fun">{{final.fun}}</div>
     </div>
     <div class="col-sm-4">
       <div data-drop="true" data-jqyoui-options="data-jqyoui-options" jqyoui-droppable="{multiple: false, onDrop: dropped()}" style="height:50px; border: 1px solid red;" ng-model="final.thingID">{{final.thingID.name}}</div>
