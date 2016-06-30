@@ -14,13 +14,6 @@ import play.api.mvc.RequestHeader
 /**
  * Check for authorization
  *
- * use in role=
- *  "u" for user,
- *  "ua" for user,admin
- *  "a" for admin,
- *  "sa" for superAdmin, admin
- *  "s" for superAdmin
- *  "all" for superAdmin, admin, user
  */
  case class WithServices(roles: Array[String], mail: Boolean) extends Authorization[User, JWTAuthenticator] {
    def isAuthorized[B](user: User, authenticator: JWTAuthenticator)(implicit r: Request[B], m: Messages)  = {
@@ -55,7 +48,7 @@ import play.api.mvc.RequestHeader
   }
  }
 
- 
+
  object WithServices {
    def isAuthorized(user: User, role: String): Boolean =
      role == user.role
