@@ -13,16 +13,31 @@ import play.api.mvc.RequestHeader
 
 /**
  * Check for authorization
+ *
+ * use in role=
+ *  "u" for user,
+ *  "ua" for user,admin
+ *  "a" for admin,
+ *  "sa" for superAdmin, admin
+ *  "s" for superAdmin
+ *  "all" for superAdmin, admin, user
  */
- case class WithServices(role: String, mail: Boolean) extends Authorization[User, JWTAuthenticator] {
+ case class WithServices(roles: Array[String], mail: Boolean) extends Authorization[User, JWTAuthenticator] {
    def isAuthorized[B](user: User, authenticator: JWTAuthenticator)(implicit r: Request[B], m: Messages)  = {
+    var roleOK = false
     if(mail)
-     Future.successful(user.role == role && user.mailConfirmed == true)
+    {
+      for(userRole <- roles if roleOK == false) {
+        if (user.role == userRole)
+          roleOK = true
+      }
+      Future.successful(roleOK && user.mailConfirmed == true)
+    }
     else
-     Future.successful(user.role == role)
-  }
+      Future.successful(roleOK)
+    }
  }
-
+/*
  case class WithServicesMultiple(role: String, role2: String, mail: Boolean) extends Authorization[User, JWTAuthenticator] {
    def isAuthorized[B](user: User, authenticator: JWTAuthenticator)(implicit r: Request[B], m: Messages)  = {
     if(mail)
@@ -40,7 +55,7 @@ import play.api.mvc.RequestHeader
   }
  }
 
- /*
+ 
  object WithServices {
    def isAuthorized(user: User, role: String): Boolean =
      role == user.role

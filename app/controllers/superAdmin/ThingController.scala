@@ -48,7 +48,7 @@ class ThingController @Inject() (
   )
 extends Silhouette[User, JWTAuthenticator] {
 
-  def showThing = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def showThing = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     val things = thingDao.findAll()
     things.flatMap{
       things =>
@@ -56,7 +56,7 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def showThingDetails(thingID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def showThingDetails(thingID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     val thing = thingDao.findByID(thingID)
     thing.flatMap{
       thing =>
@@ -64,7 +64,7 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def delete(thingID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def delete(thingID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     thingDao.findByID(thingID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       case Some (thing) =>
@@ -78,7 +78,7 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def updateThing (thingID : UUID) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
+  def updateThing (thingID : UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[EditThing.Data].map { data =>
           thingDao.findByID(thingID).flatMap{
             case Some(thingTypeToAssign) =>

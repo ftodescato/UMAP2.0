@@ -99,7 +99,7 @@ extends Silhouette[User, JWTAuthenticator] {
 }
 
 
-def delete(thingTypeID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+def delete(thingTypeID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     thingTypeDao.findByID(thingTypeID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
       case Some (thingType) =>
@@ -126,7 +126,7 @@ def delete(thingTypeID: UUID) = SecuredAction(WithServices("superAdmin", true)).
         }
  }
 
-  def updateThingType(id: UUID) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
+  def updateThingType(id: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[EditThingType.Data].map { data =>
       val companyInfo = data.company
       companyDao.checkExistence(companyInfo).flatMap {

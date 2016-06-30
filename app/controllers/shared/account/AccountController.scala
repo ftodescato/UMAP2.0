@@ -49,7 +49,7 @@ class AccountController @Inject() (
      Future.successful(Ok(Json.toJson(request.identity)))
    }
 
-   def updateAccount = SecuredAction(WithServicesMultipleAll("superAdmin", "admin","user", true)).async(parse.json) { implicit request =>
+   def updateAccount = SecuredAction(WithServices(Array("superAdmin", "admin","user"), true)).async(parse.json) { implicit request =>
        request.body.validate[EditUser.Data].map { data =>
          userDao.findByID(request.identity.userID).flatMap {
            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))

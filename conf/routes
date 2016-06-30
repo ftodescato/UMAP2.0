@@ -8,8 +8,8 @@ GET         /testDue                            controllers.ApplicationControlle
 GET         /user                               controllers.ApplicationController.user
 GET         /signOut                            controllers.ApplicationController.signOut
 POST        /test                               controllers.ApplicationController.test
-POST        /signIn                             controllers.shared.AuthController.authenticate
-GET         /api/getrole                        controllers.shared.AuthController.getRole
+POST        /signIn                             controllers.shared.account.AuthController.authenticate
+GET         /api/getrole                        controllers.shared.account.AuthController.getRole
 
 
 #GET        /corr                               controllers.ApplicationController.correlation
@@ -46,17 +46,17 @@ POST        /api/chartA/                        controllers.admin.ChartControlle
 POST        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
 
 # ADMIN+USER
-GET         /api/thingTypes                     controllers.shared.admin-User.ThingTypeController.showThingType
-GET         /api/thingTypes/:id                 controllers.shared.admin-User.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
-GET         /api/things                         controllers.shared.admin-User.ThingTypeController.showThings
-GET         /api/things/:id                     controllers.shared.admin-User.ThingTypeController.showThingDetails(id: java.util.UUID)
-GET         /api/notifications/:id              controllers.shared.admin-User.NotificationController.showNotificationDetails(id: java.util.UUID)
-PUT         /api/notifications/:id              controllers.shared.admin-User.NotificationController.update(id: java.util.UUID)
-GET         /api/notifications/:id              controllers.shared.admin-User.NotificationController.showNotificationDetails(id: java.util.UUID)
-GET         /api/notifications                  controllers.shared.admin-User.NotificationController.showNotifications
-POST        /api/notifications                  controllers.shared.admin-User.NotificationController.addNotification
-#GET        /api/notificationsOfTT/:id          controllers.shared.admin-User.NotificationController.showNotificationOfThingType(id: java.util.UUID)
-DELETE      /api/notifications/:id              controllers.shared.admin-User.NotificationController.delete(id: java.util.UUID)
+GET         /api/thingTypes                     controllers.shared.adminUser.ThingTypeController.showThingType
+GET         /api/thingTypes/:id                 controllers.shared.adminUser.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
+GET         /api/things                         controllers.shared.adminUser.ThingTypeController.showThings
+GET         /api/things/:id                     controllers.shared.adminUser.ThingTypeController.showThingDetails(id: java.util.UUID)
+GET         /api/notifications/:id              controllers.shared.adminUser.NotificationController.showNotificationDetails(id: java.util.UUID)
+PUT         /api/notifications/:id              controllers.shared.adminUser.NotificationController.update(id: java.util.UUID)
+GET         /api/notifications/:id              controllers.shared.adminUser.NotificationController.showNotificationDetails(id: java.util.UUID)
+GET         /api/notifications                  controllers.shared.adminUser.NotificationController.showNotifications
+POST        /api/notifications                  controllers.shared.adminUser.NotificationController.addNotification
+#GET        /api/notificationsOfTT/:id          controllers.shared.adminUser.NotificationController.showNotificationOfThingType(id: java.util.UUID)
+DELETE      /api/notifications/:id              controllers.shared.adminUser.NotificationController.delete(id: java.util.UUID)
 
 #SUPERADMIN
 PUT         /api/passwordsSA/:id                controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)

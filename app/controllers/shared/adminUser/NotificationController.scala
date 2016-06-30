@@ -1,4 +1,4 @@
-package controllers.shared
+package controllers.shared.adminUser
 
 import java.util.UUID
 import javax.inject.Inject
@@ -124,7 +124,7 @@ class NotificationController @Inject() (
    }
 
 
-  def addNotification = SecuredAction(WithServicesMultiple("admin","user", true)).async(parse.json) { implicit request =>
+  def addNotification = SecuredAction(WithServices(Array("admin","user"), true)).async(parse.json) { implicit request =>
     request.body.validate[AddNotification.Data].map { data =>
       userDao.findByID(request.identity.userID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notExists"))))

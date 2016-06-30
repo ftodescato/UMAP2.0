@@ -47,7 +47,7 @@ class CompanyController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-  def showCompanies = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def showCompanies = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     val companies = companyDao.findAll()
     companies.flatMap{
       companies =>
@@ -55,7 +55,7 @@ class CompanyController @Inject() (
     }
   }
 
-  def showCompanyDetails(companyID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def showCompanyDetails(companyID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     val company = companyDao.findByID(companyID)
     company.flatMap{
       company =>
@@ -63,7 +63,7 @@ class CompanyController @Inject() (
     }
   }
 
-  def delete(companyID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def delete(companyID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     companyDao.findByID(companyID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
       case Some (company) =>
@@ -103,7 +103,7 @@ class CompanyController @Inject() (
     }
   }
 
-  def updateCompany (companyID : UUID) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
+  def updateCompany (companyID : UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[EditCompany.Data].map { data =>
       companyDao.findByID(companyID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))

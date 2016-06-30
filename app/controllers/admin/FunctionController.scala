@@ -43,7 +43,7 @@ class FunctionController @Inject() (
 
 
 
-  def selectFunction = SecuredAction(WithServices("admin", true)).async(parse.json){ implicit request =>
+  def selectFunction = SecuredAction(WithServices(Array("admin"), true)).async(parse.json){ implicit request =>
     request.body.validate[SelectFunctionAdmin.Data].map { data =>
       companyDao.findByID(request.identity.company).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
