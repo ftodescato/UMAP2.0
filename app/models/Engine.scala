@@ -17,19 +17,18 @@ import models._
 import collection.breakOut
 
 class Engine{
-  //CORRELATION
+  //metodo per la correlazione
   def getCorrelation(a: Array[Double], b: Array[Double]) : Double = {
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
-    //val df = sqlContext.read.json(Json.toJson(a).toString())
-    //sc.parallelize(Json.toJson(a).toString())
     val seriesX: RDD[Double] = sc.parallelize(a)
     val seriesY: RDD[Double] = sc.parallelize(b)
+    //calcolo correlazione tra valori e la loro R
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
     correlation
   }
-
+  //calcolo della R di un insieme di punti per la correlazione
   def getPointsOnR(lista:Array[Double]): Array[Double]={
     var pointsOnR =Array.empty[Double]
     val listlength = lista.length
@@ -63,24 +62,30 @@ class Engine{
     val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+    // imposto i dati per la funzione spark
     val toarray = lista.toArray
     val tovectors = toarray.map(Vectors.dense(_))
     val aux: RDD[Vector] = sc.parallelize(tovectors)
+    // applico la funzione
     val result:MultivariateStatisticalSummary = Statistics.colStats(aux)
     mv match{
+      //restituisco la varianza
       case "Variance" =>
         result.variance.toArray
+      //la media
       case "Mean" =>
         result.mean.toArray
+      //il massimo
       case "Max" =>
         result.max.toArray
+      //il minimo
       case "Min" =>
         result.min.toArray
     }
   }
 
   //LOGISTIC REGRESSION
-  //crea il modello, lo salva e lo ritorna
+  //crea il modello e lo ritorna
   def getLogRegModel(labelList: List[Double], measureList: List[Array[Double]]) : LogRegModel ={
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
@@ -110,20 +115,8 @@ class Engine{
     savedModel
   }
 
-  // def getLogRegPrediction(modello: LogRegModel, measureList: List[Array[Double]]) : Array[Double] = {
-  //
-  //   val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
-  //   val sc = new SparkContext(configuration)
-  //
-  //   val measureArray = measureList.toArray
-  //   val vecMeasureArray = measureArray.map(Vectors.dense(_))
-  //   val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
-  //   val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(modello.getWeights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
-  //   val prediction = loadedModel.predict(test2)
-  //   prediction.collect.toArray
-  // }
 
-//classifica l'array in input e ritorna la label risultato
+  //applica il modello di una thing ad una nuova misurazione e restituisce la sua label
   def getLogRegPrediction(modello: LogRegModel, data: Array[Double]) : Double = {
 
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
@@ -137,7 +130,7 @@ class Engine{
     val sol=prediction.collect.toArray
     sol(0)
   }
-
+  // calcola una possibile misurazione futura
   def getFuture(lista:List[Array[Double]]):Array[Double] ={
       val times=lista(0).length
       var sol=Array.empty[Double]
@@ -149,7 +142,7 @@ class Engine{
       }
       sol
     }
-
+  // metodo chiamato da getFuture per generare i singoli dati di una misurazione
   def getSingleFuture(lista:List[Array[Double]],arraycol:Int):Double ={
       val arraylength:Int =lista(0).length
       val listlength:Int =lista.length
@@ -172,6 +165,7 @@ class Engine{
       }
       val slope=(((listlength*sumxy)-(sumx*sumy))/((listlength*sumsqx)-(sumx*sumx)))
       val offset=((sumy-(slope*sumx))/listlength)
+      //y=slope*x+offset (y=ax+b)
       val newvalue=((slope*(listlength+1))+offset)
       newvalue
     }

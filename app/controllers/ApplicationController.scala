@@ -46,13 +46,13 @@ class ApplicationController @Inject() (
   def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
   }
-
+//facade del metodo engine.correlation
   def correlation(thingID: UUID, datatype: Int): Double ={
-    // val a: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
-    // val b: List[Double] = List(1.2, 2.1, 3.2, 3, 3, 3)
+    //recupero dati necessari dal DB
     val thingDB =thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 1 seconds)
     val data=thingDao.findListArray(thing.get)
+    //sottoselezione dei dati
     val datalength=data.length
     var chosendata=Array.empty[Double]
     var iterator:Int=0
@@ -60,129 +60,68 @@ class ApplicationController @Inject() (
       chosendata=chosendata:+data(iterator)(datatype)
     }
     val e = new Engine
+    //creazione della R
     var r:Array[Double]=e.getPointsOnR(chosendata)
+    //chiamata di correlation
     val sol: Double = e.getCorrelation(chosendata,r)
+    //valore ritornato 0~100%==0->1
     sol
   }
-  // SUMSTATISTIC
+  // facade dei metodi appartenenti a sumstatistic
   def sumStatistic(thingID: UUID, mv: String, datatype: Int): Double = {
-    // val obs: Array[Double] = Array(1.2, 2, 3, 3, 3, 3)
-    // val obs2: Array[Double] = Array(0, 1, 0, 3, 3, 3)
-    // val lista: List[Array[Double]] =List(obs,obs2)
-
     // recupero list[array[double]] dal db tramite ID
     val thingDB =thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 1 seconds)
     val data=thingDao.findListArray(thing.get)
-
-    // // seleziono solo un tipo di dato list[array[datatype,1,2]]
-    // //                                    [array[datatype,1,2]]
-    // val datalength=data.length
-    // var chosendata=Array.empty[Double]
-    // var iterator:Int=0
-    // for (iterator<-0 until datalength){
-    //   chosendata=chosendata:+data(iterator)(datatype)
-    // }
-
     // chiamo l'engine per calcolarmi le statistiche sui dati
     val e = new Engine
     val aux: Array[Double] = e.sumStatistic(data, mv)
 
     //ciclo in cerca dell valore che mi interessa
     var sol:Double=aux(datatype)
-    // Future.successful(Ok(Json.obj("Array"->aux)))
+    //valore ritornato -inf->+inf
     sol
   }
-
+  // facade per la creaziome del modello degli oggetti a partire dai dati nel DB
   def ModelLogReg(thingID: UUID): LogRegModel ={
-    // val obs: Array[Double] = Array(1.2, 2, 3)
-    // val obs2: Array[Double] = Array(0, 1, 0)
-    // val obs3: Array[Double] = Array(3.6,5.9,6.7)
-    // val obs4: Array[Double] = Array(1.2, 2.1, 3)
-    // val obs5: Array[Double] = Array(0.3, 1.1, 0.1)
-    // val obs6: Array[Double] = Array(3.7,5.8,6.6)
-    // val health: List[Double]= List(0.0,1.0,2.0,0.0,1.0,2.0)
-    // val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4,obs5,obs6)
+    //recupero informazioni dal DB
     val thingDB =thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 1 seconds)
     val label=thingDao.findListLabel(thing.get)
     val data=thingDao.findListArray(thing.get)
-
+    //creo il modello di una thing
     val e = new Engine
     val modello:LogRegModel = e.getLogRegModel(label,data)
+    //valore ritornato LogRegModel
     modello
   }
-
+  //NECESSARIO FIX! necessita di una classe di mappatura modello->thing
   def LogReg(thingID: UUID, data: Array[Double]):Double = {
-
+    //recupero informazioni dal DB
     val thingDB =thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 3 seconds)
     val label=thingDao.findListLabel(thing.get)
-    // val data=thingDao.findListArray(thing.get)
+
     val e = new Engine
-
     // recupero il modello con l'ID della thing
-    // val modello:LogRegModel = ModelLogReg(thingID)
-
+    val modello:LogRegModel = ModelLogReg(thingID)
     // faccio la predizione della nuova label
-    // val predizione = e.getLogRegPrediction(modello,data)
-
+    val predizione = e.getLogRegPrediction(modello,data)
     // ritorno la label come double
-    // predizione
-    //return temporaneo
-    val temp:Double=0
-    temp
+    predizione
   }
-  // def LogReg(thingID: UUID) = Action.async { implicit request =>
-  //   // val obs: Array[Double] = Array(1.6, 2.1, 3)
-  //   // val obs2: Array[Double] = Array(0, 1, 0)
-  //   // val obs3: Array[Double] = Array(3.6,5.9,6.7)
-  //   // val obs4: Array[Double] = Array(1.2, 2.5, 3)
-  //   // val obs5: Array[Double] = Array(0.3, 1.1, 0.1)
-  //   // val obs6: Array[Double] = Array(3.7,5.6,6.6)
-  //   // val obs7: Array[Double] = Array(1.2, 2, 3)
-  //   // val obs8: Array[Double] = Array(0.1, 1, 0.1)
-  //   // val obs9: Array[Double] = Array(3.6,5.9,6.7)
-  //   //
-  //   // val obs10: Array[Double] = Array(1.6, 2.1, 3)
-  //   // val obs11: Array[Double] = Array(0, 1, 0)
-  //   // val obs12: Array[Double] = Array(3.6,5.9,6.6)
-  //   // val obs13: Array[Double] = Array(1.2, 2.6, 3.1)
-  //   // val obs14: Array[Double] = Array(0.3, 1.1, 0.1)
-  //   // val obs15: Array[Double] = Array(3.7,5.6,6.6)
-  //   // val obs16: Array[Double] = Array(1.2, 2, 3.2)
-  //   // val obs17: Array[Double] = Array(0.2, 1.2, 0.1)
-  //   // val obs18: Array[Double] = Array(3.6,5.8,6.9)
-  //   // val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4,obs5,obs6,obs7,obs8,obs9,obs10,obs11,obs12,obs13,obs14,obs15,obs16,obs17,obs18)
-  //
-  //   val thingDB =thingDao.findByID(thingID)
-  //   val thing = Await.result(thingDB, 3 seconds)
-  //   val label=thingDao.findListLabel(thing.get)
-  //   val data=thingDao.findListArray(thing.get)
-  //
-  //   val e = new Engine
-  //   val modello:LogRegModel = ModelLogReg(thingID)
-  //   val predizione = e.getLogRegPrediction(modello,data)
-  //   Future.successful(Ok(Json.obj("Label nel DB"->label,"Array"->predizione)))
-  // }
 
+  //facade per  la creazione di un elemento futuro
   def futureV(thingID: UUID, datatype:Int): Double = {
-      // val obs: Array[Double] = Array(1, 4, 2)
-      // val obs2: Array[Double] = Array(2, 3, 4)
-      // val obs3: Array[Double] = Array(3,2,6)
-      // val obs4: Array[Double] = Array(4,1,8)
-
-      val thingDB =thingDao.findByID(thingID)
-      val thing = Await.result(thingDB, 3 seconds)
-      //val label=thingDao.findListLabel(thing.get)
-      val data=thingDao.findListArray(thing.get)
-
-      //val lista: List[Array[Double]] = List(obs,obs2,obs3,obs4)
-      val e = new Engine
-      val sol=e.getFuture(data)
-      // Future.successful(Ok(Json.obj("Dati"->data,
-      //                               "Array"->sol)))
-      sol(datatype)
+    //recupero dati dal DB
+    val thingDB =thingDao.findByID(thingID)
+    val thing = Await.result(thingDB, 3 seconds)
+    val data=thingDao.findListArray(thing.get)
+    //creazione elemento futuro
+    val e = new Engine
+    val sol=e.getFuture(data)
+    // restituisco valore futuro come double facendo una selezione dal risultato
+    sol(datatype)
   }
 
   def index = UserAwareAction.async { implicit request =>
