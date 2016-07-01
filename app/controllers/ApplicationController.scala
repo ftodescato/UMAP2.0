@@ -9,6 +9,7 @@ import models.Engine
 import models._
 import models.daos.thing.ThingDAO
 import models.daos.modelLogReg.ModelLogRegDAO
+import models.daos.notification.NotificationDAO
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.Action
@@ -18,6 +19,8 @@ import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.mllib.regression.LabeledPoint
 
 import play.api.i18n.{ MessagesApi, Messages }
+
+import play.api.libs.mailer._
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -33,7 +36,8 @@ class ApplicationController @Inject() (
   val messagesApi: MessagesApi,
   modelLogRegDao: ModelLogRegDAO,
   thingDao: ThingDAO,
-//  val engine : Engine,
+  notificationDao: NotificationDAO,
+  mailer: MailerClient,
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
 
@@ -128,7 +132,7 @@ class ApplicationController @Inject() (
   // creazione di un elemento futuro
   def futureV(thingID: UUID, datatype:Int): Double = {
     //recupero dati dal DB
-    val thingDB =thingDao.findByID(thingID)
+    val thingDB = thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 3 seconds)
     val data=thingDao.findListArray(thing.get)
     //creazione elemento futuro
@@ -137,6 +141,70 @@ class ApplicationController @Inject() (
     // restituisco valore futuro come double facendo una selezione dal risultato
     sol(datatype)
   }
+
+
+  def futureM(thingID: UUID): Array[Double] = {
+    //recupero dati dal DB
+    val thingDB = thingDao.findByID(thingID)
+    val thing = Await.result(thingDB, 3 seconds)
+    val data=thingDao.findListArray(thing.get)
+    //creazione elemento futuro
+    val e = new Engine
+    val sol=e.getFuture(data)
+    // restituisco valore futuro come double facendo una selezione dal risultato
+    sol
+  }
+ // @Every("1d")
+ def dailyPrediction = Action.async{ implicit request =>
+   notificationDao.findAll().flatMap{
+     notificationsList =>
+        for(notification <- notificationsList){
+          if(notification.isThing){
+            //prendo il parametro su cui faccio i controlli e lo confronto con i valori min e max delle notifiche
+            var parameter = notification.inputType
+            thingDao.findByID(notification.thingID.get).flatMap{
+              case None =>
+                Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+              case Some(thing) =>
+                var parameterFind = false
+                var count = 0
+                for (sensorParameter <- thing.datas(0).sensors if parameterFind == false){
+                  if(sensorParameter.sensor == parameter){
+                    parameterFind = true
+                  }
+                  count = count + 1
+                }
+                var resultFuture = futureV(notification.thingID.get, count)
+                if(resultFuture > notification.valMax){
+                  val email = Email(
+                    "Valori "+parameter+"",
+                    "LatexeBiscotti <latexebiscotti@gmail.com>",
+                    Seq("Miss TO <"+notification.emailUser+">"),
+                    bodyText = Some("Il valore "+parameter+"arriverà a:"+resultFuture+" e il massimo previsto è per"+notification.valMax
+                    )
+                  )
+                  mailer.send(email)
+                }
+                if(resultFuture < notification.valMin){
+                  val email = Email(
+                    "Valori "+parameter+"",
+                    "LatexeBiscotti <latexebiscotti@gmail.com>",
+                    Seq("Miss TO <"+notification.emailUser+">"),
+                    bodyText = Some("Il valore "+parameter+"arriverà a:"+resultFuture+" e il minimo previsto è per"+notification.valMin
+                    )
+                  )
+                  mailer.send(email)
+                }
+
+                Future.successful(Ok(Json.toJson(thing)))
+            }
+          }
+        }
+        Future.successful(Ok(Json.toJson(notificationsList)))
+   }
+ }
+
+
 
   def index = UserAwareAction.async { implicit request =>
     Future.successful(Ok(Json.obj("test"->"contenuto")))
