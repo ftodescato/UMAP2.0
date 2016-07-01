@@ -12,12 +12,12 @@ case class LogRegModel(
   intercept:Double,
   numFeatures:Int,
   numClasses:Int,
-  weights:Vector
+  weights:Array[Double]
 ){
   def getIntercept: Double ={return intercept}
   def getNumFeatures: Int ={return numFeatures}
   def getClasses: Int ={return numClasses}
-  def getWeights: Vector ={return weights}
+  def getWeights: Array[Double] ={return weights}
 }
 
 object LogRegModel {

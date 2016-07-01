@@ -111,7 +111,7 @@ class Engine{
     val metrics = new MulticlassMetrics(predictionAndLabels)
     val precision = metrics.precision
     predictionAndLabels.collect().foreach{ point =>  println(point)}
-    val savedModel:LogRegModel = new LogRegModel(model.intercept,model.numFeatures,model.numClasses,model.weights)
+    val savedModel:LogRegModel = new LogRegModel(model.intercept,model.numFeatures,model.numClasses,model.weights.toArray)
     savedModel
   }
 
@@ -124,8 +124,8 @@ class Engine{
 
     val vecMeasureArray = data.map(Vectors.dense(_))
     val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
-
-    val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(modello.getWeights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
+    val weights = Vectors.dense(modello.getWeights)
+    val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(weights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
     val prediction = loadedModel.predict(test2)
     val sol=prediction.collect.toArray
     sol(0)
