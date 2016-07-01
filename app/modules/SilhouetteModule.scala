@@ -70,6 +70,7 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[FunctionDAO].to[FunctionDAOImpl]
     bind[NotificationDAO].to[NotificationDAOImpl]
     bind[ChartDAO].to[ChartDAOImpl]
+    bind[ModelLogRegDAO].to[ModelLogRegDAOImpl]
     bind[DelegableAuthInfoDAO[PasswordInfo]].to[PasswordInfoDAO]
     bind[DelegableAuthInfoDAO[OAuth1Info]].to[OAuth1InfoDAO]
     bind[DelegableAuthInfoDAO[OAuth2Info]].to[OAuth2InfoDAO]

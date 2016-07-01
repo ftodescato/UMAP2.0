@@ -8,6 +8,7 @@ import models.User
 import models.Engine
 import models._
 import models.daos.thing.ThingDAO
+import models.daos.modelLogReg.ModelLogRegDAO
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.Action
@@ -16,6 +17,7 @@ import org.apache.spark.mllib.linalg._
 import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.mllib.regression.LabeledPoint
 
+import play.api.i18n.{ MessagesApi, Messages }
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -28,8 +30,9 @@ import scala.language.postfixOps
  * @param socialProviderRegistry The social provider registry.
  */
 class ApplicationController @Inject() (
-  thingDao: ThingDAO,
   val messagesApi: MessagesApi,
+  modelLogRegDao: ModelLogRegDAO,
+  thingDao: ThingDAO,
 //  val engine : Engine,
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
@@ -83,18 +86,29 @@ class ApplicationController @Inject() (
     sol
   }
   // facade per la creaziome del modello degli oggetti a partire dai dati nel DB
-  def ModelLogReg(thingID: UUID): LogRegModel ={
+  def modelLogReg(thingID: UUID) = Action.async{ implicit request =>
     //recupero informazioni dal DB
-    val thingDB =thingDao.findByID(thingID)
-    val thing = Await.result(thingDB, 1 seconds)
-    val label=thingDao.findListLabel(thing.get)
-    val data=thingDao.findListArray(thing.get)
-    //creo il modello di una thing
-    val e = new Engine
-    val modello:LogRegModel = e.getLogRegModel(label,data)
-    //valore ritornato LogRegModel
-    modello
+    thingDao.findByID(thingID).flatMap{
+      case None =>
+        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+      case Some(thingDB) =>
+      //  val thing = Await.result(thingDB, 1 seconds)
+        val label=thingDao.findListLabel(thing)
+        val data=thingDao.findListArray(thing)
+
+        //creo il modello di una thing
+        val e = new Engine
+        val modello:LogRegModel = e.getLogRegModel(thingID,label,data)
+
+        for {
+         modello <- modelLogRegDao.save(modello)
+      } yield {
+        Ok(Json.obj("token" -> "ok"))
+      }
+    }
+
   }
+
   //NECESSARIO FIX! necessita di una classe di mappatura modello->thing
   def LogReg(thingID: UUID, data: Array[Double]):Double = {
     //recupero informazioni dal DB
@@ -104,7 +118,7 @@ class ApplicationController @Inject() (
 
     val e = new Engine
     // recupero il modello con l'ID della thing
-    val modello:LogRegModel = ModelLogReg(thingID)
+    val modello:LogRegModel = modelLogReg(thingID)
     // faccio la predizione della nuova label
     val predizione = e.getLogRegPrediction(modello,data)
     // ritorno la label come double

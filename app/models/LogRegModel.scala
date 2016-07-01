@@ -1,14 +1,14 @@
 package models
 
-import play.api.libs.json._
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.linalg.Vector
 import java.util.UUID
 import play.api.libs.json.Json
-import play.api.libs.json._
 
 
 case class LogRegModel(
+  logRegModelID: UUID,
+  thingID: UUID,
   intercept:Double,
   numFeatures:Int,
   numClasses:Int,

@@ -1,4 +1,7 @@
 package models
+
+import java.util.UUID
+
 import play.api.libs.json._
 import org.apache.spark.rdd._
 import org.apache.spark.mllib.linalg._
@@ -13,7 +16,7 @@ import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 import org.apache.spark.mllib.classification.{LogisticRegressionModel, LogisticRegressionWithLBFGS}
 import org.apache.spark.mllib.evaluation._
 import org.apache.spark.mllib.util._
-import models._
+//import models._
 import collection.breakOut
 
 class Engine{
@@ -86,7 +89,7 @@ class Engine{
 
   //LOGISTIC REGRESSION
   //crea il modello e lo ritorna
-  def getLogRegModel(labelList: List[Double], measureList: List[Array[Double]]) : LogRegModel ={
+  def getLogRegModel(thingID: UUID, labelList: List[Double], measureList: List[Array[Double]]) : LogRegModel ={
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
     val measureArray = measureList.toArray
@@ -111,7 +114,7 @@ class Engine{
     val metrics = new MulticlassMetrics(predictionAndLabels)
     val precision = metrics.precision
     predictionAndLabels.collect().foreach{ point =>  println(point)}
-    val savedModel:LogRegModel = new LogRegModel(model.intercept,model.numFeatures,model.numClasses,model.weights.toArray)
+    val savedModel:LogRegModel = new LogRegModel(UUID.randomUUID(),thingID,model.intercept,model.numFeatures,model.numClasses,model.weights.toArray)
     savedModel
   }
 
