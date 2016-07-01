@@ -27,6 +27,7 @@ import models.daos.thing._
 import models.daos.function._
 import models.daos.notification._
 import models.daos.thingType._
+import models.daos.modelLogReg._
 
 import models.services.{ UserService, UserServiceImpl }
 import net.ceedubs.ficus.Ficus._

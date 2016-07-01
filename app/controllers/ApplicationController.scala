@@ -1,5 +1,5 @@
 package controllers
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import javax.inject.Inject
 import java.util.UUID
 import com.mohiva.play.silhouette.api.{ Environment, LogoutEvent, Silhouette }
@@ -49,7 +49,7 @@ class ApplicationController @Inject() (
   def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
   }
-//facade del metodo engine.correlation
+// metodo engine.correlation
   def correlation(thingID: UUID, datatype: Int): Double ={
     //recupero dati necessari dal DB
     val thingDB =thingDao.findByID(thingID)
@@ -70,7 +70,7 @@ class ApplicationController @Inject() (
     //valore ritornato 0~100%==0->1
     sol
   }
-  // facade dei metodi appartenenti a sumstatistic
+  // metodi appartenenti a sumstatistic
   def sumStatistic(thingID: UUID, mv: String, datatype: Int): Double = {
     // recupero list[array[double]] dal db tramite ID
     val thingDB =thingDao.findByID(thingID)
@@ -85,13 +85,13 @@ class ApplicationController @Inject() (
     //valore ritornato -inf->+inf
     sol
   }
-  // facade per la creaziome del modello degli oggetti a partire dai dati nel DB
+  // creaziome del modello degli oggetti a partire dai dati nel DB
   def modelLogReg(thingID: UUID) = Action.async{ implicit request =>
     //recupero informazioni dal DB
     thingDao.findByID(thingID).flatMap{
       case None =>
         Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-      case Some(thingDB) =>
+      case Some(thing) =>
       //  val thing = Await.result(thingDB, 1 seconds)
         val label=thingDao.findListLabel(thing)
         val data=thingDao.findListArray(thing)
@@ -108,24 +108,24 @@ class ApplicationController @Inject() (
     }
 
   }
-
-  //NECESSARIO FIX! necessita di una classe di mappatura modello->thing
+  // produzione della label per una nuova misurazione
   def LogReg(thingID: UUID, data: Array[Double]):Double = {
-    //recupero informazioni dal DB
-    val thingDB =thingDao.findByID(thingID)
-    val thing = Await.result(thingDB, 3 seconds)
-    val label=thingDao.findListLabel(thing.get)
-
-    val e = new Engine
     // recupero il modello con l'ID della thing
-    val modello:LogRegModel = modelLogReg(thingID)
-    // faccio la predizione della nuova label
-    val predizione = e.getLogRegPrediction(modello,data)
-    // ritorno la label come double
-    predizione
-  }
+    var predizione = 0.0
+    modelLogRegDao.findByThingID(thingID).flatMap{
+      case None =>
+        Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+      case Some(modello) =>
 
-  //facade per  la creazione di un elemento futuro
+      val e = new Engine
+      // faccio la predizione della nuova label
+      predizione = e.getLogRegPrediction(modello,data)
+      Future.successful(Ok(Json.toJson(predizione)))
+    }
+    predizione
+}
+
+  // creazione di un elemento futuro
   def futureV(thingID: UUID, datatype:Int): Double = {
     //recupero dati dal DB
     val thingDB =thingDao.findByID(thingID)

@@ -11,7 +11,7 @@ import scala.concurrent.Future
  */
 trait ModelLogRegDAO {
 
-  def findByThingID(thingID: UUID): Future[List[LogRegModel]]
+  def findByThingID(thingID: UUID): Future[Option[LogRegModel]]
 
   def save(logRegModelID: LogRegModel): Future[LogRegModel]
 

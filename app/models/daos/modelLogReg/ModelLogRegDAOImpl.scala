@@ -24,8 +24,8 @@ class ModelLogRegDAOImpl @Inject() (db : DB) extends ModelLogRegDAO {
   def collection: JSONCollection = db.collection[JSONCollection]("modelLogReg")
 
 
-  def findByThingID(thingID: UUID): Future[List[LogRegModel]] = {
-    collection.find(Json.obj("thingID" -> thingID)).cursor[LogRegModel]().collect[List]()
+  def findByThingID(thingID: UUID): Future[Option[LogRegModel]] = {
+    collection.find(Json.obj("thingID" -> thingID)).one[LogRegModel]
   }
 
 

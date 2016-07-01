@@ -8,6 +8,7 @@ user.exists = There already exists a thing with this id!
 user.notComplete = User does not complete!
 mail.notExists = Mail does not exists!
 user.notExists = User does not exists!
+modelLogReg.notExists = Model does not exists!
 parameters.notCorrect = Parameters of measurements not correct!
 measurements.notExists = Measurements does not exists!
 notification.notExists = Notification does not exists!
