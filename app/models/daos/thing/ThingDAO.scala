@@ -18,13 +18,15 @@ trait ThingDAO {
 
   def findAll(): Future[List[Thing]]
 
-  def findByCompany(companyID: UUID): Future[List[Thing]]
+  def findByCompanyID(companyID: UUID): Future[List[Thing]]
 
   def findByID(thingID: UUID): Future[Option[Thing]]
 
   def find(serialNumber: String): Future[Option[Thing]]
 
   def findListLabel(thing: Thing): List[Double]
+
+  def findByThingTypeID(thingTypeID: UUID): Future[List[Thing]]
 
   def save(thing: Thing): Future[Thing]
 

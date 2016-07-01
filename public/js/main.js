@@ -36921,7 +36921,7 @@ app.provider('Flash', function() {
           method: 'PUT' // this method issues a PUT request
         }
       }),
-      Password: $resource('/api/account/psw',{},{
+      Password: $resource('/api/test/psw',{},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -36943,15 +36943,16 @@ app.provider('Flash', function() {
     $scope.errore = '';
     $scope.infos = {
       newPassword : '',
-      newsecretString : ''
+      newSecretString : ''
     }
     $scope.editPsw = function (){
       if($scope.newPasswordTwo !== $scope.infos.newPassword){
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        AccountService.Password.update({}, $scope.infos, function(){
-          $state.go('root',{reload: true});
+        console.log($scope.infos);
+        AccountService.Password.save($scope.infos).$promise.then(function(u){
+          $state.go('root');
         });
       }
     }
@@ -36974,7 +36975,12 @@ app.provider('Flash', function() {
   }]);
   umap.factory('AnalisiService', function($resource) {
     return{
-      Analisi: $resource('/api/usersA/:id',{id: "@id"},{// da rifare
+      Analisi: $resource('/api/charts/:id',{id: "@id"},{// da rifare
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      }),
+      Things: $resource('/api/things/:id',{id: "@id"},{// da rifare
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -36982,35 +36988,47 @@ app.provider('Flash', function() {
     }
   });
 
-  umap.controller('AnalisiController',['$scope','$state','AnalisiService', function($scope, $state, AnalisiService){
+  umap.controller('AnalisiController',['$scope','$state','AnalisiService','MyCompanyService','ThingTypeServiceAU','Flash', function($scope, $state, AnalisiService, MyCompanyService, ThingTypeServiceAU, Flash){
     //$scope.item = { testo:'stocazzo' } ;
     $scope.drop;
-    $scope.functions = [
-      {functionId:'1', functionName:'func uno', selected: false},
-      {functionId:'2', functionName:'func due', selected: false},
-      {functionId:'3', functionName:'func tre', selected: false}
-    ];
-    $scope.charts = [
-      {chartId:'0', chartName:'chart uno', selected: false},
-      {chartId:'1', chartName:'chart due', selected: false},
-      {chartId:'2', chartName:'chart tre', selected: false}
-    ];
-    //['func uno','func due', 'func tre'];
-  //  $scope.charts = ['chart uno','chart due', 'chart tre'];
-    $scope.thingTypes = ['type uno','type due', 'type tre'];
-  //  $scope.functionsHash = {}
-  //  for (var i = 0; i < $scope.functions.length; i++) {
-  //    $scope.functionsHash[$scope.functions[i].functionId] = $scope.functions[i].functionName;
-  //  }
-    $scope.final = {
-      fun: {},
-      chart: [],
-      thingTypes: {}
+    $scope.errore = '';
+    MyCompanyService.query().$promise.then(function(company){
+      $scope.functions = company.functionAlgList;
+    });
+    AnalisiService.Things.query().$promise.then(function(things){
+      $scope.thingsHash = {};
+      for (var i = 0; i < things.length; i++) {
+        $scope.thingsHash[things[i].thingID] = things[i];
+      }
+    });
+ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
+  $scope.thingTypeHash = {};
+    for (var i = 0; i < thingTypes.length; i++) {
+      $scope.thingTypeHash[thingTypes[i].thingTypeID] = thingTypes[i];
     }
-    $scope.test = function(index){
-      console.log(index);
-      $scope.charts[index].selected = true;
-      console.log($scope.final);
+})
+    $scope.final = {
+      fun: '',
+      thingID: '',
+      par: ''
+    }
+    $scope.dropped = function(){
+      $scope.final.par = '';
+    }
+    $scope.test = function(){
+      var aux = {
+        functionName: $scope.final.fun,
+        objectID: $scope.final.thingID.thingID,
+        parameter: $scope.final.par.name
+      }
+      if((!aux.functionName || !aux.objectID || !aux.parameter) )
+        //$scope.errore = 'completa tutti i campi !'
+        Flash.create('danger', '<h2 class="text-center"> completa tutti i campi</h2>');
+      else{
+        AnalisiService.Analisi.save(aux, function(result){
+          $state.go('root.admin');
+        })
+      }
     }
   }]);
 })();
@@ -37277,7 +37295,7 @@ umap.factory('MyCompanyService', function($resource) {
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        LoginService.Reset.update({},$scope.reset, function(){
+        LoginService.Reset.save($scope.reset, function(){
           $state.go('root')
         });
       }
@@ -37325,6 +37343,24 @@ umap.factory('MyCompanyService', function($resource) {
             }
         }
     });
+    $stateProvider.state('root.admin.notifications.updateNotification', {
+      url: '/notification/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/notifications/updateNotification.html',
+              controller:  'UpdateNotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.user.notifications.updateNotification', {
+      url: '/notification/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/notifications/updateNotification.html',
+              controller:  'UpdateNotificationController'
+            }
+        }
+    });
   }]);
 
   umap.factory('NotificationService', function($resource){
@@ -37340,7 +37376,6 @@ umap.factory('MyCompanyService', function($resource) {
     $scope.notificationThingType = [];
     $scope.notificationThing = [];
     NotificationService.Notification.query().$promise.then(function(notifications){
-      console.log(notifications);
       for (var i = 0; i < notifications.length; i++) {
         if(notifications[i].thingTypeID)
           $scope.notificationThingType.push(notifications[i]);
@@ -37388,25 +37423,43 @@ umap.factory('MyCompanyService', function($resource) {
         $scope.thingsHash[things[i].thingID] = things[i];
       }
     });
-    $scope.send = function(){
+    $scope.send = function(user){
       var infos = {
         description: $scope.info.description,
         objectID: '',
         modelOrThing: $scope.which,
         parameter: $scope.parameterSelected,
         minValue: $scope.info.minValue,
-        maxValue: $scope.info.maxValue
+        maxValue: $scope.info.maxValue,
+        isThing: true
       }
-      if($scope.which === 'Oggetto')
+      if($scope.which === 'Oggetto'){
         infos.objectID = $scope.idOggettoSelected;
-      else
+        infos.isThing = true;
+      }else {
         infos.objectID = $scope.idModelloselected;
+        infos.isThing = false;
+      }
 
       NotificationService.Notification.save(infos).$promise.then(function(d){
-        console.log(d);
-        $state.go('root.admin.notifications');
+        if(user)
+          $state.go('root.user.notifications');
+        else
+          $state.go('root.admin.notifications');
       });
-
+    }
+  }]);
+  umap.controller('UpdateNotificationController',['$scope', '$state','$stateParams', 'NotificationService', function($scope, $state, $stateParams,NotificationService){
+    NotificationService.Notification.get({id: $stateParams.id}).$promise.then(function(result){
+      $scope.notification = result;
+    })
+    $scope.editNotification = function(admin){
+      NotificationService.Notification.update({id: $stateParams.id}, $scope.notification).$promise.then(function(result){
+        if(admin)
+          $state.go("root.admin.notifications");
+        else
+          $state.go("root.user.notifications");
+      });
     }
   }]);
 })();

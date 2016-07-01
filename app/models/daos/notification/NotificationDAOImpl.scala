@@ -53,6 +53,16 @@ class NotificationDAOImpl @Inject() (db : DB) extends NotificationDAO {
     collection.find(Json.obj()).cursor[Notification]().collect[List]()
   }
 
+  def removeByThing(thingID: UUID):  Future[List[Notification]] = {
+    collection.remove(Json.obj("thingID" -> thingID))
+    collection.find(Json.obj()).cursor[Notification]().collect[List]()
+  }
+
+  def removeByThingType(thingTypeID: UUID):  Future[List[Notification]] = {
+    collection.remove(Json.obj("thingTypeID" -> thingTypeID))
+    collection.find(Json.obj()).cursor[Notification]().collect[List]()
+  }
+
   def removeList(notificationList: List[Notification]):  Future[List[Notification]] = {
     for (notification <- notificationList)
     {

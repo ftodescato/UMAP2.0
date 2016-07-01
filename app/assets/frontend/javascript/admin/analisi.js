@@ -14,7 +14,12 @@
   }]);
   umap.factory('AnalisiService', function($resource) {
     return{
-      Analisi: $resource('/api/usersA/:id',{id: "@id"},{// da rifare
+      Analisi: $resource('/api/charts/:id',{id: "@id"},{// da rifare
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      }),
+      Things: $resource('/api/things/:id',{id: "@id"},{// da rifare
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -22,35 +27,47 @@
     }
   });
 
-  umap.controller('AnalisiController',['$scope','$state','AnalisiService', function($scope, $state, AnalisiService){
+  umap.controller('AnalisiController',['$scope','$state','AnalisiService','MyCompanyService','ThingTypeServiceAU','Flash', function($scope, $state, AnalisiService, MyCompanyService, ThingTypeServiceAU, Flash){
     //$scope.item = { testo:'stocazzo' } ;
     $scope.drop;
-    $scope.functions = [
-      {functionId:'1', functionName:'func uno', selected: false},
-      {functionId:'2', functionName:'func due', selected: false},
-      {functionId:'3', functionName:'func tre', selected: false}
-    ];
-    $scope.charts = [
-      {chartId:'0', chartName:'chart uno', selected: false},
-      {chartId:'1', chartName:'chart due', selected: false},
-      {chartId:'2', chartName:'chart tre', selected: false}
-    ];
-    //['func uno','func due', 'func tre'];
-  //  $scope.charts = ['chart uno','chart due', 'chart tre'];
-    $scope.thingTypes = ['type uno','type due', 'type tre'];
-  //  $scope.functionsHash = {}
-  //  for (var i = 0; i < $scope.functions.length; i++) {
-  //    $scope.functionsHash[$scope.functions[i].functionId] = $scope.functions[i].functionName;
-  //  }
-    $scope.final = {
-      fun: {},
-      chart: [],
-      thingTypes: {}
+    $scope.errore = '';
+    MyCompanyService.query().$promise.then(function(company){
+      $scope.functions = company.functionAlgList;
+    });
+    AnalisiService.Things.query().$promise.then(function(things){
+      $scope.thingsHash = {};
+      for (var i = 0; i < things.length; i++) {
+        $scope.thingsHash[things[i].thingID] = things[i];
+      }
+    });
+ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
+  $scope.thingTypeHash = {};
+    for (var i = 0; i < thingTypes.length; i++) {
+      $scope.thingTypeHash[thingTypes[i].thingTypeID] = thingTypes[i];
     }
-    $scope.test = function(index){
-      console.log(index);
-      $scope.charts[index].selected = true;
-      console.log($scope.final);
+})
+    $scope.final = {
+      fun: '',
+      thingID: '',
+      par: ''
+    }
+    $scope.dropped = function(){
+      $scope.final.par = '';
+    }
+    $scope.test = function(){
+      var aux = {
+        functionName: $scope.final.fun,
+        objectID: $scope.final.thingID.thingID,
+        parameter: $scope.final.par.name
+      }
+      if((!aux.functionName || !aux.objectID || !aux.parameter) )
+        //$scope.errore = 'completa tutti i campi !'
+        Flash.create('danger', '<h2 class="text-center"> completa tutti i campi</h2>');
+      else{
+        AnalisiService.Analisi.save(aux, function(result){
+          $state.go('root.admin');
+        })
+      }
     }
   }]);
 })();

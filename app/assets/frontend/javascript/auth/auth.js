@@ -73,7 +73,7 @@
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        LoginService.Reset.update({},$scope.reset, function(){
+        LoginService.Reset.save($scope.reset, function(){
           $state.go('root')
         });
       }

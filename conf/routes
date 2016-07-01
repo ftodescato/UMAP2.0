@@ -3,66 +3,67 @@
 # ~~~~
 
 
-GET         /                                  controllers.Assets.at(path="/public", file="html/layout.html")
-GET         /testDue                           controllers.ApplicationController.index
-GET         /user                              controllers.ApplicationController.user
-GET         /signOut                           controllers.ApplicationController.signOut
-POST        /test                              controllers.ApplicationController.test
-POST        /signIn                            controllers.shared.AuthController.authenticate
-GET         /api/getrole                       controllers.shared.AuthController.getRole
+GET         /                                   controllers.Assets.at(path="/public", file="html/layout.html")
+GET         /testDue                            controllers.ApplicationController.index
+GET         /user                               controllers.ApplicationController.user
+GET         /signOut                            controllers.ApplicationController.signOut
+POST        /test                               controllers.ApplicationController.test
+POST        /signIn                             controllers.shared.account.AuthController.authenticate
+GET         /api/getrole                        controllers.shared.account.AuthController.getRole
 
 
-#GET         /corr                              controllers.ApplicationController.correlation
-#GET         /sumstat/:mv                       controllers.ApplicationController.sumStatistic(mv:String)
-#GET         /NB                                controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
-#GET         /logreg                            controllers.ApplicationController.LogReg(id: java.util.UUID)
-#GET         /futureV                           controllers.ApplicationController.futureV(id: java.util.UUID)
+#GET        /corr                               controllers.ApplicationController.correlation
+#GET        /sumstat/:mv                        controllers.ApplicationController.sumStatistic(mv:String)
+#GET        /NB                                 controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
+#GET        /logreg                             controllers.ApplicationController.LogReg(id: java.util.UUID)
+#GET        /futureV                            controllers.ApplicationController.futureV(id: java.util.UUID)
 
 
-POST        /api/functions                     controllers.superAdmin.FunctionController.addFunction
+POST        /api/functions                      controllers.superAdmin.FunctionController.addFunction
 
 #ACCOUNT
-GET         /api/account                       controllers.shared.account.AccountController.getInfo
-PUT         /api/account                       controllers.shared.account.AccountController.updateAccount
-PUT         /api/account/psw                   controllers.shared.account.AccountController.updatePassword
-PUT         /api/account/resetPasswords        controllers.shared.account.AccountController.resetPassword
+GET         /api/account                        controllers.shared.account.AccountController.getInfo
+PUT         /api/account                        controllers.shared.account.AccountController.updateAccount
+POST        /api/test/psw                       controllers.shared.account.AccountController.updatePassword
+POST        /api/account/resetPasswords         controllers.shared.account.AccountController.resetPassword
 
-POST       /api/notifications                  controllers.shared.NotificationController.addNotification
-GET        /api/notifications                  controllers.shared.NotificationController.showNotifications
-GET        /api/notifications/:id              controllers.shared.NotificationController.showNotificationDetails(id: java.util.UUID)
-DELETE     /api/notifications/:id              controllers.shared.NotificationController.delete(id: java.util.UUID)
 
 #ADMIN+SUPERADMIN
-PUT        /api/engine/datasTT                 controllers.superAdmin.CompanyController.selectDataFromThingType
-POST       /api/engine/functions               controllers.superAdmin.CompanyController.selectFunction
-GET        /api/engine/functions               controllers.superAdmin.FunctionController.showFunctions
+PUT         /api/engine/datasTT                 controllers.superAdmin.CompanyController.selectDataFromThingType
+POST        /api/engine/functions               controllers.superAdmin.CompanyController.selectFunction
+GET         /api/engine/functions               controllers.superAdmin.FunctionController.showFunctions
 
 #ADMIN
-GET         /api/usersA/:id                    controllers.admin.UserController.showUserDetails(id: java.util.UUID)
-GET         /api/usersA                        controllers.admin.UserController.showUsers
-POST        /api/usersA                        controllers.admin.UserController.addUser
-PUT         /api/usersA/:id                    controllers.admin.UserController.updateUser(id: java.util.UUID)
-DELETE      /api/usersA/:id                    controllers.admin.UserController.delete(id: java.util.UUID)
-GET         /api/getMyCompany                  controllers.admin.UserController.getMyCompany
-POST        /api/chartA/                       controllers.admin.ChartController.addChart
-POST        /api/engineA/functions             controllers.admin.FunctionController.selectFunction
+POST        /api/charts                         controllers.admin.ChartController.addChart
+
+GET         /api/usersA/:id                     controllers.admin.UserController.showUserDetails(id: java.util.UUID)
+GET         /api/usersA                         controllers.admin.UserController.showUsers
+POST        /api/usersA                         controllers.admin.UserController.addUser
+PUT         /api/usersA/:id                     controllers.admin.UserController.updateUser(id: java.util.UUID)
+DELETE      /api/usersA/:id                     controllers.admin.UserController.delete(id: java.util.UUID)
+GET         /api/getMyCompany                   controllers.admin.UserController.getMyCompany
+POST        /api/chartA/                        controllers.admin.ChartController.addChart
+POST        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
 
 # ADMIN+USER
-GET         /api/thingTypes                    controllers.shared.thingType.ThingTypeController.showThingType
-GET         /api/thingTypes/:id                controllers.shared.thingType.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
-GET         /api/things                        controllers.shared.thingType.ThingTypeController.showThings
-GET         /api/things/:id                    controllers.shared.thingType.ThingTypeController.showThingDetails(id: java.util.UUID)
-GET         /api/notification/:id              controllers.shared.NotificationController.showNotificationDetails(id: java.util.UUID)
-GET         /api/notifications                 controllers.shared.NotificationController.showNotifications
-GET         /api/notificationsOfTT/:id         controllers.shared.NotificationController.showNotificationOfThingType(id: java.util.UUID)
-DELETE      /api/notification/:id              controllers.shared.NotificationController.delete(id: java.util.UUID)
+GET         /api/thingTypes                     controllers.shared.adminUser.ThingTypeController.showThingType
+GET         /api/thingTypes/:id                 controllers.shared.adminUser.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
+GET         /api/things                         controllers.shared.adminUser.ThingTypeController.showThings
+GET         /api/things/:id                     controllers.shared.adminUser.ThingTypeController.showThingDetails(id: java.util.UUID)
+GET         /api/notifications/:id              controllers.shared.adminUser.NotificationController.showNotificationDetails(id: java.util.UUID)
+PUT         /api/notifications/:id              controllers.shared.adminUser.NotificationController.update(id: java.util.UUID)
+GET         /api/notifications/:id              controllers.shared.adminUser.NotificationController.showNotificationDetails(id: java.util.UUID)
+GET         /api/notifications                  controllers.shared.adminUser.NotificationController.showNotifications
+POST        /api/notifications                  controllers.shared.adminUser.NotificationController.addNotification
+#GET        /api/notificationsOfTT/:id          controllers.shared.adminUser.NotificationController.showNotificationOfThingType(id: java.util.UUID)
+DELETE      /api/notifications/:id              controllers.shared.adminUser.NotificationController.delete(id: java.util.UUID)
 
 #SUPERADMIN
-PUT         /api/passwordsSA/:id               controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
-POST        /api/measurements                  controllers.superAdmin.ThingController.addMeasurements
+PUT         /api/passwordsSA/:id                controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
+POST        /api/measurements                   controllers.superAdmin.ThingController.addMeasurements
 
 
-POST        /api/thingTypeVisibility           controllers.superAdmin.CompanyController.selectDataFromThingType
+POST        /api/thingTypeVisibility            controllers.superAdmin.CompanyController.selectDataFromThingType
 
 GET         /api/thingsSA/:id                  controllers.superAdmin.ThingController.showThingDetails(id: java.util.UUID)
 GET         /api/thingsSA                      controllers.superAdmin.ThingController.showThing

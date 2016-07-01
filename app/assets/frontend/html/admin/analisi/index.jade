@@ -4,22 +4,28 @@ section(id="analisi" class="container-fluid" )
       a(ui-sref="root.admin()") Home
     li(class="active") Analisi Predittiva
   h1(class="text-center page-header") Configura un'analisi predittiva
+  h2.text-center {{errore}}
   div(class="row")
     div(class="col-sm-4")
       h2 Funzioni Disponibili
       div(ng-repeat=" item in functions track by $index")
-        span( data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="functions") {{item.functionName}}
+        span( data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item}}
         br
     div(class="col-sm-4")
-      h2 Grafici Disponibili
-      div(ng-repeat=" item in charts track by $index")
-        span(ng-if="!item.selected" data-jqyoui-options="{revert: 'invalid'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.chartName}}
+      h2 Oggetti Disponibili
+      div(ng-repeat=" item in thingsHash track by $index")
+        span( data-jqyoui-options="{revert: 'invalid'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.name}}
+        br
+    div(class="col-sm-4")
+      h2 Parametri Disponibili
+      div(ng-repeat=" item in thingTypeHash[final.thingID.thingTypeID].doubleValue.infos track by $index")
+        span(ng-show="item.visible" data-jqyoui-options="{revert: 'invalid'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.name}}
         br
   div(class="row")
     div(class="col-sm-4")
-      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.fun") {{final.fun.functionName}}
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.fun") {{final.fun}}
     div(class="col-sm-4")
-      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.chart") {{final.chart.chartName}}
-        div(ng-repeat=" item in final.chart track by $index")
-          span( data-jqyoui-options="{revert: true}" data-drag="true" jqyoui-draggable="{placeholder:'keep', onDrop: test(item.chartId)}" ng-model="item") {{item.chartName}}
-  button.btn.btn-success(ng-click="test()") stampa
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false, onDrop: dropped()}"  style='height:50px; border: 1px solid red;' ng-model="final.thingID") {{final.thingID.name}}
+    div(class="col-sm-4")
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.par") {{final.par.name}}
+  button.btn.btn-success(ng-click="test()") Aggiungi

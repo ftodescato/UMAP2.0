@@ -7,14 +7,22 @@ section(id="updateNotification" class="container-fluid")
     li(class="active") Modifica Notifica
   h1(class="text-center page-header") Modifica le impostazioni di notifica  
   div(class="row")    
-    form(ng-submit="editNotification()" class="col-sm-6 col-sm-offset-3")
+    form(ng-submit="editNotification(true)" class="col-sm-6 col-sm-offset-3")
+      div(ng-show="notification.isThing")
+        label ID Oggetto
+        p {{notification.thingID}}
+      div(ng-hide="notification.isThing")
+        label ID Modello Oggetto
+        p {{notification.thingTypeID}}
+      label Parametro
+      p {{notification.inputType}}
       label(for="descrizione") Descrizione
-      textarea(type="text" id="descrizione" class="form-control" ng-model="info.description" placeholder="descrizione" value="{{notification.name}}")
+      textarea(type="text" id="descrizione" class="form-control" ng-model="notification.notificationDescription" placeholder="descrizione" value="{{notification.notificationDescription}}")
       br
       label(for="minValue") Soglia Minima
-      input(type="text" id="minValue" class="form-control" ng-model="info.minValue" placeholder="soglia minima" value="{{notification.minValue}}")
+      input(type="number" id="minValue" class="form-control" ng-model="notification.valMin" placeholder="soglia minima" value="{{notification.valMin}}")
       br
       label(for="maxValue") Soglia Massima
-      input(type="text" id="maxValue" class="form-control" ng-model="info.maxValue" placeholder="soglia massima" value="{{notification.maxValue}}")
+      input(type="number" id="maxValue" class="form-control" ng-model="notification.valMax" placeholder="soglia massima" value="{{notification.valMax}}")
       br
       button(type='submit' class="btn btn-success") Modifica

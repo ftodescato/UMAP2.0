@@ -48,8 +48,8 @@ class ChartDAOImpl @Inject() (db : DB) extends ChartDAO {
     collection.find(Json.obj("chartID" -> chartID)).one[Chart]
   }
 
-  def findByThingID(thingID: UUID): Future[Option[Chart]] = {
-    collection.find(Json.obj("thingID" -> thingID)).one[Chart]
+  def findByThingID(thingID: UUID): Future[List[Chart]] = {
+    collection.find(Json.obj("thingID" -> thingID)).cursor[Chart]().collect[List]()
   }
 
 
@@ -73,6 +73,12 @@ class ChartDAOImpl @Inject() (db : DB) extends ChartDAO {
 
   def remove(chartID: UUID): Future[List[Chart]] = {
     collection.remove(Json.obj("chartID" -> chartID))
+    collection.find(Json.obj()).cursor[Chart]().collect[List]()
+
+  }
+
+  def removeByThing(thingID: UUID): Future[List[Chart]] = {
+    collection.remove(Json.obj("thingID" -> thingID))
     collection.find(Json.obj()).cursor[Chart]().collect[List]()
 
   }

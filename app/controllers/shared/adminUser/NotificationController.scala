@@ -1,4 +1,4 @@
-package controllers.shared
+package controllers.shared.adminUser
 
 import java.util.UUID
 import javax.inject.Inject
@@ -32,11 +32,11 @@ class NotificationController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-    def showNotificationDetails(notificationID: UUID) = Action.async(parse.json) { implicit request =>
+    def showNotificationDetails(notificationID: UUID) = Action.async { implicit request =>
       val notification = notificationDao.findByID(notificationID)
       notification.flatMap{
         notification =>
-        Future.successful(Ok(Json.toJson(notification)))
+          Future.successful(Ok(Json.toJson(notification)))
       }
     }
 
@@ -71,13 +71,13 @@ class NotificationController @Inject() (
          if(notification.isThing == true)
           {  val newNotification = Notification(
              notificationID = notification.notificationID,
-             notificationDescription = data.description,
+             notificationDescription = data.notificationDescription,
              emailUser = notification.emailUser,
-             inputType = data.parameter,
+             inputType = notification.inputType,
              thingID = notification.thingID,
-             thingTypeID = null,
-             valMin = data.minValue,
-             valMax= data.maxValue,
+             thingTypeID = None,
+             valMin = data.valMin,
+             valMax= data.valMax,
              isThing = notification.isThing
            )
            for{
@@ -89,13 +89,13 @@ class NotificationController @Inject() (
          else{
            val newNotification = Notification(
               notificationID = notification.notificationID,
-              notificationDescription = data.description,
+              notificationDescription = data.notificationDescription,
               emailUser = notification.emailUser,
-              inputType = data.parameter,
-              thingID = null,
+              inputType = notification.inputType,
+              thingID = None,
               thingTypeID = notification.thingTypeID,
-              valMin = data.minValue,
-              valMax= data.maxValue,
+              valMin = data.valMin,
+              valMax= data.valMax,
               isThing = notification.isThing
             )
            for{
@@ -124,7 +124,7 @@ class NotificationController @Inject() (
    }
 
 
-  def addNotification = SecuredAction(WithServicesMultiple("admin","user", true)).async(parse.json) { implicit request =>
+  def addNotification = SecuredAction(WithServices(Array("admin","user"), true)).async(parse.json) { implicit request =>
     request.body.validate[AddNotification.Data].map { data =>
       userDao.findByID(request.identity.userID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notExists"))))

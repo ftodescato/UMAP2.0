@@ -13,19 +13,17 @@ object EditNotification {
    */
   val form = Form(
     mapping(
-      "description" -> nonEmptyText,
-      "parameter" -> nonEmptyText,
-      "minValue" -> of(doubleFormat),
-      "maxValue" -> of(doubleFormat)
+      "notificationDescription" -> nonEmptyText,
+      "valMax" -> of(doubleFormat),
+      "valMin" -> of(doubleFormat)
     )(Data.apply)(Data.unapply)
   )
 
 
   case class Data(
-    description: String,
-    parameter: String,
-    minValue: Double,
-    maxValue: Double
+    notificationDescription: String,
+    valMax: Double,
+    valMin: Double
     )
 
 

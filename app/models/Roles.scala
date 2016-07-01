@@ -13,26 +13,42 @@ import play.api.mvc.RequestHeader
 
 /**
  * Check for authorization
+ *
  */
- case class WithServices(role: String, mail: Boolean) extends Authorization[User, JWTAuthenticator] {
+ case class WithServices(roles: Array[String], mail: Boolean) extends Authorization[User, JWTAuthenticator] {
    def isAuthorized[B](user: User, authenticator: JWTAuthenticator)(implicit r: Request[B], m: Messages)  = {
+    var roleOK = false
     if(mail)
-     Future.successful(user.role == role && user.mailConfirmed == true)
+    {
+      for(userRole <- roles if roleOK == false) {
+        if (user.role == userRole)
+          roleOK = true
+      }
+      Future.successful(roleOK && user.mailConfirmed == true)
+    }
     else
-     Future.successful(user.role == role)
-  }
+      Future.successful(roleOK)
+    }
  }
-
+/*
  case class WithServicesMultiple(role: String, role2: String, mail: Boolean) extends Authorization[User, JWTAuthenticator] {
    def isAuthorized[B](user: User, authenticator: JWTAuthenticator)(implicit r: Request[B], m: Messages)  = {
     if(mail)
      Future.successful((user.role == role || user.role == role2) && user.mailConfirmed == true)
     else
-     Future.successful(user.role == role)
+     Future.successful(user.role == role || user.role == role2)
+  }
+}
+ case class WithServicesMultipleAll(role: String, role2: String, role3: String, mail: Boolean) extends Authorization[User, JWTAuthenticator] {
+   def isAuthorized[B](user: User, authenticator: JWTAuthenticator)(implicit r: Request[B], m: Messages)  = {
+    if(mail)
+     Future.successful((user.role == role || user.role == role2 || user.role == role3) && user.mailConfirmed == true)
+    else
+     Future.successful(user.role == role || user.role == role2 || user.role == role3)
   }
  }
 
- /*
+
  object WithServices {
    def isAuthorized(user: User, role: String): Boolean =
      role == user.role

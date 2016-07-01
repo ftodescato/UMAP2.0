@@ -1,4 +1,4 @@
-package controllers.shared
+package controllers.shared.account
 
 import javax.inject.Inject
 

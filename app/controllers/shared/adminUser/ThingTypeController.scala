@@ -1,4 +1,4 @@
-package controllers.shared.thingType
+package controllers.shared.adminUser
 
 import java.util.UUID
 import javax.inject.Inject
@@ -40,7 +40,7 @@ class ThingTypeController @Inject() (
 extends Silhouette[User, JWTAuthenticator] {
 
   def showThingType = SecuredAction.async{ implicit request =>
-   val thingType = thingTypeDao.findByCompany(request.identity.company)
+   val thingType = thingTypeDao.findByCompanyID(request.identity.company)
    thingType.flatMap{
     thingType =>
      Future.successful(Ok(Json.toJson(thingType)))
@@ -56,7 +56,7 @@ extends Silhouette[User, JWTAuthenticator] {
   }
 
   def showThings  = SecuredAction.async{ implicit request =>
-   val things = thingDao.findByCompany(request.identity.company)
+   val things = thingDao.findByCompanyID(request.identity.company)
    things.flatMap{
     things =>
      Future.successful(Ok(Json.toJson(things)))

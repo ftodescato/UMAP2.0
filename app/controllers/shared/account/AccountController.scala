@@ -49,7 +49,7 @@ class AccountController @Inject() (
      Future.successful(Ok(Json.toJson(request.identity)))
    }
 
-   def updateAccount = SecuredAction(WithServicesMultiple("superAdmin", "admin", true)).async(parse.json) { implicit request =>
+   def updateAccount = SecuredAction(WithServices(Array("superAdmin", "admin","user"), true)).async(parse.json) { implicit request =>
        request.body.validate[EditUser.Data].map { data =>
          userDao.findByID(request.identity.userID).flatMap {
            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
@@ -103,18 +103,26 @@ class AccountController @Inject() (
              case None =>
                Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
              case Some(psw) =>
-             if(user.secretString == data.newSecretString){
-             var authInfo = passwordHasher.hash(data.newPassword)
-             userDao.confirmedMail(user)
-
+              var authInfo = passwordHasher.hash(data.newPassword)
+              val user2 = User(
+                userID = user.userID,
+                name = user.name,
+                surname = user.surname,
+                loginInfo = user.loginInfo,
+                email = user.email,
+                company = user.company,
+                mailConfirmed = user.mailConfirmed,
+                token = "vuoto",
+                role = user.role,
+                secretString = data.newSecretString
+              )
                for{
-
+                 user <- userDao.confirmedMail(user2)
                  authInfo <- passwordInfoDao.update(loginInfo, authInfo)
                }yield {
                  Ok(Json.obj("token" -> "ok"))
                }
-             }else
-             Future.successful(BadRequest(Json.obj("message" -> Messages("secretString.notCorrect"))))
+
 
            }
      }

@@ -15,6 +15,8 @@ import models.Engine
 import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
+import models.daos.chart.ChartDAO
+import models.daos.notification.NotificationDAO
 import controllers.ApplicationController
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
@@ -40,11 +42,13 @@ class ThingController @Inject() (
   thingDao: ThingDAO,
   thingTypeDao: ThingTypeDAO,
   companyDao: CompanyDAO,
+  chartDao: ChartDAO,
+  notificationDao: NotificationDAO,
   val appcontroller:ApplicationController
   )
 extends Silhouette[User, JWTAuthenticator] {
 
-  def showThing = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def showThing = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     val things = thingDao.findAll()
     things.flatMap{
       things =>
@@ -52,7 +56,7 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def showThingDetails(thingID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def showThingDetails(thingID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     val thing = thingDao.findByID(thingID)
     thing.flatMap{
       thing =>
@@ -60,11 +64,13 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def delete(thingID: UUID) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def delete(thingID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     thingDao.findByID(thingID).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       case Some (thing) =>
         for{
+          notification <- notificationDao.removeByThing(thingID)
+          chart <- chartDao.removeByThing(thingID)
           thing <- thingDao.remove(thingID)
         }yield{
           Ok(Json.obj("ok" -> "ok"))
@@ -72,7 +78,7 @@ extends Silhouette[User, JWTAuthenticator] {
     }
   }
 
-  def updateThing (thingID : UUID) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
+  def updateThing (thingID : UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[EditThing.Data].map { data =>
           thingDao.findByID(thingID).flatMap{
             case Some(thingTypeToAssign) =>

@@ -35,7 +35,7 @@
           <td>{{not.thingTypeID}}</td>
           <td>{{not.valMin}}</td>
           <td>{{not.valMax}}</td>
-          <td> <a ui-sref="root.admin.notificationDetails({id:not.notificationID})"> 
+          <td> <a ui-sref="root.admin.notifications.updateNotification({id:not.notificationID})"> 
               <button class="btn btn-warning">Modifica</button></a>
             <form ng-submit="deleteNotification(not.notificationID)">
               <button type="submit" class="btn btn-danger">Elimina </button>
@@ -70,7 +70,7 @@
           <td>{{not.thingID}}</td>
           <td>{{not.valMin}}</td>
           <td>{{not.valMax}}</td>
-          <td> <a ui-sref="root.admin.notificationDetails({id:not.notificationID})"> 
+          <td> <a ui-sref="root.admin.notifications.updateNotification({id:not.notificationID})"> 
               <button class="btn btn-warning">Modifica           </button></a>
             <form ng-submit="deleteNotification(not.notificationID)">
               <button type="submit" class="btn btn-danger">Elimina            </button>

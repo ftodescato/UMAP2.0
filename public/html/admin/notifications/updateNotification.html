@@ -7,13 +7,23 @@
   </ul>
   <h1 class="text-center page-header">Modifica le impostazioni di notifica  </h1>
   <div class="row">   
-    <form ng-submit="editNotification()" class="col-sm-6 col-sm-offset-3">
+    <form ng-submit="editNotification(true)" class="col-sm-6 col-sm-offset-3">
+      <div ng-show="notification.isThing">
+        <label>ID Oggetto</label>
+        <p>{{notification.thingID}}</p>
+      </div>
+      <div ng-hide="notification.isThing">
+        <label>ID Modello Oggetto</label>
+        <p>{{notification.thingTypeID}}</p>
+      </div>
+      <label>Parametro</label>
+      <p>{{notification.inputType}}</p>
       <label for="descrizione">Descrizione</label>
-      <textarea type="text" id="descrizione" ng-model="info.description" placeholder="descrizione" value="{{notification.name}}" class="form-control"></textarea><br/>
+      <textarea type="text" id="descrizione" ng-model="notification.notificationDescription" placeholder="descrizione" value="{{notification.notificationDescription}}" class="form-control"></textarea><br/>
       <label for="minValue">Soglia Minima</label>
-      <input type="text" id="minValue" ng-model="info.minValue" placeholder="soglia minima" value="{{notification.minValue}}" class="form-control"/><br/>
+      <input type="number" id="minValue" ng-model="notification.valMin" placeholder="soglia minima" value="{{notification.valMin}}" class="form-control"/><br/>
       <label for="maxValue">Soglia Massima</label>
-      <input type="text" id="maxValue" ng-model="info.maxValue" placeholder="soglia massima" value="{{notification.maxValue}}" class="form-control"/><br/>
+      <input type="number" id="maxValue" ng-model="notification.valMax" placeholder="soglia massima" value="{{notification.valMax}}" class="form-control"/><br/>
       <button type="submit" class="btn btn-success">Modifica</button>
     </form>
   </div>

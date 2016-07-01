@@ -36,7 +36,7 @@ class FunctionController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-  def showFunctions = SecuredAction(WithServicesMultiple("superAdmin","admin", true)).async{ implicit request =>
+  def showFunctions = SecuredAction(WithServices(Array("superAdmin", "admin"), true)).async{ implicit request =>
     val functions = functionDao.findAll()
     functions.flatMap{
       functions =>
@@ -44,7 +44,7 @@ class FunctionController @Inject() (
     }
   }
 
-  def delete(name: String) = SecuredAction(WithServices("superAdmin", true)).async{ implicit request =>
+  def delete(name: String) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
     functionDao.find(name).flatMap{
       case None => Future.successful(BadRequest(Json.obj("message" -> Messages("function.notExists"))))
       case Some (function) =>
@@ -58,12 +58,13 @@ class FunctionController @Inject() (
     }
   }
 
-  def updateFunction (name : String) = SecuredAction(WithServices("superAdmin", true)).async(parse.json) { implicit request =>
+  def updateFunction (name : String) = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[EditFunction.Data].map { data =>
       functionDao.find(name).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("function.notExists"))))
         case Some (function) =>
           val newFunction = Function(
+              functionID = UUID.randomUUID(),
               name = data.functionName
           )
           for{
@@ -84,7 +85,8 @@ class FunctionController @Inject() (
     request.body.validate[AddFunction.Data].map { data =>
       //val authInfo = passwordHasher.hash(data.password)
       val function = Function(
-          name = data.functionName
+        functionID = UUID.randomUUID(),
+        name = data.functionName
       )
       for{
         function <- functionDao.save(function)

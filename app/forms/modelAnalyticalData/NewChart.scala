@@ -16,7 +16,7 @@ object NewChart {
     mapping(
       "functionName" -> nonEmptyText,
       "objectID" -> uuid,
-      "datas" -> nonEmptyText
+      "parameter" -> nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 

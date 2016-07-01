@@ -27,7 +27,7 @@
           method: 'PUT' // this method issues a PUT request
         }
       }),
-      Password: $resource('/api/account/psw',{},{
+      Password: $resource('/api/test/psw',{},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -49,15 +49,16 @@
     $scope.errore = '';
     $scope.infos = {
       newPassword : '',
-      newsecretString : ''
+      newSecretString : ''
     }
     $scope.editPsw = function (){
       if($scope.newPasswordTwo !== $scope.infos.newPassword){
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        AccountService.Password.update({}, $scope.infos, function(){
-          $state.go('root',{reload: true});
+        console.log($scope.infos);
+        AccountService.Password.save($scope.infos).$promise.then(function(u){
+          $state.go('root');
         });
       }
     }
