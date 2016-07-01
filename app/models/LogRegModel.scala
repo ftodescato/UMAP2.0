@@ -9,9 +9,9 @@ import play.api.libs.json._
 
 
 case class LogRegModel(
-  intercept:Double
-  numFeatures:Int
-  numClasses:Int
+  intercept:Double,
+  numFeatures:Int,
+  numClasses:Int,
   weights:Vector
 ){
   def getIntercept: Double ={return intercept}
@@ -20,10 +20,10 @@ case class LogRegModel(
   def getWeights: Vector ={return weights}
 }
 
-object logRegModel {
+object LogRegModel {
 
    /**
     * Converts the [LogRegModel] object to Json and vice versa.
     */
-   implicit val jsonFormatDetection = Json.format[DetectionDouble]
+   implicit val jsonFormatDetection = Json.format[LogRegModel]
 }
