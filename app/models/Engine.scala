@@ -22,13 +22,14 @@ import collection.breakOut
 class Engine{
   //metodo per la correlazione
   def getCorrelation(a: Array[Double], b: Array[Double]) : Double = {
-    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "false") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val seriesX: RDD[Double] = sc.parallelize(a)
     val seriesY: RDD[Double] = sc.parallelize(b)
     //calcolo correlazione tra valori e la loro R
     val correlation: Double = Statistics.corr(seriesX, seriesY, "pearson")
+    sc.stop()
     correlation
   }
   //calcolo della R di un insieme di punti per la correlazione
@@ -62,7 +63,7 @@ class Engine{
 
   //SUMSTATISTIC (FUNZIONI BASE)
   def sumStatistic(lista: List[Array[Double]], mv: String) : Array[Double] = {
-    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "false") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     // imposto i dati per la funzione spark
@@ -71,6 +72,7 @@ class Engine{
     val aux: RDD[Vector] = sc.parallelize(tovectors)
     // applico la funzione
     val result:MultivariateStatisticalSummary = Statistics.colStats(aux)
+    sc.stop()
     mv match{
       //restituisco la varianza
       case "Variance" =>
@@ -90,7 +92,7 @@ class Engine{
   //LOGISTIC REGRESSION
   //crea il modello e lo ritorna
   def getLogRegModel(thingID: UUID, labelList: List[Double], measureList: List[Array[Double]]) : LogRegModel ={
-    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "false") ;
     val sc = new SparkContext(configuration)
     val measureArray = measureList.toArray
     val vecMeasureArray = measureArray.map(Vectors.dense(_))
@@ -115,6 +117,7 @@ class Engine{
     val precision = metrics.precision
     predictionAndLabels.collect().foreach{ point =>  println(point)}
     val savedModel:LogRegModel = new LogRegModel(UUID.randomUUID(),thingID,model.intercept,model.numFeatures,model.numClasses,model.weights.toArray)
+    sc.stop()
     savedModel
   }
 
@@ -122,7 +125,7 @@ class Engine{
   //applica il modello di una thing ad una nuova misurazione e restituisce la sua label
   def getLogRegPrediction(modello: LogRegModel, data: Array[Double]) : Double = {
 
-    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
+    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "false") ;
     val sc = new SparkContext(configuration)
 
     val vecMeasureArray = data.map(Vectors.dense(_))
@@ -131,6 +134,7 @@ class Engine{
     val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(weights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
     val prediction = loadedModel.predict(test2)
     val sol=prediction.collect.toArray
+    sc.stop()
     sol(0)
   }
   // calcola una possibile misurazione futura

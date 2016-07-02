@@ -84,7 +84,7 @@ class ApplicationController @Inject() (
     val e = new Engine
     val aux: Array[Double] = e.sumStatistic(data, mv)
 
-    //ciclo in cerca dell valore che mi interessa
+    //seleziono il valore che mi interessa
     var sol:Double=aux(datatype)
     //valore ritornato -inf->+inf
     sol
