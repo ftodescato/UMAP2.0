@@ -42,6 +42,16 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     collection.find(Json.obj("thingID" -> thingID)).one[Thing]
   }
 
+  def findMeasurements(thingID: UUID): Future[List[Measurements]] = {
+    findByID(thingID).flatMap{
+      thing =>
+        var listMeasurements = thing.get.datas
+        listMeasurements.toList
+        Future.successful(listMeasurements.toList)
+    }
+  }
+
+
   def findListLabel(thing: Thing): List[Double] = {
     var listMeasurements = new ListBuffer[Measurements]
     for (measurements <- thing.datas)

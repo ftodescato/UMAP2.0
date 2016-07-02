@@ -89,7 +89,7 @@ class ApplicationController @Inject() (
     //valore ritornato -inf->+inf
     sol
   }
-  // creaziome del modello degli oggetti a partire dai dati nel DB
+  // creazione del modello degli oggetti a partire dai dati nel DB
   def modelLogReg(thingID: UUID) = Action.async{ implicit request =>
     //recupero informazioni dal DB
     thingDao.findByID(thingID).flatMap{

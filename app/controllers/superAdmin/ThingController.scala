@@ -18,6 +18,8 @@ import models.daos.thing.ThingDAO
 import models.daos.chart.ChartDAO
 import models.daos.notification.NotificationDAO
 import controllers.ApplicationController
+import controllers.shared.adminUser.NotificationController
+
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -44,7 +46,8 @@ class ThingController @Inject() (
   companyDao: CompanyDAO,
   chartDao: ChartDAO,
   notificationDao: NotificationDAO,
-  val appcontroller:ApplicationController
+  val appcontroller: ApplicationController,
+  notificationController: NotificationController
   )
 extends Silhouette[User, JWTAuthenticator] {
 
@@ -191,7 +194,6 @@ extends Silhouette[User, JWTAuthenticator] {
                       for{
 
                         thing <- thingDao.updateMeasurements(thingInfo, measurements)
-                        //measurements <- measurementsDao.add(measurements)
                         } yield {
                           Ok(Json.obj("ok" -> "ok"))
 
@@ -211,7 +213,6 @@ extends Silhouette[User, JWTAuthenticator] {
                       for{
 
                         thing <- thingDao.updateMeasurements(thingInfo, measurements)
-                        //measurements <- measurementsDao.add(measurements)
                         } yield {
                           Ok(Json.obj("ok" -> "ok"))
 
@@ -273,8 +274,10 @@ extends Silhouette[User, JWTAuthenticator] {
                       )
                   for{
                     thing <- thingDao.updateMeasurements(thingInfo, measurements)
-                    // measurements <- measurementsDao.add(measurements)
-                  } yield { Ok(Json.obj("ok" -> "ok")) }
+
+                  } yield {
+                    notificationController.notifyAfterMeasurement(thing.thingID, measurements.measurementsID)
+                    Ok(Json.obj("ok" -> "ok")) }
                 }
               else{
                 val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
@@ -295,8 +298,9 @@ extends Silhouette[User, JWTAuthenticator] {
                 )
                 for{
                   thing <- thingDao.updateMeasurements(thingInfo, measurements)
-                  //measurements <- measurementsDao.add(measurements)
-                  } yield { Ok(Json.obj("ok" -> "ok")) }
+                  } yield {
+                    notificationController.notifyAfterMeasurement(thingInfo, measurements.measurementsID)
+                    Ok(Json.obj("ok" -> "ok")) }
                 }
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
         }

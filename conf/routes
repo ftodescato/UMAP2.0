@@ -54,13 +54,14 @@ GET         /api/notifications/:id              controllers.shared.adminUser.Not
 PUT         /api/notifications/:id              controllers.shared.adminUser.NotificationController.update(id: java.util.UUID)
 GET         /api/notifications/:id              controllers.shared.adminUser.NotificationController.showNotificationDetails(id: java.util.UUID)
 GET         /api/notifications                  controllers.shared.adminUser.NotificationController.showNotifications
-POST        /api/notifications                  controllers.shared.adminUser.NotificationController.addNotification
+POST        /api/notifications/:id                  controllers.shared.adminUser.NotificationController.addNotification(id: java.util.UUID)
 #GET        /api/notificationsOfTT/:id          controllers.shared.adminUser.NotificationController.showNotificationOfThingType(id: java.util.UUID)
 DELETE      /api/notifications/:id              controllers.shared.adminUser.NotificationController.delete(id: java.util.UUID)
 
 #SUPERADMIN
 PUT         /api/passwordsSA/:id                controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                   controllers.superAdmin.ThingController.addMeasurements
+POST        /api/newmeasurements                   controllers.superAdmin.ThingController.addNewMeasurements
 
 
 POST        /api/thingTypeVisibility            controllers.superAdmin.CompanyController.selectDataFromThingType
