@@ -29,6 +29,7 @@ import play.api.mvc.Action
 
 import scala.concurrent.Future
 import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 
 class GraphicController @Inject() (
@@ -44,9 +45,9 @@ class GraphicController @Inject() (
     def createGraphic(chartID: UUID) = Action.async { implicit request =>
       var futureV = false
       var valueForX: Double = 0
-      var valueY = Array.empty[Double]
-      var valueX = Array.empty[Date]
-      var arrayDouble = Array.empty[Double]
+      var valueY = new ArrayBuffer[Double]()
+      var valueX = new ArrayBuffer[Date]()
+      //var arrayDouble = Array.empty[Double]
       val chart = chartDao.findByID(chartID)
       chart.flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
@@ -63,11 +64,15 @@ class GraphicController @Inject() (
            var listMeasurement = thing.datas
            for(measurement <- listMeasurement)
            {countForDate = countForDate + 1
-             valueX :+ measurement.dataTime
-               for (sensors <- measurement.sensors if indexFind == false){
+             valueX += measurement.dataTime
+               for (sensors <- measurement.sensors){
                  if(sensors.sensor == chart.infoDataName)
-                    {index = countForIndex
+                    {
+                      if(indexFind == false){
+                      index = countForIndex
                       indexFind= true
+                      }
+                      valueY += sensors.value
                     }
                   countForIndex = countForIndex + 1
                }
@@ -94,8 +99,8 @@ class GraphicController @Inject() (
           //  valueX :+ nextDate
            val graphic = Graphic(
              futureV = futureV,
-             valuesY = valueY,
-             valuesX = valueX,
+             valuesY = valueY.toArray,
+             valuesX = valueX.toArray,
              resultFunction = valueForX
            )
 
