@@ -194,10 +194,22 @@ extends Silhouette[User, JWTAuthenticator] {
                       for{
 
                         thing <- thingDao.updateMeasurements(thingInfo, measurements)
-                        } yield {
-                          Ok(Json.obj("ok" -> "ok"))
 
-                        }
+
+                        // PSEUDOCODICE PER LA CREAZIONE E AGGIORNAMENTO DEL MODELLO le quadre segnalo le parti da tradurre in codice
+                        // if([#misurazioni della thing]>=6){
+                        //   var nuovomodello:LogRegModel=modelLogReg([ID della thing])
+                        //   var vecchiomodello:LogRegModel=[ModelLogRegDAO.findByThingID([ID della thing])]
+                        //   [LogRegModelDAO.update(vecchiomodello.logRegModelID,nuovomodello)]
+                        // }else if([#misurazioni della thing]==5){
+                        //   var nuovomodello:LogRegModel=modelLogReg([ID della thing])
+                        //   [LogRegModelDAO.save(nuovomodello)]
+                        // }
+
+                        //measurements <- measurementsDao.add(measurements)
+                      } yield {
+                          Ok(Json.obj("ok" -> "ok"))
+                      }
                 }
               else
               {
@@ -213,6 +225,19 @@ extends Silhouette[User, JWTAuthenticator] {
                       for{
 
                         thing <- thingDao.updateMeasurements(thingInfo, measurements)
+
+
+                        // PSEUDOCODICE PER LA CREAZIONE E AGGIORNAMENTO DEL MODELLO le quadre segnalo le parti da tradurre in codice
+                        // if([#misurazioni della thing]>=6){
+                        //   var nuovomodello:LogRegModel=modelLogReg([ID della thing])
+                        //   var vecchiomodello:LogRegModel=[ModelLogRegDAO.findByThingID([ID della thing])]
+                        //   [LogRegModelDAO.update(vecchiomodello.logRegModelID,nuovomodello)]
+                        // }else if([#misurazioni della thing]==5){
+                        //   var nuovomodello:LogRegModel=modelLogReg([ID della thing])
+                        //   [LogRegModelDAO.save(nuovomodello)]
+                        // }
+
+                        //measurements <- measurementsDao.add(measurements)
                         } yield {
                           Ok(Json.obj("ok" -> "ok"))
 
