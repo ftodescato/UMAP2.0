@@ -276,7 +276,8 @@ extends Silhouette[User, JWTAuthenticator] {
                     thing <- thingDao.updateMeasurements(thingInfo, measurements)
 
                   } yield {
-                    notificationController.notifyAfterMeasurement(thing.thingID, measurements.measurementsID)
+                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
+                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID)
                     Ok(Json.obj("ok" -> "ok")) }
                 }
               else{
@@ -299,7 +300,8 @@ extends Silhouette[User, JWTAuthenticator] {
                 for{
                   thing <- thingDao.updateMeasurements(thingInfo, measurements)
                   } yield {
-                    notificationController.notifyAfterMeasurement(thingInfo, measurements.measurementsID)
+                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
+                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID)
                     Ok(Json.obj("ok" -> "ok")) }
                 }
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))

@@ -17,6 +17,7 @@ import models.services._
 import models.daos.user._
 import models.daos.notification._
 import models.daos.thing.ThingDAO
+import models.daos.thingType.ThingTypeDAO
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -30,6 +31,7 @@ class NotificationController @Inject() (
   userDao: UserDAO,
   notificationDao: NotificationDAO,
   thingDao: ThingDAO,
+  thingTypeDao: ThingTypeDAO,
   mailer: MailerClient,
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
@@ -176,7 +178,8 @@ class NotificationController @Inject() (
   }
 
 
-  def notifyAfterMeasurement(thingID: UUID, measurementID: UUID) ={
+  def notifyAfterMeasurementThing(thingID: UUID, measurementID: UUID) = {
+    var bodyMail = ""
       thingDao.findByID(thingID).flatMap{
         case None =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("measurements.notExists"))))
@@ -190,35 +193,82 @@ class NotificationController @Inject() (
                   listOfMeasurements =>
                     for(measurement <- listOfMeasurements){
                       if(measurement.measurementsID == measurementID){
+                        if (measurement.label != 0){
+                          bodyMail = thing.name+" si trova in stato: "+measurement.label+"."
+                        }
                         for(detectionDouble <- measurement.sensors if parameterFind == false)
                           if(detectionDouble.sensor == parameter){
                             parameterFind = true
                             if(detectionDouble.value > notification.valMax){
-                              val email = Email(
-                                "Valori "+parameter+"",
-                                "LatexeBiscotti <latexebiscotti@gmail.com>",
-                                Seq("Miss TO <"+notification.emailUser+">"),
-                                bodyText = Some("Il valore "+parameter+"è a:"+detectionDouble.value+" e il massimo previsto è per"+notification.valMax
-                                )
-                              )
-                              mailer.send(email)
+                              bodyMail = bodyMail+"Il valore "+parameter+"è a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
                             }
                             if(detectionDouble.value < notification.valMin){
-                              val email = Email(
-                                "Valori "+parameter+"",
-                                "LatexeBiscotti <latexebiscotti@gmail.com>",
-                                Seq("Miss TO <"+notification.emailUser+">"),
-                                bodyText = Some("Il valore "+parameter+"è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin
-                                )
-                              )
-                              mailer.send(email)
+                              bodyMail = bodyMail+ "Il valore "+parameter+"è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
                             }
                           }
+                          val email = Email(
+                            "Valori "+parameter+"",
+                            "LatexeBiscotti <latexebiscotti@gmail.com>",
+                            Seq("Miss TO <"+notification.emailUser+">"),
+                            bodyText = Some(bodyMail)
+                          )
+                          mailer.send(email)
                       }
                     }
                     Future.successful(Ok(Json.toJson(listOfMeasurements)))
                 }
 
+            }
+            Future.successful(Ok(Json.toJson(listNotifications)))
+          }
+      }
+  }
+
+  def notifyAfterMeasurementThingType(thingTypeID: UUID, measurementID: UUID) = {
+    var bodyMail = ""
+      thingTypeDao.findByID(thingTypeID).flatMap{
+        case None =>
+          Future.successful(BadRequest(Json.obj("message" -> Messages("measurements.notExists"))))
+        case Some(thingType) =>
+          notificationDao.findNotificationOfThingType(thingTypeID).flatMap{
+            listNotifications =>
+              for(notification <- listNotifications) {
+                var parameterFind = false
+                var parameter = notification.inputType
+                thingDao.findByThingTypeID(thingTypeID).flatMap{
+                  things =>
+                    for(thing <- things){
+                      thingDao.findMeasurements(thing.thingID).flatMap{
+                        listOfMeasurements =>
+                          for(measurement <- listOfMeasurements){
+                            if(measurement.measurementsID == measurementID){
+                              if (measurement.label != 0){
+                                bodyMail = thing.name+" si trova in stato: "+measurement.label+"."
+                              }
+                              for(detectionDouble <- measurement.sensors if parameterFind == false)
+                                if(detectionDouble.sensor == parameter){
+                                  parameterFind = true
+                                  if(detectionDouble.value > notification.valMax){
+                                    bodyMail = bodyMail+"Il valore "+parameter+"è a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
+                                  }
+                                  if(detectionDouble.value < notification.valMin){
+                                    bodyMail = bodyMail+ "Il valore "+parameter+"è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
+                                  }
+                                }
+                                val email = Email(
+                                  "Valori "+parameter+"",
+                                  "LatexeBiscotti <latexebiscotti@gmail.com>",
+                                  Seq("Miss TO <"+notification.emailUser+">"),
+                                  bodyText = Some(bodyMail)
+                                )
+                                mailer.send(email)
+                            }
+                          }
+                          Future.successful(Ok(Json.toJson(listOfMeasurements)))
+                      }
+                    }
+                    Future.successful(Ok(Json.toJson(things)))
+                }
             }
             Future.successful(Ok(Json.toJson(listNotifications)))
           }
