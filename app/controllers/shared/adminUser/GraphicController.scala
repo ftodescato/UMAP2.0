@@ -41,7 +41,7 @@ class GraphicController @Inject() (
 
 
 
-    def createGraphic(chartID: UUID) = Action.async(parse.json) { implicit request =>
+    def createGraphic(chartID: UUID) = Action.async { implicit request =>
       var futureV = false
       var valueForX: Double = 0
       var valueY = Array.empty[Double]
@@ -51,21 +51,24 @@ class GraphicController @Inject() (
       chart.flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
         case Some (chart) =>
-         val thing = thingDao.findByID(chartID)
+         val thing = thingDao.findByID(chart.thingID)
          thing.flatMap{
            case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
            case Some (thing) =>
            val functionName = chart.functionName
            var countForIndex = 0
-           var index = 0
+           var indexFind = false
+           var index=0
            var countForDate = 0
            var listMeasurement = thing.datas
            for(measurement <- listMeasurement)
            {countForDate = countForDate + 1
              valueX :+ measurement.dataTime
-               for (sensors <- measurement.sensors if index == 0){
+               for (sensors <- measurement.sensors if indexFind == false){
                  if(sensors.sensor == chart.infoDataName)
-                    {index = countForIndex}
+                    {index = countForIndex
+                      indexFind= true
+                    }
                   countForIndex = countForIndex + 1
                }
             }
@@ -81,14 +84,14 @@ class GraphicController @Inject() (
                 case "Future" =>
                     valueForX = engine.futureV(thing.thingID, index)
                 }
-           var lastDateMeasurement = thing.datas(countForDate).dataTime.toString()
-           val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-           val oldDate = LocalDate.parse(lastDateMeasurement, formatter)
-           var secondLastDateMeasurement = thing.datas(countForDate - 1).dataTime.toString()
-           val newDate = LocalDate.parse(secondLastDateMeasurement, formatter)
-           var differenceForDate = newDate.toEpochDay() - oldDate.toEpochDay()
-           var nextDate = lastDateMeasurement + differenceForDate
-           valueX :+ nextDate
+          //  var lastDateMeasurement = thing.datas(countForDate).dataTime.toString()
+          //  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+          //  val oldDate = LocalDate.parse(lastDateMeasurement, formatter)
+          //  var secondLastDateMeasurement = thing.datas(countForDate - 1).dataTime.toString()
+          //  val newDate = LocalDate.parse(secondLastDateMeasurement, formatter)
+          //  var differenceForDate = newDate.toEpochDay() - oldDate.toEpochDay()
+          //  var nextDate = lastDateMeasurement + differenceForDate
+          //  valueX :+ nextDate
            val graphic = Graphic(
              futureV = futureV,
              valuesY = valueY,
