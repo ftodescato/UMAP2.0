@@ -2,8 +2,8 @@ package controllers.shared.account
 
 import java.io.File
 
-import org.apache.commons.mail.EmailAttachment
-import play.api.libs.mailer._
+//import org.apache.commons.mail.EmailAttachment
+
 
 import java.util.UUID
 import javax.inject.Inject
@@ -34,7 +34,6 @@ import scala.concurrent.Future
 
 class AccountController @Inject() (
   val messagesApi: MessagesApi,
-  mailer: MailerClient,
   userDao: UserDAO,
   companyDao: CompanyDAO,
   notificationDao: NotificationDAO,

@@ -84,12 +84,12 @@ class ApplicationController @Inject() (
     val e = new Engine
     val aux: Array[Double] = e.sumStatistic(data, mv)
 
-    //ciclo in cerca dell valore che mi interessa
+    //seleziono il valore che mi interessa
     var sol:Double=aux(datatype)
     //valore ritornato -inf->+inf
     sol
   }
-  // creaziome del modello degli oggetti a partire dai dati nel DB
+  // creazione del modello degli oggetti a partire dai dati nel DB
   def modelLogReg(thingID: UUID) = Action.async{ implicit request =>
     //recupero informazioni dal DB
     thingDao.findByID(thingID).flatMap{

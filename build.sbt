@@ -31,7 +31,7 @@ libraryDependencies ++= Seq(
 )
 dependencyOverrides ++= Set(
 "com.fasterxml.jackson.core" % "jackson-databind" % "2.4.4"
-) 
+)
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 

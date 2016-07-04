@@ -38,7 +38,6 @@ class ThingTypeDAOImpl @Inject() (db : DB) extends ThingTypeDAO {
 
   def findByID(thingTypeID: UUID): Future[Option[ThingType]] = {
     collection.find(Json.obj("thingTypeID" -> thingTypeID)).one[ThingType]
-
   }
 
   def save(thingType: ThingType): Future[ThingType] = {

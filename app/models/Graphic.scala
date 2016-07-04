@@ -12,7 +12,7 @@ import java.util.Date
  case class Graphic(
   futureV: Boolean,
   valuesY: Array[Double],
-  valuesX: Array[Date],
+  valuesX: Array[String],
   resultFunction: Double
 )
 
