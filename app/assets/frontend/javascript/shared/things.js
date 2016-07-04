@@ -1,5 +1,5 @@
 (function(){
-  var umap = angular.module('umap.adminUser.things',['ui.router','ngResource']);
+  var umap = angular.module('umap.adminUser.things',['ui.router','ngResource', 'chart.js']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
     $stateProvider.state('root.admin.things', {
       url: '/things',
@@ -38,22 +38,30 @@
         }
     });
   }]);
-/*
   umap.factory('GraphicService', function($resource){
     return{
-        Graphic: $resource('/api/thingTypes/:id',{id: "@id"},{
+        Graphic: $resource('/api/graphics/:id',{id: "@id"},{
           update:{
             method: 'PUT'
           }
-      })
+        }),
+        Chart: $resource('/api/charts/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          },
+          get:{
+            method: 'GET',
+            isArray: true
+          }
+        })
     }
-  });*/
+  });
   umap.controller('ThingsControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
     ThingTypeServiceAU.Thing.query().$promise.then(function(things){
       $scope.things = things;
     });
   }]);
-  umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams', 'ThingTypeServiceAU', function($scope, $stateParams, ThingTypeServiceAU ){
+  umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams', 'ThingTypeServiceAU','GraphicService', function($scope, $stateParams, ThingTypeServiceAU, GraphicService ){
     $scope.hashMisure = [];
     ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
       ThingTypeServiceAU.ThingType.get({id: thing.thingTypeID}).$promise.then(function(thingType){
@@ -64,5 +72,31 @@
         $scope.thing = thing;
       });
     });
+    GraphicService.Chart.get({id: $stateParams.id}).$promise.then(function(charts){
+      $scope.charts = charts;
+    });
+    //query su charts per prendermi tutti i chart col mio thingID
+    //ciclo questi chart e mi salvo la previsione in un array di previsioni
+    $scope.showGraphics = function(){
+      $scope.data = [[1,3,4]];
+      $scope.labels = ['uno', 'due', 'tre'];
+      $scope.loading = true;
+      $scope.graphics = [];
+      for (var i = 0; i < $scope.charts.length; i++) {
+        var aux = {
+          data: [],
+          labels: [],
+          function: $scope.charts[i].functionName,
+          param: $scope.charts[i].infoDataName
+        };
+        GraphicService.Graphic.get({id: $scope.charts[i].chartID}).$promise.then(function(graphic){
+          aux.data.push(graphic.valuesY);
+          aux.labels = graphic.valuesX;
+          $scope.graphics.push(aux);
+          if(i === $scope.charts.length)
+            $scope.loading = false;
+        });
+      }
+    }
   }]);
 })();

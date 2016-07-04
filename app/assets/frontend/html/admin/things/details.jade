@@ -34,6 +34,17 @@ section(id="thingsDetails" class="container-fluid" )
             p(ng-repeat=" i in x.sensors")
               span(ng-show="hashMisure[i.sensor]") {{i.value}} 
               br
+  div.row
+    div.col-sm-12.text-center
+      h2 Grafici
+    div.col-sm-12.text-center
+      p(ng-show="loading") Caricamento ...    
+    div.col-sm-12.text-center
+      button.btn.btn-success(ng-click="showGraphics()") Mostra grafici  
+    
+    div.col-sm-12(ng-repeat="g in graphics")
+      canvas(id="line" class="chart chart-line" chart-data="g.data" chart-labels="g.labels" chart-legend="true" chart-series="series" chart-click="onClick")
+      
             
             
             

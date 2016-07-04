@@ -32,4 +32,18 @@
       </tbody>
     </table>
   </div>
+  <div class="row">
+    <div class="col-sm-12 text-center">
+      <h2>Grafici</h2>
+    </div>
+    <div class="col-sm-12 text-center">
+      <p ng-show="loading">Caricamento ...    </p>
+    </div>
+    <div class="col-sm-12 text-center">
+      <button ng-click="showGraphics()" class="btn btn-success">Mostra grafici  </button>
+    </div>
+    <div ng-repeat="g in graphics" class="col-sm-12">
+      <canvas id="line" chart-data="g.data" chart-labels="g.labels" chart-legend="true" chart-series="series" chart-click="onClick" class="chart chart-line"></canvas>
+    </div>
+  </div>
 </section>

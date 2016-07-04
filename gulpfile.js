@@ -13,6 +13,8 @@ gulp.task('js', function () {
   'vendor/bower_components/jquery-ui/jquery-ui.min.js',
   'vendor/bower_components/angular-flash-alert/src/angular-flash.js',
   'vendor/bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min.js',
+  'vendor/bower_components/Chart.js/Chart.js',
+  'vendor/bower_components/angular-chart.js/dist/angular-chart.js',
   'app/assets/frontend/javascript/**/*.js'])
     .pipe(concat('public/js/main.js'))
     .pipe(gulp.dest('.'))

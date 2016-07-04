@@ -38,7 +38,13 @@ class ChartController @Inject() (
 )
   extends Silhouette[User, JWTAuthenticator] {
 
-
+  def showCharts(thingID: UUID) = Action.async { implicit request =>
+    val charts = chartDao.findByThingID(thingID)
+    charts.flatMap{
+      charts =>
+      Future.successful(Ok(Json.toJson(charts)))
+    }
+  }
   def addChart = Action.async(parse.json) { implicit request =>
     request.body.validate[NewChart.Data].map { data =>
         val chart = Chart(
