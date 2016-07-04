@@ -32,7 +32,7 @@ section(id="addNotification" class="container-fluid")
             option(ng-repeat="a in availableParametersHash[thingsHash[idOggettoSelected].thingTypeID] track by $index"  value="{{a}}") {{a}}        
           br
         label(for="description" ) Descrizione          
-        textarea(type="text" id="description" class="form-control" ng-model="info.description" placeholder="descrizione" required="")
+        textarea(type="text" id="description" class="form-control" ng-model="info.description" placeholder="descrizione" )
         br
         label(for="minValue" ) Soglia Minima                 
         input(type="number" class="form-control" id="minValue" ng-model="info.minValue" placeholder="soglia minima" required="")

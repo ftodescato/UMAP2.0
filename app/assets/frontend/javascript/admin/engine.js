@@ -24,12 +24,11 @@ umap.factory('MyCompanyService', function($resource) {
   umap.controller('EngineFunctionsAController',['$scope','$state','FunctionsService','MyCompanyService', function($scope,$state, FunctionsService, MyCompanyService){
     $scope.info = {
       listFunction: []
-    };
-    $scope.ok = false;
+    }
     $scope.infoC = [];
-    MyCompanyService.query().$promise.then(function(company){
-      $scope.infoC = company.functionAlgList;
-    });
+      MyCompanyService.query().$promise.then(function(company){
+        $scope.infoC = company.functionAlgList;
+      });
 
     FunctionsService.Functions.query().$promise.then(function(functions){
       for (var j = 0; j < functions.length; j++) {
@@ -38,7 +37,6 @@ umap.factory('MyCompanyService', function($resource) {
         else
           $scope.info.listFunction.push({name:functions[j].name, inUse: false});
       }
-      $scope.ok = true;
     });
     $scope.send = function ( ){
       $scope.payload = {

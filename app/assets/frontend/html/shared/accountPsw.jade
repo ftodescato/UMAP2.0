@@ -11,10 +11,10 @@ section(id="updateAccountPassword")
       h2 {{errore}}
       form(ng-submit="editPsw()" class="col-sm-6 col-sm-offset-3")
         label(for="userNewPassInput") Nuova password     
-        input(type="password" id="userNewPassInput" class="form-control" ng-model="infos.newPassword"  placeholder="Nuova password" required="")
+        input(type="password" id="userNewPassInput" class="form-control" ng-model="infos.newPassword"  placeholder="Nuova password")
         br
         label(for="userConfPassInput") Conferma password     
-        input(type="password" id="userConfPassInput" class="form-control" ng-model="newPasswordTwo" placeholder="Conferma password" required="")
+        input(type="password" id="userConfPassInput" class="form-control" ng-model="newPasswordTwo" placeholder="Conferma password")
         br
         label(for="userSecretString") Frase segreta   
         input(type="text" id="userSecretString" class="form-control" ng-model="infos.newSecretString" placeholder="Frase segreta")

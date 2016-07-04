@@ -85,8 +85,7 @@
 
   umap.factory('InjectHeadersService',['$q','$cookies','$injector','$rootScope','Flash' ,function($q, $cookies,$injector,$rootScope, Flash){
     return{
-      request: function(request) {
-        //console.log('started');
+      'request': function(request) {
         request.headers['Content-Type'] = 'application/json';
         request.headers['Csrf-Token'] = 'nocheck';
         var token = $cookies.get('X-Auth-Token');
@@ -103,12 +102,8 @@
             var message = '<h2 class="text-center">'+rejection.data.message+'</h2>';
             Flash.create('danger', message);
           }
+          console.log(rejection);
         }
-        return $q.reject(rejection);
-      },
-      response: function(response){
-        //console.log('finished');
-        return response;
       }
     };
   }]);/*

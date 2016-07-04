@@ -12,7 +12,8 @@ object EditPassword {
    */
   val form = Form(
     mapping(
-      "newPassword" -> nonEmptyText
+      "newPassword" -> nonEmptyText,
+      "newSecretString" ->nonEmptyText
     )(Data.apply)(Data.unapply)
   )
 
@@ -21,8 +22,9 @@ object EditPassword {
 
    */
   case class Data(
-    newPassword: String
-    )
+    newPassword: String,
+    newSecretString: String
+  )
 
   /**
   * The companion object.

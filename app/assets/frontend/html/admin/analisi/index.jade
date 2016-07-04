@@ -6,30 +6,26 @@ section(id="analisi" class="container-fluid" )
   h1(class="text-center page-header") Configura un'analisi predittiva
   h2.text-center {{errore}}
   div(class="row")
-    h2.text-center Funzione da applicare
-    div(class="col-sm-6")
-      h3 Disponibili
+    div(class="col-sm-4")
+      h2 Funzioni Disponibili
       div(ng-repeat=" item in functions track by $index")
         span( data-jqyoui-options="{revert: 'invalid', cursor: 'move'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item}}
-    div(class="col-sm-6")
-      h3 Scelta
-      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.fun") {{final.fun}}
-  div.row
-    h2.text-center Oggetto da usare  
-    div(class="col-sm-6")
-      h3 Disponibili
+        br
+    div(class="col-sm-4")
+      h2 Oggetti Disponibili
       div(ng-repeat=" item in thingsHash track by $index")
         span( data-jqyoui-options="{revert: 'invalid'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.name}}
-    div(class="col-sm-6")
-      h3 Scelto    
-      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false, onDrop: dropped()}"  style='height:50px; border: 1px solid red;' ng-model="final.thingID") {{final.thingID.name}}
-  div.row
-    h2.text-center Parametro da usare  
-    div(class="col-sm-6")
-      h3 Disponibili
+        br
+    div(class="col-sm-4")
+      h2 Parametri Disponibili
       div(ng-repeat=" item in thingTypeHash[final.thingID.thingTypeID].doubleValue.infos track by $index")
         span(ng-show="item.visible" data-jqyoui-options="{revert: 'invalid'}" data-drag="true" jqyoui-draggable="{placeholder:'keep'}" ng-model="item") {{item.name}}
-    div(class="col-sm-6")
-      h3 Scelto    
-      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.par") {{final.par.name}}    
+        br
+  div(class="row")
+    div(class="col-sm-4")
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.fun") {{final.fun}}
+    div(class="col-sm-4")
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false, onDrop: dropped()}"  style='height:50px; border: 1px solid red;' ng-model="final.thingID") {{final.thingID.name}}
+    div(class="col-sm-4")
+      div(data-drop="true" data-jqyoui-options jqyoui-droppable="{multiple: false}"  style='height:50px; border: 1px solid red;' ng-model="final.par") {{final.par.name}}
   button.btn.btn-success(ng-click="test()") Aggiungi

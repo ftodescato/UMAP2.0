@@ -6,9 +6,12 @@
   </ul>
   <h1 class="page-header text-center">Gestione Engine</h1>
   <div class="row">
-    <div class="col-sm-12 text-center"> 
+    <div class="col-xs-6 col-xs-offset-3 text-center"> </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6 text-center"> 
       <h2>Funzioni Disponibili </h2>
-      <div ng-repeat=" fun in info.listFunction track by $index" ng-show="ok"><span>{{fun.name}}
+      <div ng-repeat=" fun in info.listFunction track by $index"><span>{{fun.name}}
           <input type="checkbox" ng-model="fun.inUse"/></span></div>
     </div>
   </div>

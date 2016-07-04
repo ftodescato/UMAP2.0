@@ -36773,17 +36773,6 @@ app.provider('Flash', function() {
     }];
 });
 
-/*!
- * jQuery UI Touch Punch 0.2.3
- *
- * Copyright 2011–2014, Dave Furfero
- * Dual licensed under the MIT or GPL Version 2 licenses.
- *
- * Depends:
- *  jquery.ui.widget.js
- *  jquery.ui.mouse.js
- */
-!function(a){function f(a,b){if(!(a.originalEvent.touches.length>1)){a.preventDefault();var c=a.originalEvent.changedTouches[0],d=document.createEvent("MouseEvents");d.initMouseEvent(b,!0,!0,window,1,c.screenX,c.screenY,c.clientX,c.clientY,!1,!1,!1,!1,0,null),a.target.dispatchEvent(d)}}if(a.support.touch="ontouchend"in document,a.support.touch){var e,b=a.ui.mouse.prototype,c=b._mouseInit,d=b._mouseDestroy;b._touchStart=function(a){var b=this;!e&&b._mouseCapture(a.originalEvent.changedTouches[0])&&(e=!0,b._touchMoved=!1,f(a,"mouseover"),f(a,"mousemove"),f(a,"mousedown"))},b._touchMove=function(a){e&&(this._touchMoved=!0,f(a,"mousemove"))},b._touchEnd=function(a){e&&(f(a,"mouseup"),f(a,"mouseout"),this._touchMoved||f(a,"click"),e=!1)},b._mouseInit=function(){var b=this;b.element.bind({touchstart:a.proxy(b,"_touchStart"),touchmove:a.proxy(b,"_touchMove"),touchend:a.proxy(b,"_touchEnd")}),c.call(b)},b._mouseDestroy=function(){var b=this;b.element.unbind({touchstart:a.proxy(b,"_touchStart"),touchmove:a.proxy(b,"_touchMove"),touchend:a.proxy(b,"_touchEnd")}),d.call(b)}}}(jQuery);
 (function(){
   'use strict';
 
@@ -36871,8 +36860,7 @@ app.provider('Flash', function() {
 
   umap.factory('InjectHeadersService',['$q','$cookies','$injector','$rootScope','Flash' ,function($q, $cookies,$injector,$rootScope, Flash){
     return{
-      request: function(request) {
-        //console.log('started');
+      'request': function(request) {
         request.headers['Content-Type'] = 'application/json';
         request.headers['Csrf-Token'] = 'nocheck';
         var token = $cookies.get('X-Auth-Token');
@@ -36889,12 +36877,8 @@ app.provider('Flash', function() {
             var message = '<h2 class="text-center">'+rejection.data.message+'</h2>';
             Flash.create('danger', message);
           }
+          console.log(rejection);
         }
-        return $q.reject(rejection);
-      },
-      response: function(response){
-        //console.log('finished');
-        return response;
       }
     };
   }]);/*
@@ -36921,20 +36905,11 @@ app.provider('Flash', function() {
         }
   });
     $stateProvider.state('root.account.psw', {
-      url: 'account/passwordNew',
+      url: 'account/password',
       views: {
             'content@': {
               templateUrl: 'assets/html/shared/accountPsw.html',
               controller:  'AccountControllerPsw'
-            }
-        }
-  });
-    $stateProvider.state('root.account.pswUpdate', {
-      url: 'account/passwordUpdate',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/shared/accountPswUpdate.html',
-              controller:  'AccountControllerPswUpdate'
             }
         }
   });
@@ -36946,12 +36921,7 @@ app.provider('Flash', function() {
           method: 'PUT' // this method issues a PUT request
         }
       }),
-      PasswordNew: $resource('/api/account/pswNew ',{},{
-        update: {
-          method: 'PUT' // this method issues a PUT request
-        }
-      }),
-      PasswordEdit: $resource('/api/account/pswUpdate',{},{
+      Password: $resource('/api/test/psw',{},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -36980,24 +36950,8 @@ app.provider('Flash', function() {
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        AccountService.PasswordNew.save($scope.infos).$promise.then(function(u){
-          $state.go('root');
-        });
-      }
-    }
-  }]);
-  umap.controller('AccountControllerPswUpdate',['AccountService','$scope','$state',function(AccountService,$scope,$state){
-    $scope.newPasswordTwo = '';
-    $scope.errore = '';
-    $scope.infos = {
-      newPassword : ''
-    }
-    $scope.editPsw = function (){
-      if($scope.newPasswordTwo !== $scope.infos.newPassword){
-        $scope.errore = 'errore ! password differenti';
-        return;
-      }else{
-        AccountService.PasswordEdit.save($scope.infos).$promise.then(function(u){
+        console.log($scope.infos);
+        AccountService.Password.save($scope.infos).$promise.then(function(u){
           $state.go('root');
         });
       }
@@ -37105,12 +37059,11 @@ umap.factory('MyCompanyService', function($resource) {
   umap.controller('EngineFunctionsAController',['$scope','$state','FunctionsService','MyCompanyService', function($scope,$state, FunctionsService, MyCompanyService){
     $scope.info = {
       listFunction: []
-    };
-    $scope.ok = false;
+    }
     $scope.infoC = [];
-    MyCompanyService.query().$promise.then(function(company){
-      $scope.infoC = company.functionAlgList;
-    });
+      MyCompanyService.query().$promise.then(function(company){
+        $scope.infoC = company.functionAlgList;
+      });
 
     FunctionsService.Functions.query().$promise.then(function(functions){
       for (var j = 0; j < functions.length; j++) {
@@ -37119,7 +37072,6 @@ umap.factory('MyCompanyService', function($resource) {
         else
           $scope.info.listFunction.push({name:functions[j].name, inUse: false});
       }
-      $scope.ok = true;
     });
     $scope.send = function ( ){
       $scope.payload = {
@@ -37618,31 +37570,15 @@ umap.factory('MyCompanyService', function($resource) {
         }
     });
   }]);
-/*
-  umap.factory('GraphicService', function($resource){
-    return{
-        Graphic: $resource('/api/thingTypes/:id',{id: "@id"},{
-          update:{
-            method: 'PUT'
-          }
-      })
-    }
-  });*/
   umap.controller('ThingsControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
     ThingTypeServiceAU.Thing.query().$promise.then(function(things){
       $scope.things = things;
     });
   }]);
   umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams', 'ThingTypeServiceAU', function($scope, $stateParams, ThingTypeServiceAU ){
-    $scope.hashMisure = [];
     ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
-      ThingTypeServiceAU.ThingType.get({id: thing.thingTypeID}).$promise.then(function(thingType){
-        $scope.hashVisibility = {};
-        for (var i = 0; i < thingType.doubleValue.infos.length; i++) {
-          $scope.hashMisure[thingType.doubleValue.infos[i].name] = thingType.doubleValue.infos[i].visible;
-        }
-        $scope.thing = thing;
-      });
+      $scope.thing = thing;
+      console.log(thing);
     });
   }]);
 })();
