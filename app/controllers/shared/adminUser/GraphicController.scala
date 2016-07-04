@@ -9,6 +9,7 @@ import java.text.DateFormat._
 import java.util.Date
 import java.time.format.DateTimeFormatter
 import java.time.LocalDate
+import java.util.Calendar
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -46,7 +47,7 @@ class GraphicController @Inject() (
       var futureV = false
       var valueForX: Double = 0
       var valueY = new ArrayBuffer[Double]()
-      var valueX = new ArrayBuffer[Date]()
+      var valueX = new ArrayBuffer[String]()
       //var arrayDouble = Array.empty[Double]
       val chart = chartDao.findByID(chartID)
       chart.flatMap{
@@ -59,13 +60,14 @@ class GraphicController @Inject() (
            val functionName = chart.functionName
            var countForIndex = 0
            var indexFind = false
-           var index=0
-           var countForDate = 0
+           var index = 0
+           var countForDate = -(1)
            var listMeasurement = thing.datas
            for(measurement <- listMeasurement)
-           {countForDate = countForDate + 1
-             valueX += measurement.dataTime
-               for (sensors <- measurement.sensors){
+           {
+             var date = measurement.dataTime
+             valueX += date.toString()
+             for (sensors <- measurement.sensors){
                  if(sensors.sensor == chart.infoDataName)
                     {
                       if(indexFind == false){
@@ -76,6 +78,7 @@ class GraphicController @Inject() (
                     }
                   countForIndex = countForIndex + 1
                }
+               countForDate = countForDate + 1
             }
              functionName match {
                 case "Media" =>
@@ -89,14 +92,15 @@ class GraphicController @Inject() (
                 case "Future" =>
                     valueForX = engine.futureV(thing.thingID, index)
                 }
-          //  var lastDateMeasurement = thing.datas(countForDate).dataTime.toString()
-          //  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-          //  val oldDate = LocalDate.parse(lastDateMeasurement, formatter)
-          //  var secondLastDateMeasurement = thing.datas(countForDate - 1).dataTime.toString()
-          //  val newDate = LocalDate.parse(secondLastDateMeasurement, formatter)
-          //  var differenceForDate = newDate.toEpochDay() - oldDate.toEpochDay()
-          //  var nextDate = lastDateMeasurement + differenceForDate
-          //  valueX :+ nextDate
+            var lastDateMeasurement = thing.datas(countForDate).dataTime
+            //  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            //  val oldDate = LocalDate.parse(lastDateMeasurement, formatter)
+            //  var secondLastDateMeasurement = thing.datas(countForDate - 1).dataTime.toString()
+            //  val newDate = LocalDate.parse(secondLastDateMeasurement, formatter)
+            //  var differenceForDate = newDate.toEpochDay() - oldDate.toEpochDay()
+            //  var nextDate = lastDateMeasurement + differenceForDate
+            //valueX += lastDateMeasurement.toString()
+
            val graphic = Graphic(
              futureV = futureV,
              valuesY = valueY.toArray,
