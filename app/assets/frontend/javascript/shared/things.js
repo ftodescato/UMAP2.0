@@ -38,15 +38,31 @@
         }
     });
   }]);
+/*
+  umap.factory('GraphicService', function($resource){
+    return{
+        Graphic: $resource('/api/thingTypes/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+      })
+    }
+  });*/
   umap.controller('ThingsControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
     ThingTypeServiceAU.Thing.query().$promise.then(function(things){
       $scope.things = things;
     });
   }]);
   umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams', 'ThingTypeServiceAU', function($scope, $stateParams, ThingTypeServiceAU ){
+    $scope.hashMisure = [];
     ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
-      $scope.thing = thing;
-      console.log(thing);
+      ThingTypeServiceAU.ThingType.get({id: thing.thingTypeID}).$promise.then(function(thingType){
+        $scope.hashVisibility = {};
+        for (var i = 0; i < thingType.doubleValue.infos.length; i++) {
+          $scope.hashMisure[thingType.doubleValue.infos[i].name] = thingType.doubleValue.infos[i].visible;
+        }
+        $scope.thing = thing;
+      });
     });
   }]);
 })();

@@ -5,11 +5,9 @@ section(id="companiesList" class="container-fluid")
     li(class="active") Gestione Engine
   h1(class="page-header text-center") Gestione Engine
   div(class="row")
-    div(class="col-xs-6 col-xs-offset-3 text-center") 
-  div(class="row")
-    div(class="col-sm-6 text-center") 
+    div(class="col-sm-12 text-center") 
       h2 Funzioni Disponibili 
-      div(ng-repeat=" fun in info.listFunction track by $index")
+      div(ng-repeat=" fun in info.listFunction track by $index" ng-show="ok")
         span {{fun.name}}
           input(type="checkbox" ng-model="fun.inUse") 
   form(ng-submit="send()")

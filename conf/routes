@@ -24,7 +24,8 @@ POST        /api/functions                      controllers.superAdmin.FunctionC
 #ACCOUNT
 GET         /api/account                        controllers.shared.account.AccountController.getInfo
 PUT         /api/account                        controllers.shared.account.AccountController.updateAccount
-POST        /api/test/psw                       controllers.shared.account.AccountController.updatePassword
+POST        /api/account/pswUpdate                       controllers.shared.account.AccountController.updatePassword
+POST        /api/account/pswNew                       controllers.shared.account.AccountController.setNewPassword
 POST        /api/account/resetPasswords         controllers.shared.account.AccountController.resetPassword
 
 
@@ -57,7 +58,7 @@ GET         /api/notifications                  controllers.shared.adminUser.Not
 POST        /api/notifications                  controllers.shared.adminUser.NotificationController.addNotification
 #GET        /api/notificationsOfTT/:id          controllers.shared.adminUser.NotificationController.showNotificationOfThingType(id: java.util.UUID)
 DELETE      /api/notifications/:id              controllers.shared.adminUser.NotificationController.delete(id: java.util.UUID)
-
+GET /api/graphics/:id                            controllers.shared.adminUser.GraphicController.createGraphic(id: java.util.UUID)
 #SUPERADMIN
 PUT         /api/passwordsSA/:id                controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                   controllers.superAdmin.ThingController.addMeasurements

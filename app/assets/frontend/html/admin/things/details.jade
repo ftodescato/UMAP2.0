@@ -23,13 +23,18 @@ section(id="thingsDetails" class="container-fluid" )
         th 
           a(class="btn" ng-click="order('')") 
             strong Valore  
-        th 
-          a(class="btn" ng-click="order('')") 
-            strong Visibilità  
       tbody
         tr(ng-repeat="x in thing.datas |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
-          td {{x.name}}
-          td {{x.visible}}
+          td {{x.dataTime}}
+          td
+            p(ng-repeat=" i in x.sensors")
+              span(ng-show="hashMisure[i.sensor]") {{i.sensor}} 
+              br
+          td
+            p(ng-repeat=" i in x.sensors")
+              span(ng-show="hashMisure[i.sensor]") {{i.value}} 
+              br
+            
             
             
   
