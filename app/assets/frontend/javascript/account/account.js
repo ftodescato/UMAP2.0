@@ -11,11 +11,20 @@
         }
   });
     $stateProvider.state('root.account.psw', {
-      url: 'account/password',
+      url: 'account/passwordNew',
       views: {
             'content@': {
               templateUrl: 'assets/html/shared/accountPsw.html',
               controller:  'AccountControllerPsw'
+            }
+        }
+  });
+    $stateProvider.state('root.account.pswUpdate', {
+      url: 'account/passwordUpdate',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/shared/accountPswUpdate.html',
+              controller:  'AccountControllerPswUpdate'
             }
         }
   });
@@ -27,7 +36,12 @@
           method: 'PUT' // this method issues a PUT request
         }
       }),
-      Password: $resource('/api/test/psw',{},{
+      PasswordNew: $resource('/api/account/pswNew ',{},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      }),
+      PasswordEdit: $resource('/api/account/pswUpdate',{},{
         update: {
           method: 'PUT' // this method issues a PUT request
         }
@@ -56,8 +70,24 @@
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        console.log($scope.infos);
-        AccountService.Password.save($scope.infos).$promise.then(function(u){
+        AccountService.PasswordNew.save($scope.infos).$promise.then(function(u){
+          $state.go('root');
+        });
+      }
+    }
+  }]);
+  umap.controller('AccountControllerPswUpdate',['AccountService','$scope','$state',function(AccountService,$scope,$state){
+    $scope.newPasswordTwo = '';
+    $scope.errore = '';
+    $scope.infos = {
+      newPassword : ''
+    }
+    $scope.editPsw = function (){
+      if($scope.newPasswordTwo !== $scope.infos.newPassword){
+        $scope.errore = 'errore ! password differenti';
+        return;
+      }else{
+        AccountService.PasswordEdit.save($scope.infos).$promise.then(function(u){
           $state.go('root');
         });
       }

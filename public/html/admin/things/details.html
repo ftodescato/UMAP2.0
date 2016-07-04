@@ -18,12 +18,16 @@
         <th> <a ng-click="order('')" class="btn"> <strong> Data rilevazione      </strong></a></th>
         <th> <a ng-click="order('')" class="btn"> <strong> Nome parametro      </strong></a></th>
         <th> <a ng-click="order('')" class="btn"> <strong>Valore  </strong></a></th>
-        <th> <a ng-click="order('')" class="btn"> <strong>Visibilità  </strong></a></th>
       </thead>
       <tbody>
         <tr ng-repeat="x in thing.datas |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ">
-          <td>{{x.name}}</td>
-          <td>{{x.visible}}</td>
+          <td>{{x.dataTime}}</td>
+          <td>
+            <p ng-repeat=" i in x.sensors"><span ng-show="hashMisure[i.sensor]">{{i.sensor}} </span><br/></p>
+          </td>
+          <td>
+            <p ng-repeat=" i in x.sensors"><span ng-show="hashMisure[i.sensor]">{{i.value}} </span><br/></p>
+          </td>
         </tr>
       </tbody>
     </table>

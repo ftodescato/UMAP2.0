@@ -1,4 +1,4 @@
-package controllers.superAdmin
+  package controllers.superAdmin
 
 import java.util.UUID
 import javax.inject.Inject
