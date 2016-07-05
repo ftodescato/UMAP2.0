@@ -90,7 +90,7 @@ class ApplicationController @Inject() (
     sol
   }
   // creazione del modello degli oggetti a partire dai dati nel DB
-  def modelLogReg(thingID: UUID) = Action.async{ implicit request =>
+  def modelLogRegSave(thingID: UUID) = Action.async{ implicit request =>
     //recupero informazioni dal DB
     thingDao.findByID(thingID).flatMap{
       case None =>
@@ -110,8 +110,30 @@ class ApplicationController @Inject() (
         Ok(Json.obj("token" -> "ok"))
       }
     }
+}
 
+    def modelLogRegUpdate(thingID: UUID, oldModelID: UUID) = Action.async{ implicit request =>
+      //recupero informazioni dal DB
+      thingDao.findByID(thingID).flatMap{
+        case None =>
+          Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+        case Some(thing) =>
+        //  val thing = Await.result(thingDB, 1 seconds)
+          val label=thingDao.findListLabel(thing)
+          val data=thingDao.findListArray(thing)
+
+          //creo il modello di una thing
+          val e = new Engine
+          val modello:LogRegModel = e.getLogRegModel(thingID,label,data)
+
+          for {
+           modello <- modelLogRegDao.update(oldModelID, modello)
+        } yield {
+          Ok(Json.obj("token" -> "ok"))
+        }
+      }
   }
+
   // produzione della label per una nuova misurazione
   def LogReg(thingID: UUID, data: Array[Double]):Double = {
     // recupero il modello con l'ID della thing
