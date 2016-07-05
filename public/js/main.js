@@ -41382,89 +41382,6 @@ umap.factory('MyCompanyService', function($resource) {
 })();
 
 (function(){
-  'use strict';
-  var umap = angular.module('umap.login',['ui.router','ngResource','ngCookies']);
-
-  umap.config(['$stateProvider',function($stateProvider){
-    $stateProvider.state('root.login',{
-      url: 'login',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/shared/index.html',
-              controller:  'LoginController'
-            }
-        }
-    });
-    $stateProvider.state('root.resetPsw',{
-      url: 'resetPsw',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/shared/recuperoPsw.html',
-              controller:  'ResetPswController'
-            }
-        }
-    });
-    $stateProvider.state('root.unauthorized',{
-      url: 'unauthorized',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/shared/401.html',
-              //controller:  'UnauthorizedController'
-            }
-        }
-    });
-  }]);
-  umap.factory('LoginService',['$resource',function($resource){
-    return {
-      Login: $resource('/signIn'),
-      Role: $resource('/api/getrole'),
-      Reset: $resource('/api/account/resetPasswords', {},{
-        update: {
-          method: 'PUT' // this method issues a PUT request
-        }
-      })
-    }
-  }]);
-  umap.controller('LoginController',['LoginService','$scope','$cookies','$state',function(LoginService,$scope,$cookies,$state){
-    $scope.credentials = {'email':'','password':'','rememberMe':false};
-    $scope.login = function (){
-      LoginService.Login.save({},$scope.credentials).$promise.then(
-        function(success){
-          $cookies.put('X-Auth-Token', success.token);
-          LoginService.Role.get({}, function(success){
-            if(success !== null)
-              $cookies.put('Role', success.role);
-              $state.go('root');
-          });
-          //$state.go('root.home');
-        }, function(err){
-          //console.log(err.message);
-        }
-      );
-    };
-  }]);
-  umap.controller('ResetPswController',['LoginService','$scope','$state', function(LoginService, $scope, $state){
-    $scope.credentials = {
-      'email':'',
-      'secretString': '',
-      'newPassword': ''
-    };
-    $scope.newPasswordTwo = '';
-    $scope.errore = '';
-    $scope.editPsw = function (){
-      if($scope.newPasswordTwo !== $scope.credentials.newPassword){
-        $scope.errore = 'errore ! password differenti';
-        return;
-      }else{
-        LoginService.Reset.save($scope.reset, function(){
-          $state.go('root')
-        });
-      }
-    }
-  }]);
-})();
-
-(function(){
   "use strict";
   var umap = angular.module('umap.adminUser.notifications',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
@@ -41771,8 +41688,6 @@ umap.factory('MyCompanyService', function($resource) {
     //query su charts per prendermi tutti i chart col mio thingID
     //ciclo questi chart e mi salvo la previsione in un array di previsioni
     $scope.showGraphics = function(){
-      $scope.data = [[1,3,4]];
-      $scope.labels = ['uno', 'due', 'tre'];
       $scope.loading = true;
       $scope.graphics = [];
       for (var i = 0; i < $scope.charts.length; i++) {
@@ -41785,12 +41700,136 @@ umap.factory('MyCompanyService', function($resource) {
         GraphicService.Graphic.get({id: $scope.charts[i].chartID}).$promise.then(function(graphic){
           aux.data.push(graphic.valuesY);
           aux.labels = graphic.valuesX;
+          for (var i = 0; i < aux.labels.length; i++) {
+            console.log(aux.labels[i]);
+            aux.labels[i] = Date.parse(aux.labels[i]);
+            console.log(aux.labels[i]);
+          }
           $scope.graphics.push(aux);
           if(i === $scope.charts.length)
             $scope.loading = false;
         });
       }
     }
+  }]);
+})();
+
+(function(){
+  'use strict';
+  var umap = angular.module('umap.login',['ui.router','ngResource','ngCookies']);
+
+  umap.config(['$stateProvider',function($stateProvider){
+    $stateProvider.state('root.login',{
+      url: 'login',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/shared/index.html',
+              controller:  'LoginController'
+            }
+        }
+    });
+    $stateProvider.state('root.resetPsw',{
+      url: 'resetPsw',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/shared/recuperoPsw.html',
+              controller:  'ResetPswController'
+            }
+        }
+    });
+    $stateProvider.state('root.unauthorized',{
+      url: 'unauthorized',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/shared/401.html',
+              //controller:  'UnauthorizedController'
+            }
+        }
+    });
+  }]);
+  umap.factory('LoginService',['$resource',function($resource){
+    return {
+      Login: $resource('/signIn'),
+      Role: $resource('/api/getrole'),
+      Reset: $resource('/api/account/resetPasswords', {},{
+        update: {
+          method: 'PUT' // this method issues a PUT request
+        }
+      })
+    }
+  }]);
+  umap.controller('LoginController',['LoginService','$scope','$cookies','$state',function(LoginService,$scope,$cookies,$state){
+    $scope.credentials = {'email':'','password':'','rememberMe':false};
+    $scope.login = function (){
+      LoginService.Login.save({},$scope.credentials).$promise.then(
+        function(success){
+          $cookies.put('X-Auth-Token', success.token);
+          LoginService.Role.get({}, function(success){
+            if(success !== null)
+              $cookies.put('Role', success.role);
+              $state.go('root');
+          });
+          //$state.go('root.home');
+        }, function(err){
+          //console.log(err.message);
+        }
+      );
+    };
+  }]);
+  umap.controller('ResetPswController',['LoginService','$scope','$state', function(LoginService, $scope, $state){
+    $scope.credentials = {
+      'email':'',
+      'secretString': '',
+      'newPassword': ''
+    };
+    $scope.newPasswordTwo = '';
+    $scope.errore = '';
+    $scope.editPsw = function (){
+      if($scope.newPasswordTwo !== $scope.credentials.newPassword){
+        $scope.errore = 'errore ! password differenti';
+        return;
+      }else{
+        LoginService.Reset.save($scope.reset, function(){
+          $state.go('root')
+        });
+      }
+    }
+  }]);
+})();
+
+(function(){
+  'use strict';
+
+  var umap = angular.module('umap.user',['ui.router']);
+  umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+      $cookies = _$cookies_;
+    }]);
+    $stateProvider.state('root.user',{
+      url: 'user',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/home.html',
+              controller:  'UserController'
+            },
+            'header@':{
+              templateUrl: 'assets/html/user/header.html'
+            }
+        },
+        resolve: {
+          security: ['$q', function($q){
+              var role = $cookies.get('Role');
+              if(role != 'user'){
+                 return $q.reject("Not Authorized");
+              }
+          }]
+       }
+    });
+  }]);
+
+  umap.controller('UserController',['$scope',function($scope){
+
   }]);
 })();
 
@@ -42364,41 +42403,5 @@ umap.factory('MyCompanyService', function($resource) {
         });
       }
     }
-  }]);
-})();
-
-(function(){
-  'use strict';
-
-  var umap = angular.module('umap.user',['ui.router']);
-  umap.config(['$stateProvider','$urlRouterProvider',function($stateProvider, $urlRouterProvider){
-    var $cookies;
-    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
-      $cookies = _$cookies_;
-    }]);
-    $stateProvider.state('root.user',{
-      url: 'user',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/user/home.html',
-              controller:  'UserController'
-            },
-            'header@':{
-              templateUrl: 'assets/html/user/header.html'
-            }
-        },
-        resolve: {
-          security: ['$q', function($q){
-              var role = $cookies.get('Role');
-              if(role != 'user'){
-                 return $q.reject("Not Authorized");
-              }
-          }]
-       }
-    });
-  }]);
-
-  umap.controller('UserController',['$scope',function($scope){
-
   }]);
 })();

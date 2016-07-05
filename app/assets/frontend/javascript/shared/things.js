@@ -78,8 +78,6 @@
     //query su charts per prendermi tutti i chart col mio thingID
     //ciclo questi chart e mi salvo la previsione in un array di previsioni
     $scope.showGraphics = function(){
-      $scope.data = [[1,3,4]];
-      $scope.labels = ['uno', 'due', 'tre'];
       $scope.loading = true;
       $scope.graphics = [];
       for (var i = 0; i < $scope.charts.length; i++) {
@@ -92,6 +90,11 @@
         GraphicService.Graphic.get({id: $scope.charts[i].chartID}).$promise.then(function(graphic){
           aux.data.push(graphic.valuesY);
           aux.labels = graphic.valuesX;
+          for (var i = 0; i < aux.labels.length; i++) {
+            console.log(aux.labels[i]);
+            aux.labels[i] = Date.parse(aux.labels[i]);
+            console.log(aux.labels[i]);
+          }
           $scope.graphics.push(aux);
           if(i === $scope.charts.length)
             $scope.loading = false;

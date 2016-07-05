@@ -21,7 +21,7 @@
       </thead>
       <tbody>
         <tr ng-repeat="x in thing.datas |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ">
-          <td>{{x.dataTime}}</td>
+          <td>{{x.dataTime  | date:"MM/dd/yyyy"}}</td>
           <td>
             <p ng-repeat=" i in x.sensors"><span ng-show="hashMisure[i.sensor]">{{i.sensor}} </span><br/></p>
           </td>
@@ -42,7 +42,9 @@
     <div class="col-sm-12 text-center">
       <button ng-click="showGraphics()" class="btn btn-success">Mostra grafici  </button>
     </div>
-    <div ng-repeat="g in graphics" class="col-sm-12">
+    <div ng-repeat="g in graphics" class="col-md-4">
+      <h4>Funzione: {{g.function}}</h4>
+      <h4>Parametro: {{g.param}}</h4>
       <canvas id="line" chart-data="g.data" chart-labels="g.labels" chart-legend="true" chart-series="series" chart-click="onClick" class="chart chart-line"></canvas>
     </div>
   </div>
