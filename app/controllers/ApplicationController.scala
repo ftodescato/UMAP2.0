@@ -25,6 +25,10 @@ import play.api.libs.mailer._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
+//import per predizione giornaliera
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext
+import ExecutionContext.Implicits.global
 /**
  * The basic application controller.
  *
@@ -32,6 +36,9 @@ import scala.language.postfixOps
  * @param env The Silhouette environment.
  * @param socialProviderRegistry The social provider registry.
  */
+
+
+
 class ApplicationController @Inject() (
   val messagesApi: MessagesApi,
   modelLogRegDao: ModelLogRegDAO,
@@ -53,7 +60,7 @@ class ApplicationController @Inject() (
   def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
   }
-// metodo engine.correlation
+  // metodo engine.correlation
   def correlation(thingID: UUID, datatype: Int): Double ={
     //recupero dati necessari dal DB
     val thingDB =thingDao.findByID(thingID)
@@ -155,6 +162,8 @@ class ApplicationController @Inject() (
     sol
   }
  // @Every("1d")
+ val system = akka.actor.ActorSystem("system")
+ system.scheduler.schedule(0 seconds, 1 seconds)(dailyPrediction)
  def dailyPrediction = Action.async{ implicit request =>
    notificationDao.findAll().flatMap{
      notificationsList =>
