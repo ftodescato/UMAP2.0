@@ -41754,7 +41754,7 @@ umap.factory('MyCompanyService', function($resource) {
       $scope.things = things;
     });
   }]);
-  umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams', 'ThingTypeServiceAU','GraphicService', function($scope, $stateParams, ThingTypeServiceAU, GraphicService ){
+  umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams','$state','$window' ,'ThingTypeServiceAU','GraphicService', function($scope, $stateParams, $state, $window, ThingTypeServiceAU, GraphicService ){
     $scope.hashMisure = [];
     ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
       ThingTypeServiceAU.ThingType.get({id: thing.thingTypeID}).$promise.then(function(thingType){
@@ -41782,8 +41782,11 @@ umap.factory('MyCompanyService', function($resource) {
         });
       }
     };
+    $scope.graphics = {};
     $scope.showGraphics = function(id){
-      $scope.graphics = {};
+      $scope.clicked = {};
+      $scope.clicked[id] = ' Caricamento ... ';;
+
       console.log($scope.charts);
       var aux = {
         data: [],
@@ -41806,6 +41809,7 @@ umap.factory('MyCompanyService', function($resource) {
         }
         $scope.graphics[id] = aux;
         $scope.loadings[id] = false;
+        $scope.clicked[id] = '';
       });
     }
   }]);

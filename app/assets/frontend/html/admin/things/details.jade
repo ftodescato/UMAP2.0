@@ -42,10 +42,10 @@ section(id="thingsDetails" class="container-fluid" )
     div.col-sm-12.text-center
       button.btn.btn-success(ng-click="showGraphics()") Mostra grafici  
   .row.text-center
-    .col-md-4(ng-repeat="c in charts" style="margin-bottom: 100px;")
+    .col-md-6(ng-repeat="c in charts" style="margin-bottom: 100px;")
       h4 Funzione: {{c.functionName}}
       h4 Parametro: {{c.infoDataName}}
-      p(ng-show="loadings[c.chartID]") Caricamento ...
+      p {{clicked[c.chartID]}}
       div(ng-hide="loadings[c.chartID]")
         canvas(id="line" class="chart chart-line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick")
         h3.text-center Risultato: {{graphics[c.chartID].result}}

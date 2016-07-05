@@ -44,10 +44,10 @@
     </div>
   </div>
   <div class="row text-center">
-    <div ng-repeat="c in charts" style="margin-bottom: 100px;" class="col-md-4">
+    <div ng-repeat="c in charts" style="margin-bottom: 100px;" class="col-md-6">
       <h4>Funzione: {{c.functionName}}</h4>
       <h4>Parametro: {{c.infoDataName}}</h4>
-      <p ng-show="loadings[c.chartID]">Caricamento ...</p>
+      <p>{{clicked[c.chartID]}}</p>
       <div ng-hide="loadings[c.chartID]">
         <canvas id="line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick" class="chart chart-line"></canvas>
         <h3 class="text-center">Risultato: {{graphics[c.chartID].result}}</h3>
