@@ -1,40 +1,34 @@
 package controllers
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import javax.inject.Inject
+
 import java.util.UUID
+
 import com.mohiva.play.silhouette.api.{ Environment, LogoutEvent, Silhouette }
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
+
+import models._
 import models.User
 import models.Engine
-import models._
 import models.daos.thing.ThingDAO
 import models.daos.modelLogReg.ModelLogRegDAO
 import models.daos.notification.NotificationDAO
-import play.api.libs.json.Json
-import play.api.mvc.Action
-import scala.concurrent.Future
-import org.apache.spark.mllib.linalg._
-import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
+
 import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.linalg._
+//import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 
 import play.api.i18n.{ MessagesApi, Messages }
-
 import play.api.libs.mailer._
+import play.api.libs.json.Json
+import play.api.mvc.Action
 
-import scala.concurrent.duration._
+import scala.concurrent.Future
 import scala.language.postfixOps
 //import per predizione giornaliera
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext
 import ExecutionContext.Implicits.global
-
-/**
- * The basic application controller.
- *
- * @param messagesApi The Play messages API.
- * @param env The Silhouette environment.
- * @param socialProviderRegistry The social provider registry.
- */
 
 
 
@@ -47,11 +41,7 @@ class ApplicationController @Inject() (
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
 
-  /**
-   * Returns the user.
-   *
-   * @return The result to display.
-   */
+
   def user = SecuredAction.async { implicit request =>
     Future.successful(Ok(Json.toJson(request.identity)))
   }
@@ -257,19 +247,10 @@ class ApplicationController @Inject() (
   def index = UserAwareAction.async { implicit request =>
     Future.successful(Ok(Json.obj("test"->"contenuto")))
 }
-  /**
-   * Manages the sign out action.
-   */
+
+
   def signOut = SecuredAction.async { implicit request =>
     env.eventBus.publish(LogoutEvent(request.identity, request, request2Messages))
     env.authenticatorService.discard(request.authenticator, Ok)
   }
-
-  /**
-   * Provides the desired template.
-   *
-   * @param template The template to provide.
-   * @return The template.
-   */
-
 }

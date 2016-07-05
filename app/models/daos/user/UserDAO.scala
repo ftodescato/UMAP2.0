@@ -13,8 +13,10 @@ trait UserDAO {
 
   def findAll(): Future[List[User]]
 
-  def findByIDCompany(companyID: UUID) : Future[List[User]]
+  def findByIDCompany(companyID: UUID): Future[List[User]]
 
+  def findAdminByCompanyID(companyID: UUID): Future[List[User]]
+  
   def find(loginInfo: LoginInfo): Future[Option[User]]
 
   def findByID(userID: UUID): Future[Option[User]]

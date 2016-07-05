@@ -42,6 +42,15 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     collection.find(Json.obj("thingID" -> thingID)).one[Thing]
   }
 
+  def findCompany(thingID: UUID): Future[UUID] = {
+    findByID(thingID).flatMap{
+      thing =>
+        var companyID = thing.get.companyID
+        companyID
+        Future.successful(companyID)
+    }
+  }
+
   def findMeasurements(thingID: UUID): Future[List[Measurements]] = {
     findByID(thingID).flatMap{
       thing =>
