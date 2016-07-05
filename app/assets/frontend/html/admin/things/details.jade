@@ -25,7 +25,7 @@ section(id="thingsDetails" class="container-fluid" )
             strong Valore  
       tbody
         tr(ng-repeat="x in thing.datas |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
-          td {{x.dataTime}}
+          td {{x.dataTime  | date:"MM/dd/yyyy"}}
           td
             p(ng-repeat=" i in x.sensors")
               span(ng-show="hashMisure[i.sensor]") {{i.sensor}} 
@@ -42,8 +42,11 @@ section(id="thingsDetails" class="container-fluid" )
     div.col-sm-12.text-center
       button.btn.btn-success(ng-click="showGraphics()") Mostra grafici  
     
-    div.col-sm-12(ng-repeat="g in graphics")
+    div.col-md-4(ng-repeat="g in graphics")
+      h4 Funzione: {{g.function}}
+      h4 Parametro: {{g.param}}
       canvas(id="line" class="chart chart-line" chart-data="g.data" chart-labels="g.labels" chart-legend="true" chart-series="series" chart-click="onClick")
+      h3.text-center Risultato: {{g.result}}
       
             
             
