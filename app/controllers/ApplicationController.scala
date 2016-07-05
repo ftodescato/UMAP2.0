@@ -25,10 +25,6 @@ import play.api.libs.mailer._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
-//import per predizione giornaliera
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext
-import ExecutionContext.Implicits.global
 /**
  * The basic application controller.
  *
@@ -163,7 +159,7 @@ class ApplicationController @Inject() (
     //recupero dati dal DB
     val thingDB = thingDao.findByID(thingID)
     val thing = Await.result(thingDB, 3 seconds)
-    val data=thingDao.findListArray(thing.get)
+     val data=thingDao.findListArray(thing.get)
     //creazione elemento futuro
     val e = new Engine
     val sol=e.getFuture(data)
@@ -184,9 +180,7 @@ class ApplicationController @Inject() (
     sol
   }
  // @Every("1d")
- val system = akka.actor.ActorSystem("system")
- system.scheduler.schedule(0 seconds, 1 seconds)(dailyPrediction)
- def dailyPrediction = Action.async{ implicit request =>
+  def dailyPrediction = Action.async{ implicit request =>
    notificationDao.findAll().flatMap{
      notificationsList =>
         for(notification <- notificationsList){
@@ -234,8 +228,6 @@ class ApplicationController @Inject() (
         Future.successful(Ok(Json.toJson(notificationsList)))
    }
  }
-
-
 
   def index = UserAwareAction.async { implicit request =>
     Future.successful(Ok(Json.obj("test"->"contenuto")))
