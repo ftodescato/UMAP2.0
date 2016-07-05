@@ -30,6 +30,8 @@ trait ThingDAO {
 
   def findByThingTypeID(thingTypeID: UUID): Future[List[Thing]]
 
+  def countMeasurements(thingID: UUID): Int
+  
   def save(thing: Thing): Future[Thing]
 
   def update(thingID: UUID, thing2: Thing): Future[Thing]
