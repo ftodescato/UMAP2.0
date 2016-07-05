@@ -9,9 +9,7 @@ import java.util.UUID
 
 object SelectFunction {
 
-  /**
-   * A play framework form.
-   */
+//Form di Play!
   val form = Form(
     mapping(
       "companyID" -> uuid,
@@ -25,15 +23,9 @@ object SelectFunction {
     listFunction: List[String]
     )
 
-
-  /**
-   * The companion object.
-   */
-  object Data {
-
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
-    implicit val jsonFormat = Json.format[Data]
-  }
+    //companion object
+    object Data {
+       // Converte l'oggetto [Data] in un Json e vice versa.
+      implicit val jsonFormat = Json.format[Data]
+    }
 }

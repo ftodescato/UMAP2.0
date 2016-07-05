@@ -93,7 +93,7 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     Future.successful(thing2)
   }
 
-  def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing] = {
+  def addMeasurements(thingID: UUID, measurements: Measurements): Future[Thing] = {
     findByID(thingID).flatMap{
       case Some(thing) =>
       val newDatas = thing.datas

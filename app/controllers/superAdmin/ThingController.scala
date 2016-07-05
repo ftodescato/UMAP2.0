@@ -193,7 +193,7 @@ extends Silhouette[User, JWTAuthenticator] {
                       )
                       for{
 
-                        thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                        thing <- thingDao.addMeasurements(thingInfo, measurements)
 
 
                         // PSEUDOCODICE PER LA CREAZIONE E AGGIORNAMENTO DEL MODELLO le quadre segnalo le parti da tradurre in codice
@@ -224,7 +224,7 @@ extends Silhouette[User, JWTAuthenticator] {
                       )
                       for{
 
-                        thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                        thing <- thingDao.addMeasurements(thingInfo, measurements)
 
 
                         // PSEUDOCODICE PER LA CREAZIONE E AGGIORNAMENTO DEL MODELLO le quadre segnalo le parti da tradurre in codice
@@ -298,7 +298,7 @@ extends Silhouette[User, JWTAuthenticator] {
                       label = newlabel
                       )
                   for{
-                    thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                    thing <- thingDao.addMeasurements(thingInfo, measurements)
 
                   } yield {
                     notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
@@ -323,7 +323,7 @@ extends Silhouette[User, JWTAuthenticator] {
                   label = newlabel
                 )
                 for{
-                  thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                  thing <- thingDao.addMeasurements(thingInfo, measurements)
                   } yield {
                     notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
                     notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID)

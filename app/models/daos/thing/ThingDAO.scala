@@ -34,7 +34,7 @@ trait ThingDAO {
 
   def update(thingID: UUID, thing2: Thing): Future[Thing]
 
-  def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
+  def addMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
 
   def findListArray(thing: Thing): List[Array[Double]]
 

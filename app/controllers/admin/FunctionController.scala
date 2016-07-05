@@ -1,12 +1,14 @@
 package controllers.admin
 
 import java.util.UUID
+
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
-import forms.company._
+
 import forms.engine._
+
 import models._
 import models.Company
 import models.User
@@ -15,24 +17,17 @@ import models.daos.user.UserDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.function.FunctionDAO
 import models.daos.company.CompanyDAO
+
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
-
-//import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
-//import com.mohiva.play.silhouette.api.services.AvatarService
-//import com.mohiva.play.silhouette.api.util.PasswordHasher
-//import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
 import scala.concurrent.Future
 import scala.collection.mutable.ListBuffer
 
 
 class FunctionController @Inject() (
-  //authInfoRepository: AuthInfoRepository,
-  //avatarService: AvatarService,
-  //passwordHasher: PasswordHasher,
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
   companyDao: CompanyDAO,
@@ -41,17 +36,24 @@ class FunctionController @Inject() (
   userDao: UserDAO)
   extends Silhouette[User, JWTAuthenticator] {
 
-
-
+  /*
+  *   metodo che permette agli admin di selezionare le funzioni
+  *   da rendere disponibile all'utente nel calcolo dei valori dei grafici
+  */
   def selectFunction = SecuredAction(WithServices(Array("admin"), true)).async(parse.json){ implicit request =>
+    // richiesta alla form forms.engine.SelectFunctionAdmin
     request.body.validate[SelectFunctionAdmin.Data].map { data =>
+      // verifica all'interno del DB dell'esistenza della company dell'admin autenticato
       companyDao.findByID(request.identity.company).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
         case Some(company) =>
-          val functionList = new ListBuffer[String]
-          for( functionAlgList <- data.listFunction ){
+          val functionList = new ListBuffer[String]  //ListBuffer che conterrà le nuove funzioni a disposizione dell'utente
+          //ciclo sulla lista di funzioni passate tramite form
+          for(functionAlgList <- data.listFunction){
+            //riempimento di functionList con tutte le funzioni passate dalla form
             functionList += functionAlgList
           }
+          //nuova company contenente le nue funzioni
           val newCompany = Company(
               companyID = company.companyID,
               companyBusinessName = company.companyBusinessName,
@@ -65,10 +67,9 @@ class FunctionController @Inject() (
               companyName = company.companyName
           )
           for{
+            //sostituzione della vecchia company con quella aggiornata alle ultime funzioni scelte dall'admin
             company <- companyDao.update(company.companyID, newCompany)
           }yield {
-            //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            //env.eventBus.publish(LoginEvent(user, request, request2Messages))
             Ok(Json.obj("ok" -> "ok"))
            }
       }

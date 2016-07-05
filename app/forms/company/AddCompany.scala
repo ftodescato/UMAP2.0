@@ -7,9 +7,7 @@ import java.util.Date
 
 object AddCompany {
 
-  /**
-   * A play framework form.
-   */
+//form di play!
   val form = Form(
     mapping(
       "companyBusinessName" -> nonEmptyText,
@@ -35,15 +33,9 @@ object AddCompany {
     companyName: String
     )
 
-
-  /**
-   * The companion object.
-   */
+  //companion object
   object Data {
-
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
+     // Converte l'oggetto [Data] in un Json e vice versa.
     implicit val jsonFormat = Json.format[Data]
   }
 }
