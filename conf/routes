@@ -24,7 +24,8 @@ POST        /api/functions                      controllers.superAdmin.FunctionC
 #ACCOUNT
 GET         /api/account                        controllers.shared.account.AccountController.getInfo
 PUT         /api/account                        controllers.shared.account.AccountController.updateAccount
-POST        /api/test/psw                       controllers.shared.account.AccountController.updatePassword
+POST        /api/account/pswUpdate                       controllers.shared.account.AccountController.updatePassword
+POST        /api/account/pswNew                       controllers.shared.account.AccountController.setNewPassword
 POST        /api/account/resetPasswords         controllers.shared.account.AccountController.resetPassword
 
 
@@ -35,6 +36,7 @@ GET         /api/engine/functions               controllers.superAdmin.FunctionC
 
 #ADMIN
 POST        /api/charts                         controllers.admin.ChartController.addChart
+GET        /api/charts/:id                         controllers.admin.ChartController.showCharts(id: java.util.UUID)
 
 GET         /api/usersA/:id                     controllers.admin.UserController.showUserDetails(id: java.util.UUID)
 GET         /api/usersA                         controllers.admin.UserController.showUsers
@@ -42,10 +44,8 @@ POST        /api/usersA                         controllers.admin.UserController
 PUT         /api/usersA/:id                     controllers.admin.UserController.updateUser(id: java.util.UUID)
 DELETE      /api/usersA/:id                     controllers.admin.UserController.delete(id: java.util.UUID)
 GET         /api/getMyCompany                   controllers.admin.UserController.getMyCompany
-POST        /api/chartA                         controllers.admin.ChartController.addChart
 POST        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
 
-GET        /graphics/:id              controllers.shared.adminUser.GraphicController.createGraphic(id: java.util.UUID)
 
 
 # ADMIN+USER
@@ -60,6 +60,7 @@ GET         /api/notifications                  controllers.shared.adminUser.Not
 POST        /api/notifications/:id                  controllers.shared.adminUser.NotificationController.addNotification(id: java.util.UUID)
 #GET        /api/notificationsOfTT/:id          controllers.shared.adminUser.NotificationController.showNotificationOfThingType(id: java.util.UUID)
 DELETE      /api/notifications/:id              controllers.shared.adminUser.NotificationController.delete(id: java.util.UUID)
+GET /api/graphics/:id                            controllers.shared.adminUser.GraphicController.createGraphic(id: java.util.UUID)
 
 #SUPERADMIN
 PUT         /api/passwordsSA/:id                controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)

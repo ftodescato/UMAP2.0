@@ -113,6 +113,44 @@ class AccountController @Inject() (
                 mailConfirmed = user.mailConfirmed,
                 token = "vuoto",
                 role = user.role,
+                secretString = user.secretString
+              )
+               for{
+                 user <- userDao.confirmedMail(user2)
+                 authInfo <- passwordInfoDao.update(loginInfo, authInfo)
+               }yield {
+                 Ok(Json.obj("token" -> "ok"))
+               }
+
+
+           }
+     }
+   }.recoverTotal {
+     case error =>
+       Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
+     }
+ }
+   def setNewPassword = SecuredAction.async(parse.json) { implicit request =>
+     request.body.validate[NewPassword.Data].map { data =>
+       userDao.findByID(request.identity.userID).flatMap {
+         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
+         case Some(user) =>
+           val loginInfo = LoginInfo(CredentialsProvider.ID, user.email)
+           passwordInfoDao.find(loginInfo).flatMap{
+             case None =>
+               Future.successful(BadRequest(Json.obj("message" -> Messages("mail.notExists"))))
+             case Some(psw) =>
+              var authInfo = passwordHasher.hash(data.newPassword)
+              val user2 = User(
+                userID = user.userID,
+                name = user.name,
+                surname = user.surname,
+                loginInfo = user.loginInfo,
+                email = user.email,
+                company = user.company,
+                mailConfirmed = user.mailConfirmed,
+                token = "vuoto",
+                role = user.role,
                 secretString = data.newSecretString
               )
                for{
