@@ -2,7 +2,7 @@ import com.tuplejump.sbt.yeoman.Yeoman
 
 import scalariform.formatter.preferences._
 
-name := """(.Y.)"""
+name := """UMAP"""
 
 version := "3.0.0"
 
