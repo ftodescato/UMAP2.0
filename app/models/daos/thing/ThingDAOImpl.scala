@@ -51,6 +51,17 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     }
   }
 
+  def countMeasurements(thingID: UUID): Int = {
+    var count = 0
+    findByID(thingID).flatMap{
+      thing =>
+      for(measurement <- thing.get.datas){
+        count = count + 1
+      }
+      Future.successful(thing)
+    }
+    count
+  }
 
   def findListLabel(thing: Thing): List[Double] = {
     var listMeasurements = new ListBuffer[Measurements]
@@ -93,7 +104,7 @@ class ThingDAOImpl @Inject() (db : DB) extends ThingDAO {
     Future.successful(thing2)
   }
 
-  def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing] = {
+  def addMeasurements(thingID: UUID, measurements: Measurements): Future[Thing] = {
     findByID(thingID).flatMap{
       case Some(thing) =>
       val newDatas = thing.datas

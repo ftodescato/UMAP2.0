@@ -34,8 +34,9 @@ class ModelLogRegDAOImpl @Inject() (db : DB) extends ModelLogRegDAO {
     Future.successful(logRegModelID)
   }
 
-  def update(logRegModelID: UUID, newModelLogReg: LogRegModel) ={
+  def update(logRegModelID: UUID, newModelLogReg: LogRegModel): Future[LogRegModel] = {
     collection.update(Json.obj("logRegModelID" -> logRegModelID), newModelLogReg)
+    Future.successful(newModelLogReg)
   }
 
 

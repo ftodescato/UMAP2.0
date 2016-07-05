@@ -16,6 +16,7 @@ import models.daos.company.CompanyDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
 import models.daos.chart.ChartDAO
+import models.daos.modelLogReg.ModelLogRegDAO
 import models.daos.notification.NotificationDAO
 import controllers.ApplicationController
 import controllers.shared.adminUser.NotificationController
@@ -46,7 +47,8 @@ class ThingController @Inject() (
   companyDao: CompanyDAO,
   chartDao: ChartDAO,
   notificationDao: NotificationDAO,
-  val appcontroller: ApplicationController,
+  modelLogRegDao: ModelLogRegDAO,
+  val appController: ApplicationController,
   notificationController: NotificationController
   )
 extends Silhouette[User, JWTAuthenticator] {
@@ -155,6 +157,7 @@ extends Silhouette[User, JWTAuthenticator] {
     request.body.validate[AddMeasurement.Data].map {
       data =>
       val thingInfo = data.thingID
+      val numberOfMeasuremnts = thingDao.countMeasurements(thingInfo)
       thingDao.findByID(thingInfo).flatMap{
         case Some(thingToAssign) =>
         thingTypeDao.findByID(thingToAssign.thingTypeID).flatMap{
@@ -191,23 +194,22 @@ extends Silhouette[User, JWTAuthenticator] {
                           sensors = listBufferDD,
                           label = data.label
                       )
+
                       for{
-
-                        thing <- thingDao.updateMeasurements(thingInfo, measurements)
-
-
-                        // PSEUDOCODICE PER LA CREAZIONE E AGGIORNAMENTO DEL MODELLO le quadre segnalo le parti da tradurre in codice
-                        // if([#misurazioni della thing]>=6){
-                        //   var nuovomodello:LogRegModel=modelLogReg([ID della thing])
-                        //   var vecchiomodello:LogRegModel=[ModelLogRegDAO.findByThingID([ID della thing])]
-                        //   [LogRegModelDAO.update(vecchiomodello.logRegModelID,nuovomodello)]
-                        // }else if([#misurazioni della thing]==5){
-                        //   var nuovomodello:LogRegModel=modelLogReg([ID della thing])
-                        //   [LogRegModelDAO.save(nuovomodello)]
-                        // }
-
-                        //measurements <- measurementsDao.add(measurements)
+                        thing <- thingDao.addMeasurements(thingInfo, measurements)
                       } yield {
+                        if(numberOfMeasuremnts > 5){
+                          modelLogRegDao.findByThingID(thingInfo).flatMap{
+                            model =>
+                            appController.modelLogRegUpdate(thingInfo, model.get.logRegModelID)
+                            Future.successful(Ok(Json.toJson(model)))
+
+                          }
+                        }else{
+                          if(numberOfMeasuremnts == 5){
+                            appController.modelLogRegSave(thingInfo)
+                          }
+                        }
                           Ok(Json.obj("ok" -> "ok"))
                       }
                 }
@@ -224,21 +226,20 @@ extends Silhouette[User, JWTAuthenticator] {
                       )
                       for{
 
-                        thing <- thingDao.updateMeasurements(thingInfo, measurements)
-
-
-                        // PSEUDOCODICE PER LA CREAZIONE E AGGIORNAMENTO DEL MODELLO le quadre segnalo le parti da tradurre in codice
-                        // if([#misurazioni della thing]>=6){
-                        //   var nuovomodello:LogRegModel=modelLogReg([ID della thing])
-                        //   var vecchiomodello:LogRegModel=[ModelLogRegDAO.findByThingID([ID della thing])]
-                        //   [LogRegModelDAO.update(vecchiomodello.logRegModelID,nuovomodello)]
-                        // }else if([#misurazioni della thing]==5){
-                        //   var nuovomodello:LogRegModel=modelLogReg([ID della thing])
-                        //   [LogRegModelDAO.save(nuovomodello)]
-                        // }
-
-                        //measurements <- measurementsDao.add(measurements)
+                        thing <- thingDao.addMeasurements(thingInfo, measurements)
                         } yield {
+                          if(numberOfMeasuremnts > 5){
+                            modelLogRegDao.findByThingID(thingInfo).flatMap{
+                              model =>
+                              appController.modelLogRegUpdate(thingInfo, model.get.logRegModelID)
+                              Future.successful(Ok(Json.toJson(model)))
+
+                            }
+                          }else{
+                            if(numberOfMeasuremnts == 5){
+                              appController.modelLogRegSave(thingInfo)
+                            }
+                          }
                           Ok(Json.obj("ok" -> "ok"))
 
                         }
@@ -289,7 +290,7 @@ extends Silhouette[User, JWTAuthenticator] {
                   for(it <- listDD){
                     arrayDouble:+it.value
                   }
-                  var newlabel:Double = appcontroller.LogReg(data.thingID,arrayDouble)
+                  var newlabel:Double = appController.LogReg(data.thingID,arrayDouble)
                   val measurements = Measurements(
                       measurementsID = UUID.randomUUID(),
                       thingID = data.thingID,
@@ -298,7 +299,7 @@ extends Silhouette[User, JWTAuthenticator] {
                       label = newlabel
                       )
                   for{
-                    thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                    thing <- thingDao.addMeasurements(thingInfo, measurements)
 
                   } yield {
                     notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
@@ -313,7 +314,7 @@ extends Silhouette[User, JWTAuthenticator] {
                 for(it <- listDD){
                   arrayDouble:+it.value
                 }
-                var newlabel:Double = appcontroller.LogReg(data.thingID,arrayDouble)
+                var newlabel:Double = appController.LogReg(data.thingID,arrayDouble)
 
                 val measurements = Measurements(
                   measurementsID = UUID.randomUUID(),
@@ -323,7 +324,7 @@ extends Silhouette[User, JWTAuthenticator] {
                   label = newlabel
                 )
                 for{
-                  thing <- thingDao.updateMeasurements(thingInfo, measurements)
+                  thing <- thingDao.addMeasurements(thingInfo, measurements)
                   } yield {
                     notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
                     notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID)
@@ -339,36 +340,4 @@ extends Silhouette[User, JWTAuthenticator] {
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
       }
   }
-
-  // def addDetectionDouble(thingID: UUID) = Action.async(parse.json) { implicit request =>
-  //   request.body.validate[AddDetectionDouble.Data].map { data =>
-  //     thingDao.findByID(thingID).flatMap{
-  //       case Some(thingToAssign) =>
-  //             val detectionDouble = DetectionDouble(
-  //                 measurementsID = data.measurementsID,
-  //                 sensor = data.sensor,
-  //                 value = data.value
-  //             )
-  //             var measurements = thingDao.findMeasuremets(thingToAssign, data.measurementsID).flatMap{
-  //               case Some(measurements) =>
-  //
-  //               Future.successful(measurements)
-  //             }
-  //             thingDao.updateDectentionDouble(thingID, measurements, detectionDouble)
-  //             for{
-  //               thing <- thingDao.updateMeasurements(thingID, measurements)
-  //               //measurements <- measurementsDao.updateDectentionDouble(data.measurementsID,detectionDouble)
-  //
-  //               } yield {
-  //                 Ok(Json.obj("ok" -> "ok"))
-  //
-  //               }
-  //       case None =>
-  //         Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-  //     }
-  //   }.recoverTotal {
-  //         case error =>
-  //           Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
-  //     }
-  // }
 }

@@ -7,9 +7,7 @@ import play.api.libs.json.Json
 
 object NewPassword {
 
-  /**
-   * A play framework form.
-   */
+//Form di Play!
   val form = Form(
     mapping(
       "newPassword" -> nonEmptyText,
@@ -17,23 +15,14 @@ object NewPassword {
     )(Data.apply)(Data.unapply)
   )
 
-  /**
-   * The form data.
-
-   */
   case class Data(
     newPassword: String,
     newSecretString: String
   )
 
-  /**
-  * The companion object.
-  */
+  //companion object
   object Data {
-
-  /**
-   * Converts the [Date] object to Json and vice versa.
-   */
-  implicit val jsonFormat = Json.format[Data]
+     // Converte l'oggetto [Data] in un Json e vice versa.
+    implicit val jsonFormat = Json.format[Data]
   }
 }

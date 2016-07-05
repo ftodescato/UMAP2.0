@@ -7,9 +7,7 @@ import play.api.libs.json.Json
 
 object AddFunction {
 
-  /**
-   * A play framework form.
-   */
+//Form di Play! per aggiungere una funzione 
   val form = Form(
     mapping(
       "functionName" -> nonEmptyText
@@ -21,15 +19,9 @@ object AddFunction {
     functionName: String
     )
 
-
-  /**
-   * The companion object.
-   */
-  object Data {
-
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
-    implicit val jsonFormat = Json.format[Data]
-  }
+//companion object
+    object Data {
+       // Converte l'oggetto [Data] in un Json e vice versa.
+      implicit val jsonFormat = Json.format[Data]
+    }
 }

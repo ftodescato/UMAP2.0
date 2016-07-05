@@ -15,7 +15,7 @@ trait ModelLogRegDAO {
 
   def save(logRegModelID: LogRegModel): Future[LogRegModel]
 
-  def update(logRegModelID: UUID, newModelLogReg: LogRegModel)
+  def update(logRegModelID: UUID, newModelLogReg: LogRegModel): Future[LogRegModel]
 
   def remove(logRegModelID: UUID): Future[List[LogRegModel]]
 

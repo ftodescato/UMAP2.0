@@ -7,10 +7,8 @@ import play.api.libs.json.Json
 
 object ResetPassword {
 
-  /**
-   * A play framework form.
-   */
-  val form = Form(
+//Form di PLay!
+val form = Form(
     mapping(
       "email" -> email,
       "secretString" -> nonEmptyText,
@@ -18,21 +16,15 @@ object ResetPassword {
     )(Data.apply)(Data.unapply)
   )
 
-  /**
-   * The form data.
-
-   */
   case class Data(
     email: String,
     secretString: String,
     newPassword: String
   )
 
-  /**
-  * The companion object.
-  */
+  //companion object
   object Data {
-
-  implicit val jsonFormat = Json.format[Data]
+     // Converte l'oggetto [Data] in un Json e vice versa.
+    implicit val jsonFormat = Json.format[Data]
   }
 }

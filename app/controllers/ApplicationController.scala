@@ -25,6 +25,10 @@ import play.api.libs.mailer._
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
+//import per predizione giornaliera
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext
+import ExecutionContext.Implicits.global
 /**
  * The basic application controller.
  *
@@ -32,6 +36,9 @@ import scala.language.postfixOps
  * @param env The Silhouette environment.
  * @param socialProviderRegistry The social provider registry.
  */
+
+
+
 class ApplicationController @Inject() (
   val messagesApi: MessagesApi,
   modelLogRegDao: ModelLogRegDAO,
@@ -53,7 +60,7 @@ class ApplicationController @Inject() (
   def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
   }
-// metodo engine.correlation
+  // metodo engine.correlation
   def correlation(thingID: UUID, datatype: Int): Double ={
     //recupero dati necessari dal DB
     val thingDB =thingDao.findByID(thingID)
@@ -90,7 +97,7 @@ class ApplicationController @Inject() (
     sol
   }
   // creazione del modello degli oggetti a partire dai dati nel DB
-  def modelLogReg(thingID: UUID) = Action.async{ implicit request =>
+  def modelLogRegSave(thingID: UUID) = Action.async{ implicit request =>
     //recupero informazioni dal DB
     thingDao.findByID(thingID).flatMap{
       case None =>
@@ -110,8 +117,30 @@ class ApplicationController @Inject() (
         Ok(Json.obj("token" -> "ok"))
       }
     }
+}
 
+    def modelLogRegUpdate(thingID: UUID, oldModelID: UUID) = Action.async{ implicit request =>
+      //recupero informazioni dal DB
+      thingDao.findByID(thingID).flatMap{
+        case None =>
+          Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+        case Some(thing) =>
+        //  val thing = Await.result(thingDB, 1 seconds)
+          val label=thingDao.findListLabel(thing)
+          val data=thingDao.findListArray(thing)
+
+          //creo il modello di una thing
+          val e = new Engine
+          val modello:LogRegModel = e.getLogRegModel(thingID,label,data)
+
+          for {
+           modello <- modelLogRegDao.update(oldModelID, modello)
+        } yield {
+          Ok(Json.obj("token" -> "ok"))
+        }
+      }
   }
+
   // produzione della label per una nuova misurazione
   def LogReg(thingID: UUID, data: Array[Double]):Double = {
     // recupero il modello con l'ID della thing
@@ -131,15 +160,15 @@ class ApplicationController @Inject() (
 
   // creazione di un elemento futuro
   def futureV(thingID: UUID, datatype:Int): Double = {
-    //recupero dati dal DB
-    val thingDB = thingDao.findByID(thingID)
-    val thing = Await.result(thingDB, 3 seconds)
-    val data=thingDao.findListArray(thing.get)
-    //creazione elemento futuro
-    val e = new Engine
-    val sol=e.getFuture(data)
-    // restituisco valore futuro come double facendo una selezione dal risultato
-    sol(datatype)
+    var future=0.0
+    thingDao.findByID(thingID).flatMap{
+      thing=>
+        val e = new Engine
+        var sol=e.getFuture(thingDao.findListArray(thing.get))
+        future=sol(datatype)
+        Future.successful(Ok(Json.toJson(thing)))
+    }
+    future
   }
 
 
@@ -155,7 +184,9 @@ class ApplicationController @Inject() (
     sol
   }
  // @Every("1d")
- def dailyPrediction = Action.async{ implicit request =>
+ // val system = akka.actor.ActorSystem("system")
+ // system.scheduler.schedule(0 seconds, 1 seconds,  ,dailyPrediction)
+ def dailyPrediction = {
    notificationDao.findAll().flatMap{
      notificationsList =>
         for(notification <- notificationsList){
@@ -163,24 +194,28 @@ class ApplicationController @Inject() (
             //prendo il parametro su cui faccio i controlli e lo confronto con i valori min e max delle notifiche
             var parameter = notification.inputType
             thingDao.findByID(notification.thingID.get).flatMap{
+
               case None =>
                 Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
               case Some(thing) =>
                 var parameterFind = false
                 var count = 0
-                for (sensorParameter <- thing.datas(0).sensors if parameterFind == false){
+                for(measurement <- thing.datas){
+                for (sensorParameter <- measurement.sensors if parameterFind == false){
                   if(sensorParameter.sensor == parameter){
                     parameterFind = true
                   }
                   count = count + 1
                 }
+              }
+
                 var resultFuture = futureV(notification.thingID.get, count)
                 if(resultFuture > notification.valMax){
                   val email = Email(
                     "Valori "+parameter+"",
                     "LatexeBiscotti <latexebiscotti@gmail.com>",
                     Seq("Miss TO <"+notification.emailUser+">"),
-                    bodyText = Some("Il valore "+parameter+"arriverà a:"+resultFuture+" e il massimo previsto è per"+notification.valMax
+                    bodyText = Some("Il valore "+parameter+" arriverà a:"+resultFuture+" e il massimo previsto è per "+notification.valMax
                     )
                   )
                   mailer.send(email)
@@ -190,12 +225,11 @@ class ApplicationController @Inject() (
                     "Valori "+parameter+"",
                     "LatexeBiscotti <latexebiscotti@gmail.com>",
                     Seq("Miss TO <"+notification.emailUser+">"),
-                    bodyText = Some("Il valore "+parameter+"arriverà a:"+resultFuture+" e il minimo previsto è per"+notification.valMin
+                    bodyText = Some("Il valore "+parameter+" arriverà a:"+resultFuture+" e il minimo previsto è per "+notification.valMin
                     )
                   )
                   mailer.send(email)
                 }
-
                 Future.successful(Ok(Json.toJson(thing)))
             }
           }

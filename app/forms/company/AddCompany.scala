@@ -3,13 +3,12 @@ package forms.company
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+
 import java.util.Date
 
 object AddCompany {
 
-  /**
-   * A play framework form.
-   */
+//form di play! per aggiungere nuove company
   val form = Form(
     mapping(
       "companyBusinessName" -> nonEmptyText,
@@ -33,17 +32,11 @@ object AddCompany {
     companyDescription: String,
     companyLicenseExpiration: Date,
     companyName: String
-    )
+  )
 
-
-  /**
-   * The companion object.
-   */
+  //companion object
   object Data {
-
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
+     // Converte l'oggetto [Data] in un Json e vice versa.
     implicit val jsonFormat = Json.format[Data]
   }
 }

@@ -29,9 +29,7 @@ class FunctionController @Inject() (
   //passwordHasher: PasswordHasher,
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
-  //companyDao: CompanyDAO,
   functionDao: FunctionDAO
-  //userDao: UserDAO
 )
   extends Silhouette[User, JWTAuthenticator] {
 
@@ -51,8 +49,6 @@ class FunctionController @Inject() (
         for{
           function <- functionDao.remove(name)
         }yield{
-          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
           Ok(Json.obj("ok" -> "ok"))
          }
     }
@@ -70,8 +66,6 @@ class FunctionController @Inject() (
           for{
             function <- functionDao.update(name, newFunction)
           }yield {
-            //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            //env.eventBus.publish(LoginEvent(user, request, request2Messages))
             Ok(Json.obj("ok" -> "ok"))
            }
       }
@@ -83,20 +77,14 @@ class FunctionController @Inject() (
 
   def addFunction = UserAwareAction.async(parse.json) { implicit request =>
     request.body.validate[AddFunction.Data].map { data =>
-      //val authInfo = passwordHasher.hash(data.password)
       val function = Function(
         functionID = UUID.randomUUID(),
         name = data.functionName
+
       )
       for{
         function <- functionDao.save(function)
-        //user <- userService.save(user.copy(avatarURL = avatar))
-        //authInfo <- authInfoRepository.add(loginInfo, authInfo)
-        //authenticator <- env.authenticatorService.create(loginInfo)
-        //token <- env.authenticatorService.init(authenticator)
       } yield {
-          //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-          //env.eventBus.publish(LoginEvent(user, request, request2Messages))
           Ok(Json.obj("ok" -> "ok"))
         }
       }.recoverTotal {

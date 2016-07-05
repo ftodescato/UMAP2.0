@@ -2,7 +2,6 @@ package controllers.admin
 
 import java.util.UUID
 import javax.inject.Inject
-import play.api.libs.mailer._
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -10,7 +9,6 @@ import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
-
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
 import forms.user._
@@ -29,11 +27,11 @@ import models.Chart
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
+import play.api.libs.mailer._
 import play.api.mvc.Action
 
 import scala.concurrent.Future
 import scala.collection.mutable.ListBuffer
-
 
 
 class UserController @Inject() (
@@ -50,7 +48,7 @@ class UserController @Inject() (
   passwordHasher: PasswordHasher)
   extends Silhouette[User, JWTAuthenticator] {
 
-
+//metodo che fornisce la lista degli utenti della company dell'admin autenticato
   def showUsers = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
    val users = userDao.findByIDCompany(request.identity.company)
    users.flatMap{
@@ -59,14 +57,9 @@ class UserController @Inject() (
    }
   }
 
-  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
-  def showUsersByName(userName: String) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
-    val users = userDao.findByName(userName)
-    users.flatMap{
-     users =>
-      Future.successful(Ok(Json.toJson(users)))
-    }
-  }
+
+
+//metodo che restituisce la company dell'admin autenticato
   def getMyCompany = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
     val company = companyDao.findByID(request.identity.company)
     company.flatMap{
@@ -75,14 +68,25 @@ class UserController @Inject() (
     }
   }
 
+  //HO IDEA CHE NON LO USIAMO
   //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
-  def showUsersBySurname(userSurname: String) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
-    val users = userDao.findBySurname(userSurname)
-    users.flatMap{
-     users =>
-      Future.successful(Ok(Json.toJson(users)))
-    }
-  }
+  // def showUsersByName(userName: String) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
+  //   val users = userDao.findByName(userName)
+  //   users.flatMap{
+  //    users =>
+  //     Future.successful(Ok(Json.toJson(users)))
+  //   }
+  // }
+
+  //HO IDEA CHE NON LO USIAMO
+  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
+  // def showUsersBySurname(userSurname: String) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
+  //   val users = userDao.findBySurname(userSurname)
+  //   users.flatMap{
+  //    users =>
+  //     Future.successful(Ok(Json.toJson(users)))
+  //   }
+  // }
 
   //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
  def showUserDetails(userID: UUID) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
@@ -108,7 +112,7 @@ class UserController @Inject() (
   }
 }
 
-     //lato fronted bisogna fare aggiungere la company dell'admin (nascosta nella form)
+//lato fronted bisogna fare aggiungere la company dell'admin (nascosta nella form)
 def updateUser(userID: UUID) = SecuredAction(WithServices(Array("admin"), true)).async(parse.json) { implicit request =>
   request.body.validate[EditUser.Data].map { data =>
     userDao.findByID(userID).flatMap {

@@ -9,9 +9,7 @@ import java.util.UUID
 
 object NewChart {
 
-  /**
-   * A play framework form.
-   */
+//Form di Play! per creare un nuvo Chart
   val form = Form(
     mapping(
       "functionName" -> nonEmptyText,
@@ -20,22 +18,15 @@ object NewChart {
     )(Data.apply)(Data.unapply)
   )
 
-
   case class Data(
     functionName: String,
     objectID: UUID,
     parameter: String
     )
 
-
-  /**
-   * The companion object.
-   */
-  object Data {
-
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
-    implicit val jsonFormat = Json.format[Data]
-  }
+    //companion object
+    object Data {
+       // Converte l'oggetto [Data] in un Json e vice versa.
+      implicit val jsonFormat = Json.format[Data]
+    }
 }
