@@ -3,11 +3,12 @@ package forms.company
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+
 import java.util.Date
 
 object AddCompany {
 
-//form di play!
+//form di play! per aggiungere nuove company
   val form = Form(
     mapping(
       "companyBusinessName" -> nonEmptyText,
@@ -31,7 +32,7 @@ object AddCompany {
     companyDescription: String,
     companyLicenseExpiration: Date,
     companyName: String
-    )
+  )
 
   //companion object
   object Data {

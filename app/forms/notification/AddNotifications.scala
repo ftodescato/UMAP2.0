@@ -10,9 +10,7 @@ import java.util.UUID
 
 object AddNotification {
 
-  /**
-   * A play framework form.
-   */
+//Form di Play! per creare una nuova notifica
   val form = Form(
     mapping(
       "description" -> nonEmptyText,
@@ -31,19 +29,12 @@ object AddNotification {
     modelOrThing: String,
     parameter: String,
     minValue: Double,
-    maxValue: Double
-
-    )
+    maxValue: Double)
 
 
-  /**
-   * The companion object.
-   */
-  object Data {
-
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
-    implicit val jsonFormat = Json.format[Data]
-  }
+    //companion object
+    object Data {
+       // Converte l'oggetto [Data] in un Json e vice versa.
+      implicit val jsonFormat = Json.format[Data]
+    }
 }

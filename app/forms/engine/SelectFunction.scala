@@ -3,13 +3,15 @@ package forms.engine
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
-//import scala.collection.mutable.ListBuffer
 
 import java.util.UUID
 
 object SelectFunction {
 
-//Form di Play!
+/*
+* Form di Play! per la scelta delle funzioni da mettere a disposizione
+* agli utenti di una company per la generazione di grafici
+*/
   val form = Form(
     mapping(
       "companyID" -> uuid,
@@ -21,7 +23,7 @@ object SelectFunction {
   case class Data(
     companyID: UUID,
     listFunction: List[String]
-    )
+  )
 
     //companion object
     object Data {

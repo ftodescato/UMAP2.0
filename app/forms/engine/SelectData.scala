@@ -3,13 +3,14 @@ package forms.engine
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+
 import java.util.UUID
 
 
 
 object SelectData {
 
-  //form di play!
+  //form di play! per selezionare i sensori di un thing inseribili nei Chart
   val form = Form(
     mapping(
       "thingTypeID" -> uuid,
@@ -21,8 +22,7 @@ object SelectData {
   case class Data(
     thingTypeID: UUID,
     listData: List[String]
-    )
-
+  )
 
   //companion object
   object Data {
