@@ -26,13 +26,15 @@ trait ThingDAO {
 
   def findListLabel(thing: Thing): List[Double]
 
+  def findMeasurements(thingID: UUID): Future[List[Measurements]]
+
   def findByThingTypeID(thingTypeID: UUID): Future[List[Thing]]
 
   def save(thing: Thing): Future[Thing]
 
   def update(thingID: UUID, thing2: Thing): Future[Thing]
 
-  def updateMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
+  def addMeasurements(thingID: UUID, measurements: Measurements): Future[Thing]
 
   def findListArray(thing: Thing): List[Array[Double]]
 

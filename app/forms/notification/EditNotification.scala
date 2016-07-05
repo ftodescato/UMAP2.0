@@ -8,9 +8,7 @@ import play.api.data.format.Formats._
 
 object EditNotification {
 
-  /**
-   * A play framework form.
-   */
+//Form di Play! per modificare una notifica
   val form = Form(
     mapping(
       "notificationDescription" -> nonEmptyText,
@@ -26,15 +24,9 @@ object EditNotification {
     valMin: Double
     )
 
-
-  /**
-   * The companion object.
-   */
-  object Data {
-
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
-    implicit val jsonFormat = Json.format[Data]
-  }
+    //companion object
+    object Data {
+       // Converte l'oggetto [Data] in un Json e vice versa.
+      implicit val jsonFormat = Json.format[Data]
+    }
 }

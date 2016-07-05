@@ -10,8 +10,6 @@ case class Chart(
   functionName: String,
   thingID: UUID,
   infoDataName: String
-  //risultati: Array[Double]
-
 )
 
 /**

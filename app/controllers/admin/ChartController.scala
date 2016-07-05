@@ -1,15 +1,13 @@
 package controllers.admin
 
 import java.util.UUID
+
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
-//import com.mohiva.play.silhouette.api.services.AvatarService
-//import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
-
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
 
 import forms.modelAnalyticalData._
@@ -31,16 +29,23 @@ import scala.collection.mutable.ListBuffer
 class ChartController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
-  //userService: UserService,
-  chartDao: ChartDAO
-  //userDao: UserDAO,
-  //companyDao: CompanyDAO
-)
+  chartDao: ChartDAO)
   extends Silhouette[User, JWTAuthenticator] {
 
+  //metodo che dato un UUID di un oggetto restituisce la lista di charts associati
+  def showCharts(thingID: UUID) = Action.async { implicit request =>
+    val charts = chartDao.findByThingID(thingID)
+    charts.flatMap{
+      charts =>
+      Future.successful(Ok(Json.toJson(charts)))
+    }
+  }
 
+  //metodo che aggiunge un oggetto Chart al DB
   def addChart = Action.async(parse.json) { implicit request =>
+    //richiesta alla form forms.modelAnalyticalData.NewChart
     request.body.validate[NewChart.Data].map { data =>
+        //creazione di un nuovo oggetto Chart
         val chart = Chart(
           chartID = UUID.randomUUID(),
           functionName = data.functionName,
@@ -48,6 +53,7 @@ class ChartController @Inject() (
           infoDataName = data.parameter
         )
         for{
+          //inserimento del nuovo chart nel DB
           chart <- chartDao.save(chart)
         } yield {
             Ok(Json.obj("ok" -> "ok"))

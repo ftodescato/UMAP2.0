@@ -3,16 +3,14 @@ package forms.engine
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.libs.json.Json
+
 import java.util.UUID
-//import scala.collection.mutable.ListBuffer
 
 
 
 object SelectData {
 
-  /**
-   * A play framework form.
-   */
+  //form di play! per selezionare i sensori di un thing inseribili nei Chart
   val form = Form(
     mapping(
       "thingTypeID" -> uuid,
@@ -24,17 +22,11 @@ object SelectData {
   case class Data(
     thingTypeID: UUID,
     listData: List[String]
-    )
+  )
 
-
-  /**
-   * The companion object.
-   */
+  //companion object
   object Data {
-
-    /**
-     * Converts the [Date] object to Json and vice versa.
-     */
-    implicit val jsonFormat = Json.format[Data]
+   // Converte l'oggetto [Data] in un Json e vice versa.
+   implicit val jsonFormat = Json.format[Data]
   }
 }
