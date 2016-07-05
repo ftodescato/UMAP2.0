@@ -10,7 +10,6 @@ import models._
 import models.daos.thing.ThingDAO
 import models.daos.modelLogReg.ModelLogRegDAO
 import models.daos.notification.NotificationDAO
-import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import scala.concurrent.Future

@@ -63,4 +63,16 @@ class ChartController @Inject() (
           Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
       }
     }
+
+    def delete(chartID: UUID) = Action.async{ implicit request =>
+      chartDao.findByID(chartID).flatMap{
+        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
+        case Some (chart) =>
+          for{
+            chart <- chartDao.remove(chartID)
+          }yield{
+            Ok(Json.obj("ok" -> "ok"))
+           }
+      }
+    }
 }
