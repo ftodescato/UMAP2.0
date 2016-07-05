@@ -22,7 +22,7 @@ import collection.breakOut
 class Engine{
   //metodo per la correlazione
   def getCorrelation(a: Array[Double], b: Array[Double]) : Double = {
-    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "false") ;
+    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     val seriesX: RDD[Double] = sc.parallelize(a)
@@ -63,7 +63,7 @@ class Engine{
 
   //SUMSTATISTIC (FUNZIONI BASE)
   def sumStatistic(lista: List[Array[Double]], mv: String) : Array[Double] = {
-    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "false") ;
+    val conf = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(conf)
     val sqlContext = new org.apache.spark.sql.SQLContext(sc)
     // imposto i dati per la funzione spark
@@ -125,7 +125,7 @@ class Engine{
   //applica il modello di una thing ad una nuova misurazione e restituisce la sua label
   def getLogRegPrediction(modello: LogRegModel, data: Array[Double]) : Double = {
 
-    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "false") ;
+    val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
 
     val vecMeasureArray = data.map(Vectors.dense(_))

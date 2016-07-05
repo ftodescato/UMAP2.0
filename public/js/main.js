@@ -41771,25 +41771,36 @@ umap.factory('MyCompanyService', function($resource) {
     //query su charts per prendermi tutti i chart col mio thingID
     //ciclo questi chart e mi salvo la previsione in un array di previsioni
     $scope.showGraphics = function(){
-      $scope.data = [[1,3,4]];
-      $scope.labels = ['uno', 'due', 'tre'];
       $scope.loading = true;
       $scope.graphics = [];
-      for (var i = 0; i < $scope.charts.length; i++) {
+      console.log($scope.charts);
+      angular.forEach($scope.charts, function(chart, index){
         var aux = {
           data: [],
           labels: [],
-          function: $scope.charts[i].functionName,
-          param: $scope.charts[i].infoDataName
+          function: chart.functionName,
+          param: chart.infoDataName,
+          isFuture: false,
+          result: 0
         };
-        GraphicService.Graphic.get({id: $scope.charts[i].chartID}).$promise.then(function(graphic){
+        GraphicService.Graphic.get({id: chart.chartID}).$promise.then(function(graphic){
+          console.log(graphic);
           aux.data.push(graphic.valuesY);
           aux.labels = graphic.valuesX;
+          aux.result = graphic.resultFunction;
+          if(!graphic.futureV){
+            var lastItem = aux.labels.length - 1;
+            aux.labels.splice(lastItem,1);
+          }
+          for (var i = 0; i < aux.labels.length; i++) {
+            aux.labels[i] = new Date(aux.labels[i]);
+            aux.labels[i] = aux.labels[i].toDateString();
+          }
           $scope.graphics.push(aux);
           if(i === $scope.charts.length)
             $scope.loading = false;
         });
-      }
+      })
     }
   }]);
 })();

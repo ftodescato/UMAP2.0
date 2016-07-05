@@ -42,7 +42,7 @@ class GraphicController @Inject() (
       var futureV = false
       var valueForX: Double = 0
       var valueY = new ArrayBuffer[Double]()
-      var valueX = new ArrayBuffer[String]()
+      var valueX = new ArrayBuffer[Date]()
       val chart = chartDao.findByID(chartID)
       chart.flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
@@ -62,7 +62,7 @@ class GraphicController @Inject() (
             for(measurement <- listMeasurement)
             {
               var date = measurement.dataTime
-              valueX += date.toString()
+              valueX += date
               for (sensors <- measurement.sensors){
                   if(sensors.sensor == chart.infoDataName)
                      {
@@ -100,7 +100,7 @@ class GraphicController @Inject() (
                 var prova= Calendar.getInstance()
                 prova.setTime(lastDateMeasurement)
                 prova.add(Calendar.DAY_OF_MONTH, 1)
-                valueX += prova.getTime().toString()
+                valueX += prova.getTime()
                  val graphic = Graphic(
                    futureV = futureV,
                    valuesY = valueY.toArray,
