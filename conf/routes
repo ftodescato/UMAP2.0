@@ -37,6 +37,7 @@ GET         /api/engine/functions               controllers.superAdmin.FunctionC
 #ADMIN
 POST        /api/charts                         controllers.admin.ChartController.addChart
 GET         /api/charts/:id                     controllers.admin.ChartController.showCharts(id: java.util.UUID)
+DELETE      /api/charts/:id                     controllers.admin.ChartController.delete(id: java.util.UUID)
 
 GET         /api/usersA/:id                     controllers.admin.UserController.showUserDetails(id: java.util.UUID)
 GET         /api/usersA                         controllers.admin.UserController.showUsers
