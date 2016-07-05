@@ -41,12 +41,17 @@ section(id="thingsDetails" class="container-fluid" )
       p(ng-show="loading") Caricamento ...    
     div.col-sm-12.text-center
       button.btn.btn-success(ng-click="showGraphics()") Mostra grafici  
-    
-    div.col-md-4(ng-repeat="g in graphics")
-      h4 Funzione: {{g.function}}
-      h4 Parametro: {{g.param}}
-      canvas(id="line" class="chart chart-line" chart-data="g.data" chart-labels="g.labels" chart-legend="true" chart-series="series" chart-click="onClick")
-      h3.text-center Risultato: {{g.result}}
+  .row.text-center
+    .col-md-4(ng-repeat="c in charts" style="margin-bottom: 100px;")
+      h4 Funzione: {{c.functionName}}
+      h4 Parametro: {{c.infoDataName}}
+      p(ng-show="loadings[c.chartID]") Caricamento ...
+      div(ng-hide="loadings[c.chartID]")
+        canvas(id="line" class="chart chart-line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick")
+        h3.text-center Risultato: {{graphics[c.chartID].result}}
+      button.btn.btn-success(ng-click="showGraphics(c.chartID)") Aggiorna grafico  
+      button.btn.btn-danger(ng-click="deleteChart(c.chartID)") Elimina 
+
       
             
             

@@ -72,42 +72,48 @@
         $scope.thing = thing;
       });
     });
+    $scope.loadings = {};
     GraphicService.Chart.get({id: $stateParams.id}).$promise.then(function(charts){
       $scope.charts = charts;
+      for (var i = 0; i < $scope.charts.length; i++) {
+        $scope.loadings[$scope.charts[i].chartID] = true;
+      }
     });
     //query su charts per prendermi tutti i chart col mio thingID
     //ciclo questi chart e mi salvo la previsione in un array di previsioni
-    $scope.showGraphics = function(){
-      $scope.loading = true;
-      $scope.graphics = [];
-      console.log($scope.charts);
-      angular.forEach($scope.charts, function(chart, index){
-        var aux = {
-          data: [],
-          labels: [],
-          function: chart.functionName,
-          param: chart.infoDataName,
-          isFuture: false,
-          result: 0
-        };
-        GraphicService.Graphic.get({id: chart.chartID}).$promise.then(function(graphic){
-          console.log(graphic);
-          aux.data.push(graphic.valuesY);
-          aux.labels = graphic.valuesX;
-          aux.result = graphic.resultFunction;
-          if(!graphic.futureV){
-            var lastItem = aux.labels.length - 1;
-            aux.labels.splice(lastItem,1);
-          }
-          for (var i = 0; i < aux.labels.length; i++) {
-            aux.labels[i] = new Date(aux.labels[i]);
-            aux.labels[i] = aux.labels[i].toDateString();
-          }
-          $scope.graphics.push(aux);
-          if(i === $scope.charts.length)
-            $scope.loading = false;
+    $scope.deleteChart = function(id){
+      var deleteUser = $window.confirm('Sei sicuro ?');
+      if(deleteUser){
+        GraphicService.Chart.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
         });
-      })
+      }
+    };
+    $scope.showGraphics = function(id){
+      $scope.graphics = {};
+      console.log($scope.charts);
+      var aux = {
+        data: [],
+        labels: [],
+        isFuture: false,
+        result: 0
+      };
+      GraphicService.Graphic.get({id: id}).$promise.then(function(graphic){
+        console.log(graphic);
+        aux.data.push(graphic.valuesY);
+        aux.labels = graphic.valuesX;
+        aux.result = graphic.resultFunction;
+        if(!graphic.futureV){
+          var lastItem = aux.labels.length - 1;
+          aux.labels.splice(lastItem,1);
+        }
+        for (var i = 0; i < aux.labels.length; i++) {
+          aux.labels[i] = new Date(aux.labels[i]);
+          aux.labels[i] = aux.labels[i].toDateString();
+        }
+        $scope.graphics[id] = aux;
+        $scope.loadings[id] = false;
+      });
     }
   }]);
 })();

@@ -42,11 +42,18 @@
     <div class="col-sm-12 text-center">
       <button ng-click="showGraphics()" class="btn btn-success">Mostra grafici  </button>
     </div>
-    <div ng-repeat="g in graphics" class="col-md-4">
-      <h4>Funzione: {{g.function}}</h4>
-      <h4>Parametro: {{g.param}}</h4>
-      <canvas id="line" chart-data="g.data" chart-labels="g.labels" chart-legend="true" chart-series="series" chart-click="onClick" class="chart chart-line"></canvas>
-      <h3 class="text-center">Risultato: {{g.result}}</h3>
+  </div>
+  <div class="row text-center">
+    <div ng-repeat="c in charts" style="margin-bottom: 100px;" class="col-md-4">
+      <h4>Funzione: {{c.functionName}}</h4>
+      <h4>Parametro: {{c.infoDataName}}</h4>
+      <p ng-show="loadings[c.chartID]">Caricamento ...</p>
+      <div ng-hide="loadings[c.chartID]">
+        <canvas id="line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick" class="chart chart-line"></canvas>
+        <h3 class="text-center">Risultato: {{graphics[c.chartID].result}}</h3>
+      </div>
+      <button ng-click="showGraphics(c.chartID)" class="btn btn-success">Aggiorna grafico  </button>
+      <button ng-click="deleteChart(c.chartID)" class="btn btn-danger">Elimina </button>
     </div>
   </div>
 </section>
