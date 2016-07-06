@@ -1,37 +1,36 @@
 package controllers
-import scala.concurrent.ExecutionContext.Implicits.global
+
 import javax.inject.Inject
+
 import java.util.UUID
+
 import com.mohiva.play.silhouette.api.{ Environment, LogoutEvent, Silhouette }
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
+
+import models._
 import models.User
 import models.Engine
-import models._
 import models.daos.thing.ThingDAO
 import models.daos.modelLogReg.ModelLogRegDAO
 import models.daos.notification.NotificationDAO
-import play.api.i18n.MessagesApi
-import play.api.libs.json.Json
-import play.api.mvc.Action
-import scala.concurrent.Future
-import org.apache.spark.mllib.linalg._
-import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
+
 import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.linalg._
+//import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 
 import play.api.i18n.{ MessagesApi, Messages }
-
 import play.api.libs.mailer._
+import play.api.libs.json.Json
+import play.api.mvc.Action
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
+import scala.concurrent.Future
 import scala.language.postfixOps
-/**
- * The basic application controller.
- *
- * @param messagesApi The Play messages API.
- * @param env The Silhouette environment.
- * @param socialProviderRegistry The social provider registry.
- */
+
+//import per predizione giornaliera
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext
+import ExecutionContext.Implicits.global
+
 
 
 
@@ -44,11 +43,7 @@ class ApplicationController @Inject() (
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
 
-  /**
-   * Returns the user.
-   *
-   * @return The result to display.
-   */
+
   def user = SecuredAction.async { implicit request =>
     Future.successful(Ok(Json.toJson(request.identity)))
   }
@@ -56,42 +51,54 @@ class ApplicationController @Inject() (
   def test = UserAwareAction.async { implicit request =>
   Future.successful(Ok(Json.obj("test"->"test")))
   }
+
   // metodo engine.correlation
   def correlation(thingID: UUID, datatype: Int): Double ={
+    var correlation = 0.0
     //recupero dati necessari dal DB
-    val thingDB =thingDao.findByID(thingID)
-    val thing = Await.result(thingDB, 1 seconds)
-    val data=thingDao.findListArray(thing.get)
-    //sottoselezione dei dati
-    val datalength=data.length
-    var chosendata=Array.empty[Double]
-    var iterator:Int=0
-    for (iterator<-0 until datalength){
-      chosendata=chosendata:+data(iterator)(datatype)
+    thingDao.findByID(thingID).flatMap{
+      case None =>
+        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+      case Some(thing) =>
+        val data=thingDao.findListArray(thing)
+        //sottoselezione dei dati
+        val datalength=data.length
+        var chosendata=Array.empty[Double]
+        var iterator:Int=0
+        for (iterator<-0 until datalength){
+          chosendata=chosendata:+data(iterator)(datatype)
+        }
+        val e = new Engine
+        //creazione della R
+        var r:Array[Double]=e.getPointsOnR(chosendata)
+        //chiamata di correlation
+        correlation = e.getCorrelation(chosendata,r)
+        //valore ritornato 0~100%==0->1
+        Future.successful(Ok(Json.toJson(thing)))
     }
-    val e = new Engine
-    //creazione della R
-    var r:Array[Double]=e.getPointsOnR(chosendata)
-    //chiamata di correlation
-    val sol: Double = e.getCorrelation(chosendata,r)
-    //valore ritornato 0~100%==0->1
-    sol
+    correlation
   }
+
   // metodi appartenenti a sumstatistic
   def sumStatistic(thingID: UUID, mv: String, datatype: Int): Double = {
     // recupero list[array[double]] dal db tramite ID
-    val thingDB =thingDao.findByID(thingID)
-    val thing = Await.result(thingDB, 1 seconds)
-    val data=thingDao.findListArray(thing.get)
-    // chiamo l'engine per calcolarmi le statistiche sui dati
-    val e = new Engine
-    val aux: Array[Double] = e.sumStatistic(data, mv)
-
-    //seleziono il valore che mi interessa
-    var sol:Double=aux(datatype)
-    //valore ritornato -inf->+inf
-    sol
+    var solution = 0.0
+    thingDao.findByID(thingID).flatMap{
+      case None =>
+        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+      case Some(thing) =>
+      val data=thingDao.findListArray(thing)
+      // chiamo l'engine per calcolarmi le statistiche sui dati
+      val e = new Engine
+      val aux: Array[Double] = e.sumStatistic(data, mv)
+      //seleziono il valore che mi interessa
+      solution = aux(datatype)
+      Future.successful(Ok(Json.toJson(thing)))
+    }
+    solution
   }
+
+
   // creazione del modello degli oggetti a partire dai dati nel DB
   def modelLogRegSave(thingID: UUID) = Action.async{ implicit request =>
     //recupero informazioni dal DB
@@ -99,14 +106,11 @@ class ApplicationController @Inject() (
       case None =>
         Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       case Some(thing) =>
-      //  val thing = Await.result(thingDB, 1 seconds)
         val label=thingDao.findListLabel(thing)
         val data=thingDao.findListArray(thing)
-
         //creo il modello di una thing
         val e = new Engine
         val modello:LogRegModel = e.getLogRegModel(thingID,label,data)
-
         for {
          modello <- modelLogRegDao.save(modello)
       } yield {
@@ -121,10 +125,8 @@ class ApplicationController @Inject() (
         case None =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
         case Some(thing) =>
-        //  val thing = Await.result(thingDB, 1 seconds)
           val label=thingDao.findListLabel(thing)
           val data=thingDao.findListArray(thing)
-
           //creo il modello di una thing
           val e = new Engine
           val modello:LogRegModel = e.getLogRegModel(thingID,label,data)
@@ -145,7 +147,6 @@ class ApplicationController @Inject() (
       case None =>
         Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
       case Some(modello) =>
-
       val e = new Engine
       // faccio la predizione della nuova label
       predizione = e.getLogRegPrediction(modello,data)
@@ -156,29 +157,42 @@ class ApplicationController @Inject() (
 
   // creazione di un elemento futuro
   def futureV(thingID: UUID, datatype:Int): Double = {
-    var future=0.0
+    var future= 0.0
     thingDao.findByID(thingID).flatMap{
-      thing=>
+      case None =>
+        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+      case Some(thing) =>
         val e = new Engine
-        var sol=e.getFuture(thingDao.findListArray(thing.get))
-        future=sol(datatype)
-        Future.successful(Ok(Json.toJson(thing)))
+        var sol=e.getFuture(thingDao.findListArray(thing))
+        for{
+          thing <- thingDao.findByID(thingID)
+        }yield {
+          future = sol(datatype)
+          Ok(Json.obj("token" -> "ok"))
+        }
     }
     future
   }
 
 
   def futureM(thingID: UUID): Array[Double] = {
+    var futureM = Array.empty[Double]
     //recupero dati dal DB
-    val thingDB = thingDao.findByID(thingID)
-    val thing = Await.result(thingDB, 3 seconds)
-    val data=thingDao.findListArray(thing.get)
-    //creazione elemento futuro
-    val e = new Engine
-    val sol=e.getFuture(data)
+    thingDao.findByID(thingID).flatMap{
+      case None =>
+        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+      case Some(thing) =>
+        val data=thingDao.findListArray(thing)
+        //creazione elemento futuro
+        val e = new Engine
+        futureM = e.getFuture(data)
+        Future.successful(Ok(Json.toJson(thing)))
+    }
     // restituisco valore futuro come double facendo una selezione dal risultato
-    sol
+    futureM
   }
+
+
  // @Every("1d")
  // val system = akka.actor.ActorSystem("system")
  // system.scheduler.schedule(0 seconds, 1 seconds,  ,dailyPrediction)
@@ -237,19 +251,10 @@ class ApplicationController @Inject() (
   def index = UserAwareAction.async { implicit request =>
     Future.successful(Ok(Json.obj("test"->"contenuto")))
 }
-  /**
-   * Manages the sign out action.
-   */
+
+
   def signOut = SecuredAction.async { implicit request =>
     env.eventBus.publish(LogoutEvent(request.identity, request, request2Messages))
     env.authenticatorService.discard(request.authenticator, Ok)
   }
-
-  /**
-   * Provides the desired template.
-   *
-   * @param template The template to provide.
-   * @return The template.
-   */
-
 }

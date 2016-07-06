@@ -7,6 +7,8 @@ import models.User
 
 import scala.collection.mutable
 import scala.concurrent.Future
+import scala.collection.mutable.ListBuffer
+
 
 import javax.inject.Inject
 import play.api.libs.json._
@@ -39,6 +41,19 @@ class UserDAOImpl @Inject() (db : DB) extends UserDAO {
   }
   def findSecretString(user: User): Future[String] ={
     Future.successful(user.secretString)
+  }
+
+  def findAdminByCompanyID(companyID: UUID): Future[List[User]] = {
+    var listAdmin = new ListBuffer[User]
+    findByIDCompany(companyID).flatMap{
+      listUserOfCmpany =>
+        for(user <- listUserOfCmpany){
+          if(user.role == "admin"){
+            listAdmin += user
+          }
+        }
+        Future.successful(listAdmin.toList)
+    }
   }
 
 
