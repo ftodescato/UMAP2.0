@@ -57,6 +57,12 @@
     }
   });
   umap.controller('ThingsControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
+    $scope.predicate = 'thingID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
     ThingTypeServiceAU.Thing.query().$promise.then(function(things){
       $scope.things = things;
     });

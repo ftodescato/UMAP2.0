@@ -16,13 +16,13 @@ section(id="thingsList" class="container-fluid" )
     table(class="table")       
       thead
         th 
-          a(class="btn" ng-click="order('doubleValue')") 
+          a(class="btn" ng-click="order('name')") 
             strong  Nome parametro      
         th 
-          a(class="btn" ng-click="order('doubleValue.valuee')") 
+          a(class="btn" ng-click="order('visible')") 
             strong Visibilità  
       tbody
-        tr(ng-repeat="x in thingType.doubleValue.valuee |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
+        tr(ng-repeat="x in thingType.doubleValue.infos |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
           td {{x.name}}
           td {{x.visible}}
             

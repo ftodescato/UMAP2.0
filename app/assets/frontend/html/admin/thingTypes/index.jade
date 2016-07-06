@@ -27,7 +27,8 @@ section(id="thingsList" class="container-fluid" )
           td {{thingType.thingTypeName}}
           td
             ul
-              li(ng-repeat="p in thingType.doubleValue.valuee") {{p.name}} (visibile={{p.visible}})
+              li(ng-repeat="p in thingType.doubleValue.infos") 
+                span(ng-show="p.visible") {{p.name}}
           td 
             a(ui-sref="root.admin.thingTypesDetails({id:thingType.thingTypeID})") Dettagli
             
