@@ -51,13 +51,9 @@ class ApplicationController @Inject() (
   }
 
   // metodo engine.correlation
-  def correlation(thingID: UUID, datatype: Int): Double ={
+  def correlation(thing: Thing, datatype: Int): Double ={
     var correlation = 0.0
     //recupero dati necessari dal DB
-    thingDao.findByID(thingID).flatMap{
-      case None =>
-        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-      case Some(thing) =>
         val data=thingDao.findListArray(thing)
         //sottoselezione dei dati
         val datalength=data.length
@@ -72,27 +68,19 @@ class ApplicationController @Inject() (
         //chiamata di correlation
         correlation = e.getCorrelation(chosendata,r)
         //valore ritornato 0~100%==0->1
-        Future.successful(Ok(Json.toJson(thing)))
-    }
     correlation
   }
 
   // metodi appartenenti a sumstatistic
-  def sumStatistic(thingID: UUID, mv: String, datatype: Int): Double = {
+  def sumStatistic(thing: Thing, mv: String, datatype: Int): Double = {
     // recupero list[array[double]] dal db tramite ID
     var solution = 0.0
-    thingDao.findByID(thingID).flatMap{
-      case None =>
-        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-      case Some(thing) =>
       val data=thingDao.findListArray(thing)
       // chiamo l'engine per calcolarmi le statistiche sui dati
       val e = new Engine
       val aux: Array[Double] = e.sumStatistic(data, mv)
       //seleziono il valore che mi interessa
       solution = aux(datatype)
-      Future.successful(Ok(Json.toJson(thing)))
-    }
     solution
   }
 
@@ -154,41 +142,15 @@ class ApplicationController @Inject() (
 }
 
   // creazione di un elemento futuro
-  def futureV(thingID: UUID, datatype:Int): Double = {
-    var future= 0.0
-    thingDao.findByID(thingID).flatMap{
-      case None =>
-        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-      case Some(thing) =>
+  def futureV(thing: Thing, datatype:Int): Double = {
+    var future=0.0
         val e = new Engine
         var sol=e.getFuture(thingDao.findListArray(thing))
-        for{
-          thing <- thingDao.findByID(thingID)
-        }yield {
-          future = sol(datatype)
-          Ok(Json.obj("token" -> "ok"))
-        }
-    }
+        future=sol(datatype)
     future
   }
 
 
-  def futureM(thingID: UUID): Array[Double] = {
-    var futureM = Array.empty[Double]
-    //recupero dati dal DB
-    thingDao.findByID(thingID).flatMap{
-      case None =>
-        Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-      case Some(thing) =>
-        val data=thingDao.findListArray(thing)
-        //creazione elemento futuro
-        val e = new Engine
-        futureM = e.getFuture(data)
-        Future.successful(Ok(Json.toJson(thing)))
-    }
-    // restituisco valore futuro come double facendo una selezione dal risultato
-    futureM
-  }
 
 
  // @Every("1d")
@@ -217,7 +179,7 @@ class ApplicationController @Inject() (
                 }
               }
 
-                var resultFuture = futureV(notification.thingID.get, count)
+                var resultFuture = futureV(thing, count)
                 if(resultFuture > notification.valMax){
                   val email = Email(
                     "Valori "+parameter+"",

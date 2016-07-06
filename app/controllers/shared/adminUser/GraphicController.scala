@@ -78,15 +78,15 @@ class GraphicController @Inject() (
              }
              functionName match {
                 case "Media" =>
-                    valueForX = engine.sumStatistic(thing.thingID, "Mean", index)
+                    valueForX = engine.sumStatistic(thing, "Mean", index)
                 case "Minimo" =>
-                    valueForX = engine.sumStatistic(thing.thingID, "Min", index)
+                    valueForX = engine.sumStatistic(thing, "Min", index)
                 case "Massimo" =>
-                    valueForX = engine.sumStatistic(thing.thingID, "Max", index)
+                    valueForX = engine.sumStatistic(thing, "Max", index)
                 case "Varianza" =>
-                    valueForX = engine.sumStatistic(thing.thingID, "Variance", index)
+                    valueForX = engine.sumStatistic(thing, "Variance", index)
                 case "Future" =>
-                    valueForX = engine.futureV(thing.thingID, index)
+                    valueForX = engine.futureV(thing, index)
                 case default =>{
                     function404 = true
                 }

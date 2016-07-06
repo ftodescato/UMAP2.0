@@ -151,7 +151,7 @@ class CompanyController @Inject() (
     //richiesta alla form forms.company.AddCompany
     request.body.validate[AddCompany.Data].map { data =>
       //ricerca della company tramite Nome per evitare di inserirne una con nome uguale
-      companyDao.findByName(data.companyName).flatMap{
+      companyDao.findByPIVA(data.companyPIVA).flatMap{
         case Some(company) =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("company.exists"))))
         case None  =>
