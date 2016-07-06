@@ -87,6 +87,7 @@ class GraphicController @Inject() (
                     valueForX = engine.sumStatistic(thing, "Variance", index)
                 case "Future" =>
                     valueForX = engine.futureV(thing, index)
+                    futureV = true
                 case default =>{
                     function404 = true
                 }

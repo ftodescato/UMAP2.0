@@ -41756,6 +41756,12 @@ umap.factory('MyCompanyService', function($resource) {
   }]);
   umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams','$state','$window' ,'ThingTypeServiceAU','GraphicService', function($scope, $stateParams, $state, $window, ThingTypeServiceAU, GraphicService ){
     $scope.hashMisure = [];
+    $scope.predicate = 'dataTime';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
     ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
       ThingTypeServiceAU.ThingType.get({id: thing.thingTypeID}).$promise.then(function(thingType){
         $scope.hashVisibility = {};
@@ -41785,9 +41791,8 @@ umap.factory('MyCompanyService', function($resource) {
     $scope.graphics = {};
     $scope.showGraphics = function(id){
       $scope.clicked = {};
+      $scope.future = false;
       $scope.clicked[id] = ' Caricamento ... ';;
-
-      console.log($scope.charts);
       var aux = {
         data: [],
         labels: [],
@@ -41795,13 +41800,15 @@ umap.factory('MyCompanyService', function($resource) {
         result: 0
       };
       GraphicService.Graphic.get({id: id}).$promise.then(function(graphic){
-        console.log(graphic);
         aux.data.push(graphic.valuesY);
         aux.labels = graphic.valuesX;
         aux.result = graphic.resultFunction;
         if(!graphic.futureV){
           var lastItem = aux.labels.length - 1;
           aux.labels.splice(lastItem,1);
+        }else{
+          aux.data[0].push(graphic.resultFunction);
+          $scope.future = true;
         }
         for (var i = 0; i < aux.labels.length; i++) {
           aux.labels[i] = new Date(aux.labels[i]);

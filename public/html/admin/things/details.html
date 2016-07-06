@@ -15,9 +15,9 @@
   <div class="table-responsive">
     <table class="table">      
       <thead>
-        <th> <a ng-click="order('')" class="btn"> <strong> Data rilevazione      </strong></a></th>
-        <th> <a ng-click="order('')" class="btn"> <strong> Nome parametro      </strong></a></th>
-        <th> <a ng-click="order('')" class="btn"> <strong>Valore  </strong></a></th>
+        <th> <a ng-click="order('dataTime')" class="btn"> <strong> Data rilevazione      </strong></a></th>
+        <th> <a ng-click="order('sensor')" class="btn"> <strong> Nome parametro      </strong></a></th>
+        <th> <a ng-click="order('value')" class="btn"> <strong>Valore  </strong></a></th>
       </thead>
       <tbody>
         <tr ng-repeat="x in thing.datas |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ">
@@ -36,12 +36,6 @@
     <div class="col-sm-12 text-center">
       <h2>Grafici</h2>
     </div>
-    <div class="col-sm-12 text-center">
-      <p ng-show="loading">Caricamento ...    </p>
-    </div>
-    <div class="col-sm-12 text-center">
-      <button ng-click="showGraphics()" class="btn btn-success">Mostra grafici  </button>
-    </div>
   </div>
   <div class="row text-center">
     <div ng-repeat="c in charts" style="margin-bottom: 100px;" class="col-md-6">
@@ -51,6 +45,7 @@
       <div ng-hide="loadings[c.chartID]">
         <canvas id="line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick" class="chart chart-line"></canvas>
         <h3 class="text-center">Risultato: {{graphics[c.chartID].result}}</h3>
+        <h4 ng-show="future">Previsto in data: {{graphics[c.chartID].labels[graphics[c.chartID].labels.length - 1]}}</h4>
       </div>
       <button ng-click="showGraphics(c.chartID)" class="btn btn-success">Aggiorna grafico  </button>
       <button ng-click="deleteChart(c.chartID)" class="btn btn-danger">Elimina </button>
