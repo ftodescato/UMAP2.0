@@ -155,15 +155,19 @@ class ApplicationController @Inject() (
 
   // creazione di un elemento futuro
   def futureV(thingID: UUID, datatype:Int): Double = {
-    var future=0.0
+    var future= 0.0
     thingDao.findByID(thingID).flatMap{
       case None =>
         Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
       case Some(thing) =>
         val e = new Engine
         var sol=e.getFuture(thingDao.findListArray(thing))
-        future=sol(datatype)
-        Future.successful(Ok(Json.toJson(thing)))
+        for{
+          thing <- thingDao.findByID(thingID)
+        }yield {
+          future = sol(datatype)
+          Ok(Json.obj("token" -> "ok"))
+        }
     }
     future
   }
