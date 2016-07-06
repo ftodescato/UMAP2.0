@@ -16,7 +16,6 @@ import models.daos.notification.NotificationDAO
 
 import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.mllib.linalg._
-//import org.apache.spark.mllib.classification.{NaiveBayes, NaiveBayesModel}
 
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.mailer._
@@ -126,7 +125,7 @@ class ApplicationController @Inject() (
   }
 
   // produzione della label per una nuova misurazione
-  def LogReg(thingID: UUID, data: Array[Double]):Double = {
+  def logReg(thingID: UUID, data: Array[Double]):Double = {
     // recupero il modello con l'ID della thing
     var predizione = 0.0
     modelLogRegDao.findByThingID(thingID).flatMap{

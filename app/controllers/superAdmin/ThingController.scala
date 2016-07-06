@@ -290,7 +290,7 @@ extends Silhouette[User, JWTAuthenticator] {
                   for(it <- listDD){
                     arrayDouble:+it.value
                   }
-                  var newlabel:Double = appController.LogReg(data.thingID,arrayDouble)
+                  var newlabel:Double = appController.logReg(data.thingID,arrayDouble)
                   val measurements = Measurements(
                       measurementsID = UUID.randomUUID(),
                       thingID = data.thingID,
@@ -314,7 +314,7 @@ extends Silhouette[User, JWTAuthenticator] {
                 for(it <- listDD){
                   arrayDouble:+it.value
                 }
-                var newlabel:Double = appController.LogReg(data.thingID,arrayDouble)
+                var newlabel:Double = appController.logReg(data.thingID,arrayDouble)
 
                 val measurements = Measurements(
                   measurementsID = UUID.randomUUID(),

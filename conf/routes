@@ -15,7 +15,7 @@ GET         /api/getrole                        controllers.shared.account.AuthC
 #GET        /corr                               controllers.ApplicationController.correlation
 #GET        /sumstat/:mv                        controllers.ApplicationController.sumStatistic(mv:String)
 #GET        /NB                                 controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
-#GET        /logreg                             controllers.ApplicationController.LogReg(id: java.util.UUID)
+#GET        /logreg                             controllers.ApplicationController.logReg(id: java.util.UUID)
 #GET        /futureV                            controllers.ApplicationController.futureV(id: java.util.UUID)
 
 
