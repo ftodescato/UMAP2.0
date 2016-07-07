@@ -41680,14 +41680,27 @@ umap.factory('MyCompanyService', function($resource) {
     }
   });
   umap.controller('ThingTypesControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
+    $scope.predicate = 'thingTypeID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
     ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
       $scope.thingTypes = thingTypes;
     });
   }]);
   umap.controller('ThingTypesControllerDetailsAU', ['$scope','$stateParams','ThingTypeServiceAU',function($scope,$stateParams,ThingTypeServiceAU){
+    $scope.predicate = 'name';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
     ThingTypeServiceAU.ThingType.get({id: $stateParams.id}).$promise.then(function(thingType){
       $scope.thingType = thingType;
     });
+
   }]);
 })();
 
@@ -41750,12 +41763,24 @@ umap.factory('MyCompanyService', function($resource) {
     }
   });
   umap.controller('ThingsControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
+    $scope.predicate = 'thingID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
     ThingTypeServiceAU.Thing.query().$promise.then(function(things){
       $scope.things = things;
     });
   }]);
   umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams','$state','$window' ,'ThingTypeServiceAU','GraphicService', function($scope, $stateParams, $state, $window, ThingTypeServiceAU, GraphicService ){
     $scope.hashMisure = [];
+    $scope.predicate = 'dataTime';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
     ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
       ThingTypeServiceAU.ThingType.get({id: thing.thingTypeID}).$promise.then(function(thingType){
         $scope.hashVisibility = {};
@@ -41785,9 +41810,8 @@ umap.factory('MyCompanyService', function($resource) {
     $scope.graphics = {};
     $scope.showGraphics = function(id){
       $scope.clicked = {};
+      $scope.future = false;
       $scope.clicked[id] = ' Caricamento ... ';;
-
-      console.log($scope.charts);
       var aux = {
         data: [],
         labels: [],
@@ -41795,13 +41819,15 @@ umap.factory('MyCompanyService', function($resource) {
         result: 0
       };
       GraphicService.Graphic.get({id: id}).$promise.then(function(graphic){
-        console.log(graphic);
         aux.data.push(graphic.valuesY);
         aux.labels = graphic.valuesX;
         aux.result = graphic.resultFunction;
         if(!graphic.futureV){
           var lastItem = aux.labels.length - 1;
           aux.labels.splice(lastItem,1);
+        }else{
+          aux.data[0].push(graphic.resultFunction);
+          $scope.future = true;
         }
         for (var i = 0; i < aux.labels.length; i++) {
           aux.labels[i] = new Date(aux.labels[i]);
@@ -42121,6 +42147,18 @@ umap.factory('MyCompanyService', function($resource) {
   })
 
   umap.controller('ThingsTypeController',['$scope','$state','$window','CompanyService','ThingTypeService',function($scope,$state,$window,CompanyService,ThingTypeService){
+    $scope.predicate = 'thingTypeID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
+    $scope.predicate2 = 'thingID';
+    $scope.reverse2 = true;
+    $scope.order2 = function(predicate2) {
+      $scope.reverse2 = ($scope.predicate2 === predicate2) ? !$scope.reverse2 : false;
+      $scope.predicate2 = predicate2;
+    };
     CompanyService.query().$promise.then(function(companies){
       $scope.companiesHash = {}
       for (var i = 0; i < companies.length; i++) {

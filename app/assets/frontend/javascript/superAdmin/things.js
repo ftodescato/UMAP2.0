@@ -64,6 +64,18 @@
   })
 
   umap.controller('ThingsTypeController',['$scope','$state','$window','CompanyService','ThingTypeService',function($scope,$state,$window,CompanyService,ThingTypeService){
+    $scope.predicate = 'thingTypeID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
+    $scope.predicate2 = 'thingID';
+    $scope.reverse2 = true;
+    $scope.order2 = function(predicate2) {
+      $scope.reverse2 = ($scope.predicate2 === predicate2) ? !$scope.reverse2 : false;
+      $scope.predicate2 = predicate2;
+    };
     CompanyService.query().$promise.then(function(companies){
       $scope.companiesHash = {}
       for (var i = 0; i < companies.length; i++) {

@@ -28,6 +28,9 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
   def findByName(companyName: String): Future[Option[Company]] = {
     collection.find(Json.obj("companyName" -> companyName)).one[Company]
   }
+  def findByPIVA(companyPIVA: String): Future[Option[Company]] = {
+    collection.find(Json.obj("companyPIVA" -> companyPIVA)).one[Company]
+  }
 
   def findByIDUser(userID: UUID): Future[Option[Company]] ={
     collection.find(Json.obj("userID" -> userID)).one[Company]

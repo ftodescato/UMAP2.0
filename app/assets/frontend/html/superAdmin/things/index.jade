@@ -36,7 +36,8 @@ section(id="thingsList" class="container-fluid" )
               li(ng-repeat="c in thingType.companyID") {{companiesHash[c]}}
           td
             ul
-              li(ng-repeat="p in thingType.doubleValue.valuee") {{p.name}} (visibile={{p.visible}})
+              li(ng-repeat="p in thingType.doubleValue.infos") 
+                span(ng-show="p.visible") {{p.name}} 
           td 
             button(class="btn btn-warning" ui-sref="root.superAdmin.updateThingType({id:thingType.thingTypeID})") Modifica
             form(ng-submit="deleteThingType(thingType.thingTypeID)")
@@ -52,27 +53,27 @@ section(id="thingsList" class="container-fluid" )
     table(class="table")
       thead
         th 
-          a(class="btn" ng-click="order('thingTypeID')") 
+          a(class="btn" ng-click="order2('thingID')") 
             strong ID 
         th 
-          a(class="btn" ng-click="order('thingTypeName')") 
+          a(class="btn" ng-click="order2('thingTypeName')") 
             strong Nome        
         th 
-          a(class="btn" ng-click="order('serialNumber')") 
+          a(class="btn" ng-click="order2('serialNumber')") 
             strong Numero di serie   
         th 
-          a(class="btn" ng-click="order('description')") 
+          a(class="btn" ng-click="order2('description')") 
             strong Descrizione   
         th 
-          a(class="btn" ng-click="order('thingTypeId')") 
+          a(class="btn" ng-click="order2('thingTypeId')") 
             strong Modello                    
         th 
-          a(class="btn" ng-click="order('company')") 
+          a(class="btn" ng-click="order2('company')") 
             strong Company          
         th Azioni        
         
       tbody
-        tr(ng-repeat="thing in things |  orderBy:predicate:reverse | filter:searchThings:strict track by $index ")
+        tr(ng-repeat="thing in things |  orderBy:predicate2:reverse2 | filter:searchThings:strict track by $index ")
           td {{thing.thingID}}
           td {{thing.name}}
           td {{thing.serialNumber}}

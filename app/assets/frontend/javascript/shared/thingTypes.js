@@ -53,13 +53,26 @@
     }
   });
   umap.controller('ThingTypesControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
+    $scope.predicate = 'thingTypeID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
     ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
       $scope.thingTypes = thingTypes;
     });
   }]);
   umap.controller('ThingTypesControllerDetailsAU', ['$scope','$stateParams','ThingTypeServiceAU',function($scope,$stateParams,ThingTypeServiceAU){
+    $scope.predicate = 'name';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
     ThingTypeServiceAU.ThingType.get({id: $stateParams.id}).$promise.then(function(thingType){
       $scope.thingType = thingType;
     });
+
   }]);
 })();

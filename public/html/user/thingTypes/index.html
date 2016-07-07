@@ -24,7 +24,7 @@
           <td>{{thingType.thingTypeName}}</td>
           <td>
             <ul>
-              <li ng-repeat="p in thingType.doubleValue.valuee">{{p.name}} (visibile={{p.visible}})</li>
+              <li ng-repeat="p in thingType.doubleValue.infos"><span ng-show="p.visible">{{p.name}} </span></li>
             </ul>
           </td>
           <td> <a ui-sref="root.user.thingTypesDetails({id:thingType.thingTypeID})">Dettagli</a></td>

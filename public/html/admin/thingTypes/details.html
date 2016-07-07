@@ -16,11 +16,11 @@
   <div class="table-responsive">
     <table class="table">      
       <thead>
-        <th> <a ng-click="order('doubleValue')" class="btn"> <strong> Nome parametro      </strong></a></th>
-        <th> <a ng-click="order('doubleValue.valuee')" class="btn"> <strong>Visibilità  </strong></a></th>
+        <th> <a ng-click="order('name')" class="btn"> <strong> Nome parametro      </strong></a></th>
+        <th> <a ng-click="order('visible')" class="btn"> <strong>Visibilità  </strong></a></th>
       </thead>
       <tbody>
-        <tr ng-repeat="x in thingType.doubleValue.valuee |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ">
+        <tr ng-repeat="x in thingType.doubleValue.infos |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ">
           <td>{{x.name}}</td>
           <td>{{x.visible}}</td>
         </tr>

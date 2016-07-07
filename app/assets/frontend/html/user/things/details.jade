@@ -15,17 +15,17 @@ section(id="thingsDetails" class="container-fluid" )
     table(class="table")       
       thead
         th 
-          a(class="btn" ng-click="order('')") 
+          a(class="btn" ng-click="order('dataTime')") 
             strong  Data rilevazione      
         th 
-          a(class="btn" ng-click="order('')") 
+          a(class="btn" ng-click="order('sensor')") 
             strong  Nome parametro      
         th 
-          a(class="btn" ng-click="order('')") 
-            strong Valore   
+          a(class="btn" ng-click="order('value')") 
+            strong Valore  
       tbody
         tr(ng-repeat="x in thing.datas |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
-          td {{x.dataTime}}
+          td {{x.dataTime  | date:"MM/dd/yyyy"}}
           td
             p(ng-repeat=" i in x.sensors")
               span(ng-show="hashMisure[i.sensor]") {{i.sensor}} 
@@ -34,3 +34,22 @@ section(id="thingsDetails" class="container-fluid" )
             p(ng-repeat=" i in x.sensors")
               span(ng-show="hashMisure[i.sensor]") {{i.value}} 
               br
+  div.row
+    div.col-sm-12.text-center
+      h2 Grafici
+  .row.text-center
+    .col-md-6(ng-repeat="c in charts" style="margin-bottom: 100px;")
+      h4 Funzione: {{c.functionName}}
+      h4 Parametro: {{c.infoDataName}}
+      p {{clicked[c.chartID]}}
+      div(ng-hide="loadings[c.chartID]")
+        canvas(id="line" class="chart chart-line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick")
+        h3.text-center Risultato: {{graphics[c.chartID].result}}
+        h4(ng-show="future") Previsto in data: {{graphics[c.chartID].labels[graphics[c.chartID].labels.length - 1]}}
+      button.btn.btn-success(ng-click="showGraphics(c.chartID)") Aggiorna grafico  
+
+      
+            
+            
+            
+  

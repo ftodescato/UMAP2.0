@@ -73,5 +73,6 @@ trait CompanyDAO {
    * @return The list of company in db.
    */
   def remove(companyID: UUID):  Future[List[Company]]
+  def findByPIVA(companyPIVA: String): Future[Option[Company]]
 
 }

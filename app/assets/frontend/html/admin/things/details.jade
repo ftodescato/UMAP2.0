@@ -15,13 +15,13 @@ section(id="thingsDetails" class="container-fluid" )
     table(class="table")       
       thead
         th 
-          a(class="btn" ng-click="order('')") 
+          a(class="btn" ng-click="order('dataTime')") 
             strong  Data rilevazione      
         th 
-          a(class="btn" ng-click="order('')") 
+          a(class="btn" ng-click="order('sensor')") 
             strong  Nome parametro      
         th 
-          a(class="btn" ng-click="order('')") 
+          a(class="btn" ng-click="order('value')") 
             strong Valore  
       tbody
         tr(ng-repeat="x in thing.datas |  orderBy:predicate:reverse | filter:searchThingTypes:strict track by $index ")
@@ -37,10 +37,6 @@ section(id="thingsDetails" class="container-fluid" )
   div.row
     div.col-sm-12.text-center
       h2 Grafici
-    div.col-sm-12.text-center
-      p(ng-show="loading") Caricamento ...    
-    div.col-sm-12.text-center
-      button.btn.btn-success(ng-click="showGraphics()") Mostra grafici  
   .row.text-center
     .col-md-6(ng-repeat="c in charts" style="margin-bottom: 100px;")
       h4 Funzione: {{c.functionName}}
@@ -49,6 +45,7 @@ section(id="thingsDetails" class="container-fluid" )
       div(ng-hide="loadings[c.chartID]")
         canvas(id="line" class="chart chart-line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick")
         h3.text-center Risultato: {{graphics[c.chartID].result}}
+        h4(ng-show="future") Previsto in data: {{graphics[c.chartID].labels[graphics[c.chartID].labels.length - 1]}}
       button.btn.btn-success(ng-click="showGraphics(c.chartID)") Aggiorna grafico  
       button.btn.btn-danger(ng-click="deleteChart(c.chartID)") Elimina 
 
