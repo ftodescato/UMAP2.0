@@ -205,9 +205,6 @@ class ApplicationController @Inject() (
 
 
 
-  def index = UserAwareAction.async { implicit request =>
-    Future.successful(Ok(Json.obj("test"->"contenuto")))
-}
 
 
   def signOut = SecuredAction.async { implicit request =>
