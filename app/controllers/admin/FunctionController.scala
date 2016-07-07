@@ -53,7 +53,7 @@ class FunctionController @Inject() (
             //riempimento di functionList con tutte le funzioni passate dalla form
             functionList += functionAlgList
           }
-          //nuova company contenente le nue funzioni
+          //nuova company contenente le nuove funzioni
           val newCompany = Company(
               companyID = company.companyID,
               companyBusinessName = company.companyBusinessName,
