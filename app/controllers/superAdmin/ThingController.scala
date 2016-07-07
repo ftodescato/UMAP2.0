@@ -4,6 +4,7 @@ import java.util.UUID
 import java.util.Calendar
 
 import javax.inject.Inject
+import models.Engine
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
@@ -283,13 +284,21 @@ extends Silhouette[User, JWTAuthenticator] {
                   for(it <- listDD){
                     arrayDouble:+it.value
                   }
-                  var newlabel:Double = appController.logReg(data.thingID,arrayDouble)
+
+                  modelLogRegDao.findByThingID(data.thingID).flatMap{
+                    case None =>
+                      Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+                    case Some(modello) =>
+                    val e = new Engine
+                    // faccio la predizione della nuova label
+                    var newLabel = e.getLogRegPrediction(modello,arrayDouble)
+
                   val measurements = Measurements(
                       measurementsID = UUID.randomUUID(),
                       thingID = data.thingID,
                       dataTime = data.dataTime,
                       sensors = listBufferDD,
-                      label = newlabel
+                      label = newLabel
                       )
                       measurementsFuture(measurements)
                   for{
@@ -299,6 +308,8 @@ extends Silhouette[User, JWTAuthenticator] {
                     notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID, false)
                     notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID, false)
                     Ok(Json.obj("ok" -> "ok")) }
+                    Future.successful(Ok(Json.toJson(newLabel)))
+                  }
                 }
               else{
                 val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
@@ -308,22 +319,30 @@ extends Silhouette[User, JWTAuthenticator] {
                 for(it <- listDD){
                   arrayDouble :+ it.value
                 }
-                var newlabel:Double = appController.logReg(data.thingID,arrayDouble)
-
+                modelLogRegDao.findByThingID(data.thingID).flatMap{
+                  case None =>
+                    Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+                  case Some(modello) =>
+                  val e = new Engine
+                  // faccio la predizione della nuova label
+                  var newLabel = e.getLogRegPrediction(modello,arrayDouble)
                 val measurements = Measurements(
                   measurementsID = UUID.randomUUID(),
                   thingID = data.thingID,
                   dataTime = data.dataTime,
                   sensors = listDD,
-                  label = newlabel
+                  label = newLabel
                 )
                 measurementsFuture(measurements)
+
                 for{
                   thing <- thingDao.addMeasurements(thingInfo, measurements)
                   } yield {
                     notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID, false)
                     notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID, false)
                     Ok(Json.obj("ok" -> "ok")) }
+                    Future.successful(Ok(Json.toJson(newLabel)))
+                  }
                 }
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
         }
@@ -355,18 +374,27 @@ extends Silhouette[User, JWTAuthenticator] {
         nextDate.setTime(measurement.dataTime)
         nextDate.add(Calendar.DAY_OF_MONTH, 1)
 
-        var newlabel:Double = appController.logReg(measurement.thingID, arrayDouble)
+        modelLogRegDao.findByThingID(thing.get.thingID).flatMap{
+          case None =>
+            Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+          case Some(modello) =>
+          val e = new Engine
+          // faccio la predizione della nuova label
+          var newLabel = e.getLogRegPrediction(modello,arrayDouble)
+
 
         val futureMeasurement = Measurements(
           measurementsID = UUID.randomUUID(),
           thingID = measurement.thingID,
           dataTime = nextDate.getTime(),
           sensors = futureSensorList.toList,
-          label = newlabel
+          label = newLabel
         )
         thingDao.addMeasurements(measurement.thingID, futureMeasurement)
         notificationController.notifyAfterMeasurementThing(measurement.thingID, futureMeasurement.measurementsID, true)
         notificationController.notifyAfterMeasurementThingType(thing.get.thingTypeID, futureMeasurement.measurementsID, true)
+        Future.successful(Ok(Json.toJson(newLabel)))
+      }
      }
   }
 

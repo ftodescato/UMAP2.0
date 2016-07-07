@@ -124,21 +124,21 @@ class ApplicationController @Inject() (
       }
   }
 
-  // produzione della label per una nuova misurazione
-  def logReg(thingID: UUID, data: Array[Double]):Double = {
-    // recupero il modello con l'ID della thing
-    var predizione = 0.0
-    modelLogRegDao.findByThingID(thingID).flatMap{
-      case None =>
-        Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
-      case Some(modello) =>
-      val e = new Engine
-      // faccio la predizione della nuova label
-      predizione = e.getLogRegPrediction(modello,data)
-      Future.successful(Ok(Json.toJson(predizione)))
-    }
-    predizione
-}
+//   // produzione della label per una nuova misurazione
+//   def logReg(thingID: UUID, data: Array[Double]):Double = {
+//     // recupero il modello con l'ID della thing
+//     var predizione = 0.0
+//     modelLogRegDao.findByThingID(thingID).flatMap{
+//       case None =>
+//         Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+//       case Some(modello) =>
+//       val e = new Engine
+//       // faccio la predizione della nuova label
+//       predizione = e.getLogRegPrediction(modello,data)
+//       Future.successful(Ok(Json.toJson(predizione)))
+//     }
+//     predizione
+// }
 
   // creazione di un elemento futuro
   def futureV(thing: Thing, datatype:Int): Double = {
