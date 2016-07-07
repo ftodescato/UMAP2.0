@@ -4,10 +4,10 @@
   <li class="active">Recupero Password</li>
 </ul>
 <h1 class="page-header text-center">Recupero Password</h1>
-<p class="text-center">Inserisci la tua mail e ti verrà inviata la nuova password.</p>
+<p class="text-center">Compila il form per resettare la password.</p>
 <div class="container-fluid">
   <div class="row">
-    <form ng-submit="resetRequest()" name="myForm" class="col-xs-6 col-xs-offset-3">
+    <form ng-submit="editPsw()" name="myForm" class="col-xs-6 col-xs-offset-3">
       <h2 class="text-center">{{errore}}</h2>
       <label for="emailInput">Indirizzo email</label>
       <input type="text" id="emailInput" ng-model="credentials.email" placeholder="email" required="" class="form-control"/><br/>
