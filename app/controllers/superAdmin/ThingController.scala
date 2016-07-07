@@ -113,7 +113,7 @@ extends Silhouette[User, JWTAuthenticator] {
        }
   }
 
-  def addThing = Action.async(parse.json) { implicit request =>
+  def addThing = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[AddThing.Data].map { data =>
       val companyInfo = data.company
       companyDao.findByID(companyInfo).flatMap{

@@ -38,7 +38,7 @@ class GraphicController @Inject() (
 
 
 
-    def createGraphic(chartID: UUID) = Action.async { implicit request =>
+    def createGraphic(chartID: UUID) =  SecuredAction(WithServices(Array("admin","user"), true)).async { implicit request =>
       var futureV = false
       var valueForX: Double = 0
       var valueY = new ArrayBuffer[Double]()

@@ -42,7 +42,7 @@ class ChartController @Inject() (
   }
 
   //metodo che aggiunge un oggetto Chart al DB
-  def addChart = Action.async(parse.json) { implicit request =>
+  def addChart = SecuredAction(WithServices(Array("admin"), true)).async(parse.json) { implicit request =>
     //richiesta alla form forms.modelAnalyticalData.NewChart
     request.body.validate[NewChart.Data].map { data =>
         //creazione di un nuovo oggetto Chart
@@ -64,7 +64,7 @@ class ChartController @Inject() (
       }
     }
 
-    def delete(chartID: UUID) = Action.async{ implicit request =>
+    def delete(chartID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
       chartDao.findByID(chartID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
         case Some (chart) =>

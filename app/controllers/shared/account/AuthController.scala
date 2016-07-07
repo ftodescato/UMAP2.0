@@ -12,6 +12,7 @@ import com.mohiva.play.silhouette.impl.exceptions.IdentityNotFoundException
 import com.mohiva.play.silhouette.impl.providers._
 import forms.user.SignIn
 import models.User
+import models._
 import models.daos.user.UserDAO
 import net.ceedubs.ficus.Ficus._
 import play.api.Configuration
@@ -90,7 +91,7 @@ class AuthController @Inject() (
     }
   }
 
-  def getRole = SecuredAction.async{ implicit request =>
+  def getRole = SecuredAction(WithServices(Array("superAdmin","admin","user"), true)).async{ implicit request =>
     Future.successful(Ok(Json.obj("role"-> request.identity.role)))
   }
 }

@@ -45,10 +45,6 @@ class ApplicationController @Inject() (
     Future.successful(Ok(Json.toJson(request.identity)))
   }
 
-  def test = UserAwareAction.async { implicit request =>
-  Future.successful(Ok(Json.obj("test"->"test")))
-  }
-
   // metodo engine.correlation
   def correlation(thing: Thing, datatype: Int): Double ={
     var correlation = 0.0
