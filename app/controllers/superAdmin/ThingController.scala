@@ -1,6 +1,8 @@
   package controllers.superAdmin
 
 import java.util.UUID
+import java.util.Calendar
+
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api._
@@ -99,8 +101,6 @@ extends Silhouette[User, JWTAuthenticator] {
               for{
                 thing <- thingDao.update(thingID,thing2)
               }yield {
-                //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-                //env.eventBus.publish(LoginEvent(user, request, request2Messages))
                 Ok(Json.obj("ok" -> "ok"))
                }
             case None =>
@@ -120,7 +120,6 @@ extends Silhouette[User, JWTAuthenticator] {
           val thingTypeInfo = data.thingTypeID
           thingTypeDao.findByID(thingTypeInfo).flatMap{
             case Some(thingTypeToAssign) =>
-              //val authInfo = passwordHasher.hash(data.password)
               val thing = Thing(
                   thingID = UUID.randomUUID(),
                   name = data.thingName,
@@ -132,13 +131,7 @@ extends Silhouette[User, JWTAuthenticator] {
               )
               for{
                 thing <- thingDao.save(thing)
-                //user <- userService.save(user.copy(avatarURL = avatar))
-                //authInfo <- authInfoRepository.add(loginInfo, authInfo)
-                //authenticator <- env.authenticatorService.create(loginInfo)
-                //token <- env.authenticatorService.init(authenticator)
               } yield {
-                  //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-                  //env.eventBus.publish(LoginEvent(user, request, request2Messages))
                   Ok(Json.obj("ok" -> "ok"))
                 }
                 case None =>
@@ -298,12 +291,13 @@ extends Silhouette[User, JWTAuthenticator] {
                       sensors = listBufferDD,
                       label = newlabel
                       )
+                      measurementsFuture(measurements)
                   for{
                     thing <- thingDao.addMeasurements(thingInfo, measurements)
 
                   } yield {
-                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
-                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID)
+                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID, false)
+                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID, false)
                     Ok(Json.obj("ok" -> "ok")) }
                 }
               else{
@@ -312,7 +306,7 @@ extends Silhouette[User, JWTAuthenticator] {
 
                 var arrayDouble = Array.empty[Double]
                 for(it <- listDD){
-                  arrayDouble:+it.value
+                  arrayDouble :+ it.value
                 }
                 var newlabel:Double = appController.logReg(data.thingID,arrayDouble)
 
@@ -323,11 +317,12 @@ extends Silhouette[User, JWTAuthenticator] {
                   sensors = listDD,
                   label = newlabel
                 )
+                measurementsFuture(measurements)
                 for{
                   thing <- thingDao.addMeasurements(thingInfo, measurements)
                   } yield {
-                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
-                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID)
+                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID, false)
+                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID, false)
                     Ok(Json.obj("ok" -> "ok")) }
                 }
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
@@ -340,4 +335,39 @@ extends Silhouette[User, JWTAuthenticator] {
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
       }
   }
+
+  def measurementsFuture(measurement: Measurements) = {
+    thingDao.findByID(measurement.thingID).flatMap{
+      thing =>
+        var count = 0
+        var futureSensorList = new ListBuffer[DetectionDouble]
+        var arrayDouble = Array.empty[Double]
+        for(sensorItem <- measurement.sensors){
+          var valueFuture = appController.futureV(thing.get, count)
+          val futureDD = DetectionDouble(
+            sensor = sensorItem.sensor,
+            value = valueFuture
+          )
+          futureSensorList += futureDD
+          arrayDouble :+ futureDD.value
+        }
+        var nextDate= Calendar.getInstance()
+        nextDate.setTime(measurement.dataTime)
+        nextDate.add(Calendar.DAY_OF_MONTH, 1)
+
+        var newlabel:Double = appController.logReg(measurement.thingID, arrayDouble)
+
+        val futureMeasurement = Measurements(
+          measurementsID = UUID.randomUUID(),
+          thingID = measurement.thingID,
+          dataTime = nextDate.getTime(),
+          sensors = futureSensorList.toList,
+          label = newlabel
+        )
+        thingDao.addMeasurements(measurement.thingID, futureMeasurement)
+        notificationController.notifyAfterMeasurementThing(measurement.thingID, futureMeasurement.measurementsID, true)
+        notificationController.notifyAfterMeasurementThingType(thing.get.thingTypeID, futureMeasurement.measurementsID, true)
+     }
+  }
+
 }
