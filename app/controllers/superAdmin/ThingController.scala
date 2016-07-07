@@ -1,7 +1,10 @@
   package controllers.superAdmin
 
 import java.util.UUID
+import java.util.Calendar
+
 import javax.inject.Inject
+import models.Engine
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
@@ -99,8 +102,6 @@ extends Silhouette[User, JWTAuthenticator] {
               for{
                 thing <- thingDao.update(thingID,thing2)
               }yield {
-                //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-                //env.eventBus.publish(LoginEvent(user, request, request2Messages))
                 Ok(Json.obj("ok" -> "ok"))
                }
             case None =>
@@ -120,7 +121,6 @@ extends Silhouette[User, JWTAuthenticator] {
           val thingTypeInfo = data.thingTypeID
           thingTypeDao.findByID(thingTypeInfo).flatMap{
             case Some(thingTypeToAssign) =>
-              //val authInfo = passwordHasher.hash(data.password)
               val thing = Thing(
                   thingID = UUID.randomUUID(),
                   name = data.thingName,
@@ -132,13 +132,7 @@ extends Silhouette[User, JWTAuthenticator] {
               )
               for{
                 thing <- thingDao.save(thing)
-                //user <- userService.save(user.copy(avatarURL = avatar))
-                //authInfo <- authInfoRepository.add(loginInfo, authInfo)
-                //authenticator <- env.authenticatorService.create(loginInfo)
-                //token <- env.authenticatorService.init(authenticator)
               } yield {
-                  //env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-                  //env.eventBus.publish(LoginEvent(user, request, request2Messages))
                   Ok(Json.obj("ok" -> "ok"))
                 }
                 case None =>
@@ -290,21 +284,32 @@ extends Silhouette[User, JWTAuthenticator] {
                   for(it <- listDD){
                     arrayDouble:+it.value
                   }
-                  var newlabel:Double = appController.LogReg(data.thingID,arrayDouble)
+
+                  modelLogRegDao.findByThingID(data.thingID).flatMap{
+                    case None =>
+                      Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+                    case Some(modello) =>
+                    val e = new Engine
+                    // faccio la predizione della nuova label
+                    var newLabel = e.getLogRegPrediction(modello,arrayDouble)
+
                   val measurements = Measurements(
                       measurementsID = UUID.randomUUID(),
                       thingID = data.thingID,
                       dataTime = data.dataTime,
                       sensors = listBufferDD,
-                      label = newlabel
+                      label = newLabel
                       )
+                      measurementsFuture(measurements)
                   for{
                     thing <- thingDao.addMeasurements(thingInfo, measurements)
 
                   } yield {
-                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
-                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID)
+                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID, false)
+                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID, false)
                     Ok(Json.obj("ok" -> "ok")) }
+                    Future.successful(Ok(Json.toJson(newLabel)))
+                  }
                 }
               else{
                 val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
@@ -312,23 +317,32 @@ extends Silhouette[User, JWTAuthenticator] {
 
                 var arrayDouble = Array.empty[Double]
                 for(it <- listDD){
-                  arrayDouble:+it.value
+                  arrayDouble :+ it.value
                 }
-                var newlabel:Double = appController.LogReg(data.thingID,arrayDouble)
-
+                modelLogRegDao.findByThingID(data.thingID).flatMap{
+                  case None =>
+                    Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+                  case Some(modello) =>
+                  val e = new Engine
+                  // faccio la predizione della nuova label
+                  var newLabel = e.getLogRegPrediction(modello,arrayDouble)
                 val measurements = Measurements(
                   measurementsID = UUID.randomUUID(),
                   thingID = data.thingID,
                   dataTime = data.dataTime,
                   sensors = listDD,
-                  label = newlabel
+                  label = newLabel
                 )
+                measurementsFuture(measurements)
+
                 for{
                   thing <- thingDao.addMeasurements(thingInfo, measurements)
                   } yield {
-                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID)
-                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID)
+                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID, false)
+                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID, false)
                     Ok(Json.obj("ok" -> "ok")) }
+                    Future.successful(Ok(Json.toJson(newLabel)))
+                  }
                 }
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
         }
@@ -340,4 +354,48 @@ extends Silhouette[User, JWTAuthenticator] {
             Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
       }
   }
+
+  def measurementsFuture(measurement: Measurements) = {
+    thingDao.findByID(measurement.thingID).flatMap{
+      thing =>
+        var count = 0
+        var futureSensorList = new ListBuffer[DetectionDouble]
+        var arrayDouble = Array.empty[Double]
+        for(sensorItem <- measurement.sensors){
+          var valueFuture = appController.futureV(thing.get, count)
+          val futureDD = DetectionDouble(
+            sensor = sensorItem.sensor,
+            value = valueFuture
+          )
+          futureSensorList += futureDD
+          arrayDouble :+ futureDD.value
+        }
+        var nextDate= Calendar.getInstance()
+        nextDate.setTime(measurement.dataTime)
+        nextDate.add(Calendar.DAY_OF_MONTH, 1)
+
+        modelLogRegDao.findByThingID(thing.get.thingID).flatMap{
+          case None =>
+            Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+          case Some(modello) =>
+          val e = new Engine
+          // faccio la predizione della nuova label
+          var newLabel = e.getLogRegPrediction(modello,arrayDouble)
+
+
+        val futureMeasurement = Measurements(
+          measurementsID = UUID.randomUUID(),
+          thingID = measurement.thingID,
+          dataTime = nextDate.getTime(),
+          sensors = futureSensorList.toList,
+          label = newLabel
+        )
+        thingDao.addMeasurements(measurement.thingID, futureMeasurement)
+        notificationController.notifyAfterMeasurementThing(measurement.thingID, futureMeasurement.measurementsID, true)
+        notificationController.notifyAfterMeasurementThingType(thing.get.thingTypeID, futureMeasurement.measurementsID, true)
+        Future.successful(Ok(Json.toJson(newLabel)))
+      }
+     }
+  }
+
 }

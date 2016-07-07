@@ -98,10 +98,10 @@ class GraphicController @Inject() (
               }
               else{
                 var lastDateMeasurement = thing.datas(countForDate).dataTime
-                var prova= Calendar.getInstance()
-                prova.setTime(lastDateMeasurement)
-                prova.add(Calendar.DAY_OF_MONTH, 1)
-                valueX += prova.getTime()
+                var nextDate= Calendar.getInstance()
+                nextDate.setTime(lastDateMeasurement)
+                nextDate.add(Calendar.DAY_OF_MONTH, 1)
+                valueX += nextDate.getTime()
                  val graphic = Graphic(
                    futureV = futureV,
                    valuesY = valueY.toArray,

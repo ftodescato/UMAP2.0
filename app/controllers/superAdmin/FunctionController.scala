@@ -14,19 +14,10 @@ import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
 
-//import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
-//import com.mohiva.play.silhouette.api.services.AvatarService
-//import com.mohiva.play.silhouette.api.util.PasswordHasher
-//import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-
 import scala.concurrent.Future
-//import scala.collection.mutable.ListBuffer
 
 
 class FunctionController @Inject() (
-  //authInfoRepository: AuthInfoRepository,
-  //avatarService: AvatarService,
-  //passwordHasher: PasswordHasher,
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
   functionDao: FunctionDAO

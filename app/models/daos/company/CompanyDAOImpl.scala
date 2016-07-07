@@ -17,9 +17,7 @@ import models.Company
 
 import java.util.UUID
 
-/**
- * Give access to the company object.
- */
+
 class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
 
   def collection: JSONCollection = db.collection[JSONCollection]("company")
@@ -44,17 +42,6 @@ class CompanyDAOImpl @Inject() (db : DB) extends CompanyDAO {
     collection.find(Json.obj("companyID" -> companyID)).one[Company]
   }
 
-  def checkExistence(companyIDs: List[UUID]): Future[Boolean] = {
-    var exist = true;
-    var aux = true;
-    for( companyID <- companyIDs ){
-      this.findByID(companyID).flatMap{
-        case None => Future.successful(exist = false)
-        case Some(company) => Future.successful(aux = true)
-      }
-    }
-    Future.successful(exist)
-  }
 
   def save(company: Company) = {
     collection.insert(company)
