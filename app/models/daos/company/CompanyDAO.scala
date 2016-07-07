@@ -48,7 +48,7 @@ trait CompanyDAO {
    * @param companyIDs The list company to check if it's in db.
    * @return The boolean.
    */
-  def checkExistence(companyIDs: List[UUID]): Future[Boolean]
+  def checkExistence(companyIDs: List[UUID]): Boolean
 
   /**
    * Saves a Company.

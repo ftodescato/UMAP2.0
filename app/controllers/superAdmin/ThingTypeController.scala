@@ -61,10 +61,10 @@ extends Silhouette[User, JWTAuthenticator] {
   def addThingType = Action.async(parse.json) { implicit request =>
     request.body.validate[AddThingType.Data].map { data =>
       val companyInfo = data.company
-      companyDao.checkExistence(companyInfo).flatMap {
-        case false =>
-          Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-        case true =>
+      if(companyDao.checkExistence(companyInfo)){//.flatMap {
+        // case false =>
+        //   Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+        // case true =>
         val companyIDList = new ListBuffer[UUID]
         for( companyID <- data.company ){
           companyIDList += companyID
@@ -91,7 +91,11 @@ extends Silhouette[User, JWTAuthenticator] {
         } yield {
           Ok(Json.obj("ok" -> "ok"))
         }
-      }
+      //}
+    }
+    else{
+      Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+    }
 }.recoverTotal {
   case error =>
     Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
@@ -129,10 +133,11 @@ def delete(thingTypeID: UUID) = SecuredAction(WithServices(Array("superAdmin"), 
   def updateThingType(id: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[EditThingType.Data].map { data =>
       val companyInfo = data.company
-      companyDao.checkExistence(companyInfo).flatMap {
-        case false =>
-          Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
-        case true =>
+      if(companyDao.checkExistence(companyInfo)){
+        // .flatMap {
+        // case false =>
+        //   Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+        // case true =>
         thingTypeDao.findByID(id).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("thingType.notExists"))))
           case Some(thingType) =>
@@ -152,7 +157,11 @@ def delete(thingTypeID: UUID) = SecuredAction(WithServices(Array("superAdmin"), 
             Ok(Json.obj("ok" -> "ok"))
           }
           }
-      }
+    //  }
+    }
+    else{
+      Future.successful(BadRequest(Json.obj("message" -> Messages("company.notExists"))))
+    }
 }.recoverTotal {
   case error =>
     Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
