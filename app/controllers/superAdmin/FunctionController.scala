@@ -25,7 +25,7 @@ class FunctionController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-  def showFunctions = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
+  def showFunctions = SecuredAction(WithServices(Array("superAdmin","admin"), true)).async{ implicit request =>
     val functions = functionDao.findAll()
     functions.flatMap{
       functions =>

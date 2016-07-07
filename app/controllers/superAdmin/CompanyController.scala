@@ -190,7 +190,7 @@ class CompanyController @Inject() (
   }
 
 //metodo che permette di di modificare le funzioni disponibili per una company
-  def selectFunction = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
+  def selectFunction = SecuredAction(WithServices(Array("superAdmin","admin"), true)).async(parse.json) { implicit request =>
     //richiesta alla form forms.engine.SelectFunction
     request.body.validate[SelectFunction.Data].map { data =>
       //ricerca nel DB di una company tramite ID
