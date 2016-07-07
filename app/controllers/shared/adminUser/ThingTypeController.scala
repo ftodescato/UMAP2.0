@@ -1,5 +1,4 @@
 package controllers.shared.adminUser
-package controllers.shared.adminUser
 
 import java.util.UUID
 import javax.inject.Inject

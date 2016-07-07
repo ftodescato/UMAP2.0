@@ -10,6 +10,8 @@ import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+import controllers._
+
 
 import forms.notification._
 import models._
@@ -17,7 +19,6 @@ import models.Chart
 import models.Engine
 import models.daos.chart._
 import models.daos.thing._
-import controllers._
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
@@ -30,8 +31,8 @@ import scala.collection.mutable.ArrayBuffer
 
 class GraphicController @Inject() (
   val messagesApi: MessagesApi,
-  chartDao: ChartDAO,
   engine: ApplicationController,
+  chartDao: ChartDAO,
   thingDao: ThingDAO,
   val env: Environment[User, JWTAuthenticator])
   extends Silhouette[User, JWTAuthenticator] {
