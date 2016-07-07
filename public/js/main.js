@@ -41456,7 +41456,7 @@ umap.factory('MyCompanyService', function($resource) {
         $scope.errore = 'errore ! password differenti';
         return;
       }else{
-        LoginService.Reset.save($scope.reset, function(){
+        LoginService.Reset.save($scope.credentials, function(){
           $state.go('root')
         });
       }
