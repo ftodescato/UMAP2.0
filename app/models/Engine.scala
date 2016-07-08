@@ -116,7 +116,7 @@ class Engine{
     val metrics = new MulticlassMetrics(predictionAndLabels)
     val precision = metrics.precision
     predictionAndLabels.collect().foreach{ point =>  println(point)}
-    val savedModel:LogRegModel = new LogRegModel(UUID.randomUUID(),thingID,model.intercept,model.numFeatures,model.numClasses,model.weights.toArray)
+    val savedModel:LogRegModel = LogRegModel(UUID.randomUUID(),thingID,model.intercept,model.numFeatures,model.numClasses,model.weights.toArray)
     sc.stop()
     savedModel
   }

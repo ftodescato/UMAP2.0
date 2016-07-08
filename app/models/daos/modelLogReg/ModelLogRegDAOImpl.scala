@@ -29,9 +29,9 @@ class ModelLogRegDAOImpl @Inject() (db : DB) extends ModelLogRegDAO {
   }
 
 
-  def save(logRegModelID: LogRegModel): Future[LogRegModel] = {
-    collection.insert(logRegModelID)
-    Future.successful(logRegModelID)
+  def save(logRegModel: LogRegModel): Future[LogRegModel] = {
+    collection.insert(logRegModel)
+    Future.successful(logRegModel)
   }
 
   def update(logRegModelID: UUID, newModelLogReg: LogRegModel): Future[LogRegModel] = {
