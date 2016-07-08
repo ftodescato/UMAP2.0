@@ -26,6 +26,8 @@ libraryDependencies ++= Seq(
   "org.reactivemongo" %% "play2-reactivemongo" % "0.11.5.play24",
   "com.typesafe.play" %% "play-mailer" % "4.0.0",
   "com.github.nscala-time" %% "nscala-time" % "2.12.0",
+  "org.scalactic" %% "scalactic" % "2.2.6",
+  "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   cache,
   filters
 )
