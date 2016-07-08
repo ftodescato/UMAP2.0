@@ -405,27 +405,26 @@ extends Silhouette[User, JWTAuthenticator] {
   def measurementsFuture(measurement: Measurements) = {
     thingDao.findByID(measurement.thingID).flatMap{
       thing =>
-        var count = 0
-        var futureSensorList = new ListBuffer[DetectionDouble]
-        var arrayDouble = Array.empty[Double]
-        for(sensorItem <- measurement.sensors){
-          var valueFuture = appController.futureV(thing.get, count)
-          val futureDD = DetectionDouble(
-            sensor = sensorItem.sensor,
-            value = valueFuture
-          )
-          futureSensorList += futureDD
-          arrayDouble :+ futureDD.value
-        }
-        var nextDate= Calendar.getInstance()
-        nextDate.setTime(measurement.dataTime)
-        nextDate.add(Calendar.DAY_OF_MONTH, 1)
-
-        modelLogRegDao.findByThingID(thing.get.thingID).flatMap{
-          case None =>
-            Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
-          case Some(modello) =>
+      modelLogRegDao.findByThingID(thing.get.thingID).flatMap{
+        case None =>
+          Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+        case Some(modello) =>
+            var count = 0
+            var futureSensorList = new ListBuffer[DetectionDouble]
+            var arrayDouble = Array.empty[Double]
+            for(sensorItem <- measurement.sensors){
+              var valueFuture = appController.futureV(thing.get, count)
+              val futureDD = DetectionDouble(
+                sensor = sensorItem.sensor,
+                value = valueFuture
+              )
+              futureSensorList += futureDD
+              arrayDouble :+ futureDD.value
+            }
           val e = new Engine
+          var nextDate= Calendar.getInstance()
+          nextDate.setTime(measurement.dataTime)
+          nextDate.add(Calendar.DAY_OF_MONTH, 1)
           // faccio la predizione della nuova label
           var newLabel = e.getLogRegPrediction(modello,arrayDouble)
 
@@ -437,11 +436,17 @@ extends Silhouette[User, JWTAuthenticator] {
           sensors = futureSensorList.toList,
           label = newLabel
         )
-        thingDao.addMeasurements(measurement.thingID, futureMeasurement)
-        notificationController.notifyAfterMeasurementThing(measurement.thingID, futureMeasurement.measurementsID, true)
-        notificationController.notifyAfterMeasurementThingType(thing.get.thingTypeID, futureMeasurement.measurementsID, true)
-        Future.successful(Ok(Json.toJson(newLabel)))
+        for{
+          thing <-   thingDao.addMeasurements(measurement.thingID, futureMeasurement)
+          } yield {
+
+            notificationController.notifyAfterMeasurementThing(measurement.thingID, futureMeasurement.measurementsID, true)
+            notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, futureMeasurement.measurementsID, true)
+            Ok(Json.obj("ok" -> "ok"))
+            Future.successful(Ok(Json.toJson(newLabel)))
+          }
       }
+      Future.successful(Ok(Json.toJson(thing)))
      }
   }
 
