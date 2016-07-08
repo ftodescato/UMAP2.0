@@ -68,27 +68,6 @@ class UserController @Inject() (
     }
   }
 
-  //HO IDEA CHE NON LO USIAMO
-  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
-  // def showUsersByName(userName: String) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
-  //   val users = userDao.findByName(userName)
-  //   users.flatMap{
-  //    users =>
-  //     Future.successful(Ok(Json.toJson(users)))
-  //   }
-  // }
-
-  //HO IDEA CHE NON LO USIAMO
-  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
-  // def showUsersBySurname(userSurname: String) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
-  //   val users = userDao.findBySurname(userSurname)
-  //   users.flatMap{
-  //    users =>
-  //     Future.successful(Ok(Json.toJson(users)))
-  //   }
-  // }
-
-  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
  def showUserDetails(userID: UUID) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
       val user = userDao.findByID(userID)
         user.flatMap{
@@ -97,7 +76,6 @@ class UserController @Inject() (
         }
  }
 
-  //lato fronted bisogna fare la ricerca findByID solo sugli utenti della stessa company
  def delete(userID: UUID) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
   userDao.findByID(userID).flatMap{
     case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
@@ -112,7 +90,6 @@ class UserController @Inject() (
   }
 }
 
-//lato fronted bisogna fare aggiungere la company dell'admin (nascosta nella form)
 def updateUser(userID: UUID) = SecuredAction(WithServices(Array("admin"), true)).async(parse.json) { implicit request =>
   request.body.validate[EditUser.Data].map { data =>
     userDao.findByID(userID).flatMap {
