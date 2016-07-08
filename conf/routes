@@ -9,14 +9,6 @@ GET         /signOut                            controllers.ApplicationControlle
 POST        /signIn                             controllers.shared.account.AuthController.authenticate
 GET         /api/getrole                        controllers.shared.account.AuthController.getRole
 
-
-#GET        /corr                               controllers.ApplicationController.correlation
-#GET        /sumstat/:mv                        controllers.ApplicationController.sumStatistic(mv:String)
-#GET        /NB                                 controllers.ApplicationController.NaiveBayes(id: java.util.UUID)
-#GET        /logreg                             controllers.ApplicationController.logReg(id: java.util.UUID)
-#GET        /futureV                            controllers.ApplicationController.futureV(id: java.util.UUID)
-
-
 POST        /api/functions                      controllers.superAdmin.FunctionController.addFunction
 
 #ACCOUNT
@@ -44,11 +36,11 @@ PUT         /api/usersA/:id                     controllers.admin.UserController
 DELETE      /api/usersA/:id                     controllers.admin.UserController.delete(id: java.util.UUID)
 GET         /api/getMyCompany                   controllers.admin.UserController.getMyCompany
 POST        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
-GET        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
+GET        /api/engineA/functions               controllers.admin.FunctionController.selectFunction
 
 
 
-# ADMIN+USER
+#ADMIN+USER
 GET         /api/thingTypes                     controllers.shared.adminUser.ThingTypeController.showThingType
 GET         /api/thingTypes/:id                 controllers.shared.adminUser.ThingTypeController.showThingTypeDetails(id: java.util.UUID)
 GET         /api/things                         controllers.shared.adminUser.ThingTypeController.showThings
@@ -65,7 +57,7 @@ GET         /api/graphics/:id                   controllers.shared.adminUser.Gra
 #SUPERADMIN
 PUT         /api/passwordsSA/:id                controllers.superAdmin.PasswordController.updatePassword(id: java.util.UUID)
 POST        /api/measurements                   controllers.superAdmin.ThingController.addMeasurements
-POST        /api/newmeasurements                   controllers.superAdmin.ThingController.addNewMeasurements
+POST        /api/newmeasurements                controllers.superAdmin.ThingController.addNewMeasurements
 
 
 POST        /api/thingTypeVisibility            controllers.superAdmin.CompanyController.selectDataFromThingType

@@ -198,11 +198,4 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
 
     new CredentialsProvider(authInfoRepository, passwordHasher, Seq(passwordHasher))
   }
-
-
-
-
-
-
-
 }

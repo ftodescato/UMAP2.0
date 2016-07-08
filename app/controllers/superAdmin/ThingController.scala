@@ -8,7 +8,9 @@ import models.Engine
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
+
 import forms.thing._
+
 import models._
 import models.Thing
 import models.User
@@ -21,6 +23,7 @@ import models.daos.thing.ThingDAO
 import models.daos.chart.ChartDAO
 import models.daos.modelLogReg.ModelLogRegDAO
 import models.daos.notification.NotificationDAO
+
 import controllers.ApplicationController
 import controllers.shared.adminUser.NotificationController
 
@@ -33,16 +36,8 @@ import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 
 
-//import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
-//import com.mohiva.play.silhouette.api.services.AvatarService
-//import com.mohiva.play.silhouette.api.util.PasswordHasher
-//import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-
 
 class ThingController @Inject() (
-  //authInfoRepository: AuthInfoRepository,
-  //avatarService: AvatarService,
-  //passwordHasher: PasswordHasher,
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
   thingDao: ThingDAO,

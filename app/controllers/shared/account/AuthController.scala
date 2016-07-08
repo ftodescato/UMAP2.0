@@ -25,18 +25,6 @@ import play.api.mvc.Action
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-/**
- * The credentials auth controller.
- *
- * @param messagesApi The Play messages API.
- * @param env The Silhouette environment.
- * @param userService The user service implementation.
- * @param authInfoRepository The auth info repository implementation.
- * @param credentialsProvider The credentials provider.
- * @param socialProviderRegistry The social provider registry.
- * @param configuration The Play configuration.
- * @param clock The clock instance.
- */
 class AuthController @Inject() (
   val messagesApi: MessagesApi,
   val env: Environment[User, JWTAuthenticator],
@@ -47,20 +35,14 @@ class AuthController @Inject() (
   clock: Clock)
   extends Silhouette[User, JWTAuthenticator] {
 
-  /**
-   * Converts the JSON into a `SignIn.Data` object.
-   */
+
   implicit val dataReads = (
     (__ \ 'email).read[String] and
     (__ \ 'password).read[String] and
     (__ \ 'rememberMe).read[Boolean]
   )(SignIn.Data.apply _)
 
-  /**
-   * Authenticates a user against the credentials provider.
-   *
-   * @return The result to display.
-   */
+
   def authenticate = Action.async(parse.json) { implicit request =>
     request.body.validate[SignIn.Data].map { data =>
       credentialsProvider.authenticate(Credentials(data.email, data.password)).flatMap { loginInfo =>

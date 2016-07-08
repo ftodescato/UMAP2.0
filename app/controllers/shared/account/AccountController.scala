@@ -2,9 +2,6 @@ package controllers.shared.account
 
 import java.io.File
 
-//import org.apache.commons.mail.EmailAttachment
-
-
 import java.util.UUID
 import javax.inject.Inject
 
@@ -123,8 +120,6 @@ class AccountController @Inject() (
                }yield {
                  Ok(Json.obj("token" -> "ok"))
                }
-
-
            }
      }
    }.recoverTotal {
@@ -183,9 +178,7 @@ class AccountController @Inject() (
            if(user.secretString == data.secretString){
            var authInfo = passwordHasher.hash(data.newPassword)
            userDao.confirmedMail(user)
-
              for{
-
                authInfo <- passwordInfoDao.update(loginInfo, authInfo)
              }yield {
                Ok(Json.obj("token" -> "ok"))

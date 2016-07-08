@@ -22,9 +22,9 @@ import play.api.libs.mailer._
 import play.api.libs.json.Json
 import play.api.mvc.Action
 
-import scala.concurrent.Future
 import scala.language.postfixOps
-//import per predizione giornaliera
+
+import scala.concurrent.Future
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext
 import ExecutionContext.Implicits.global
@@ -79,27 +79,6 @@ class ApplicationController @Inject() (
     solution
   }
 
-
-  // creazione del modello degli oggetti a partire dai dati nel DB
-  //def modelLogRegSave(thingID: UUID) = Action.async{ implicit request =>
-    //recupero informazioni dal DB
-    // thingDao.findByID(thingID).flatMap{
-    //   case None =>
-    //     Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-    //   case Some(thing) =>
-    //     val label=thingDao.findListLabel(thing)
-    //     val data=thingDao.findListArray(thing)
-    //     //creo il modello di una thing
-    //     val e = new Engine
-    //     val modello:LogRegModel = e.getLogRegModel(thingID,label,data)
-    //     for {
-    //      modello <- modelLogRegDao.save(modello)
-    //   } yield {
-    //     Ok(Json.obj("ok" -> "ok"))
-    //   }
-    // }
-//}
-
     def modelLogRegUpdate(thingID: UUID, oldModelID: UUID) = Action.async{ implicit request =>
       //recupero informazioni dal DB
       thingDao.findByID(thingID).flatMap{
@@ -144,69 +123,6 @@ class ApplicationController @Inject() (
         future=sol(datatype)
     future
   }
-
-
-
-
- // @Every("1d")
- // val system = akka.actor.ActorSystem("system")
- // system.scheduler.schedule(0 seconds, 1 seconds,  ,dailyPrediction)
-
- def dailyPrediction = {
-   notificationDao.findAll().flatMap{
-     notificationsList =>
-        for(notification <- notificationsList){
-          if(notification.isThing){
-            //prendo il parametro su cui faccio i controlli e lo confronto con i valori min e max delle notifiche
-            var parameter = notification.inputType
-            thingDao.findByID(notification.thingID.get).flatMap{
-
-              case None =>
-                Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
-              case Some(thing) =>
-                var parameterFind = false
-                var count = 0
-                for(measurement <- thing.datas){
-                for (sensorParameter <- measurement.sensors if parameterFind == false){
-                  if(sensorParameter.sensor == parameter){
-                    parameterFind = true
-                  }
-                  count = count + 1
-                }
-              }
-
-                var resultFuture = futureV(thing, count)
-                if(resultFuture > notification.valMax){
-                  val email = Email(
-                    "Valori "+parameter+"",
-                    "LatexeBiscotti <latexebiscotti@gmail.com>",
-                    Seq("Miss TO <"+notification.emailUser+">"),
-                    bodyText = Some("Il valore "+parameter+" arriverà a:"+resultFuture+" e il massimo previsto è per "+notification.valMax
-                    )
-                  )
-                  mailer.send(email)
-                }
-                if(resultFuture < notification.valMin){
-                  val email = Email(
-                    "Valori "+parameter+"",
-                    "LatexeBiscotti <latexebiscotti@gmail.com>",
-                    Seq("Miss TO <"+notification.emailUser+">"),
-                    bodyText = Some("Il valore "+parameter+" arriverà a:"+resultFuture+" e il minimo previsto è per "+notification.valMin
-                    )
-                  )
-                  mailer.send(email)
-                }
-                Future.successful(Ok(Json.toJson(thing)))
-            }
-          }
-        }
-        Future.successful(Ok(Json.toJson(notificationsList)))
-   }
- }
-
-
-
-
 
   def signOut = SecuredAction.async { implicit request =>
     env.eventBus.publish(LogoutEvent(request.identity, request, request2Messages))

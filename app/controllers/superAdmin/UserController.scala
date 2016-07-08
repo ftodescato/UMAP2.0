@@ -2,7 +2,6 @@ package controllers.superAdmin
 
 import java.util.UUID
 import javax.inject.Inject
-import play.api.libs.mailer._
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
@@ -10,17 +9,22 @@ import com.mohiva.play.silhouette.api.services.AvatarService
 import com.mohiva.play.silhouette.api.util.PasswordHasher
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
+
 import forms.user._
+
 import models.User
 import models._
 import models.services._
 import models.daos.user._
 import models.daos.password._
 import models.daos.company._
+
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
+import play.api.libs.mailer._
+
 import scala.concurrent.Future
 
 class UserController @Inject() (
@@ -152,16 +156,11 @@ class UserController @Inject() (
                 )
               )
               mailer.send(email)
-
               for {
-              //user <- userService.save(user.copy(avatarURL = avatar))
               authInfo <- authInfoRepository.add(loginInfo, authInfo)
               authenticator <- env.authenticatorService.create(loginInfo)
               user <- userDao.save(user)
-            //  token <- env.authenticatorService.init(authenticator)
             } yield {
-            //  env.eventBus.publish(SignUpEvent(user, request, request2Messages))
-            //  env.eventBus.publish(LoginEvent(user, request, request2Messages))
               Ok(Json.obj("token" -> "ok"))
             }
             case None =>

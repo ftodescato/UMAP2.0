@@ -2,31 +2,29 @@ package controllers.superAdmin
 
 import java.util.UUID
 import javax.inject.Inject
-import models.DataDouble
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
+
 import forms.thingType._
+
 import models._
 import models.ThingType
 import models.Thing
 import models.User
 import models.Info
+import models.DataDouble
 import models.daos.company.CompanyDAO
 import models.daos.notification.NotificationDAO
 import models.daos.thingType.ThingTypeDAO
 import models.daos.thing.ThingDAO
+
 import play.api.i18n.{ MessagesApi, Messages }
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.json.Json
 import play.api.mvc.Action
+
 import scala.collection.mutable.ListBuffer
-
-//import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
-//import com.mohiva.play.silhouette.api.services.AvatarService
-//import com.mohiva.play.silhouette.api.util.PasswordHasher
-//import com.mohiva.play.silhouette.impl.providers.CredentialsProvider
-
 import scala.concurrent.Future
 
 
