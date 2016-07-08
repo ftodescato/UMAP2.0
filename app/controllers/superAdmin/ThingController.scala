@@ -267,6 +267,8 @@ extends Silhouette[User, JWTAuthenticator] {
                                   //creo il modello di una thing
                                   val e = new Engine
                                   val modello:LogRegModel = e.getLogRegModel(thingToAssign.thingID,label,data)
+                                  println("aaaaaaa")
+
                                   for {
                                    modello <- modelLogRegDao.save(modello)
                                 } yield {
@@ -308,7 +310,6 @@ extends Silhouette[User, JWTAuthenticator] {
                 listParametersthingType += infoThingType.name
               }
               if (!(listParametersthingType.equals(data.sensor))){
-
 
                   modelLogRegDao.findByThingID(data.thingID).flatMap{
                     case None =>
@@ -383,6 +384,7 @@ extends Silhouette[User, JWTAuthenticator] {
                 for{
                   thing <- thingDao.addMeasurements(thingInfo, measurements)
                   } yield {
+                    println("ciao")
                     notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID, false)
                     notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID, false)
                     Ok(Json.obj("ok" -> "ok")) }

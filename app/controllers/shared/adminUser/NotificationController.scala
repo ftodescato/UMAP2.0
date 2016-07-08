@@ -25,6 +25,8 @@ import play.api.mvc.Action
 import play.api.libs.mailer._
 
 import scala.concurrent.Future
+import scala.collection.mutable.ListBuffer
+
 
 class NotificationController @Inject() (
   val messagesApi: MessagesApi,
@@ -194,16 +196,20 @@ class NotificationController @Inject() (
                     for(measurement <- listOfMeasurements){
                       if(measurement.measurementsID == measurementID){
                         if (measurement.label != 0){
-                          bodyMail = thing.name+" si trova in stato: "+measurement.label+"."
-                        }
+                          if(future){
+                            notificationToAdmin(measurement, true)
+                          }
+                          else{
+                            notificationToAdmin(measurement, false)
+                          }                        }
                         for(detectionDouble <- measurement.sensors if parameterFind == false)
                           if(detectionDouble.sensor == parameter){
                             parameterFind = true
                             if(detectionDouble.value > notification.valMax){
-                              bodyMail = bodyMail+"Il valore "+parameter+"è a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
+                              bodyMail = bodyMail+"Il valore "+parameter+" è a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
                             }
                             if(detectionDouble.value < notification.valMin){
-                              bodyMail = bodyMail+ "Il valore "+parameter+"è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
+                              bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
                             }
                           }
                           val email = Email(
@@ -258,7 +264,7 @@ class NotificationController @Inject() (
                                       bodyMail = bodyMail+"Il valore "+parameter+" nella prossima misurazione sarà a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
                                     }
                                     else{
-                                      bodyMail = bodyMail+ "Il valore "+parameter+"è a:"+detectionDouble.value+" e il massimo previsto è per"+notification.valMin+"."
+                                      bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il massimo previsto è per"+notification.valMin+"."
                                     }
                                   }
                                   if(detectionDouble.value < notification.valMin){
@@ -266,7 +272,7 @@ class NotificationController @Inject() (
                                       bodyMail = bodyMail+"Il valore "+parameter+" nella prossima misurazione sarà a: "+detectionDouble.value+" e il minimo previsto è per "+notification.valMax+"."
                                     }
                                     else{
-                                      bodyMail = bodyMail+ "Il valore "+parameter+"è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
+                                      bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
                                     }                                  }
                                 }
                                 val email = Email(
@@ -292,30 +298,37 @@ class NotificationController @Inject() (
   def notificationToAdmin(measurement: Measurements, future: Boolean) = {
     thingDao.findByID(measurement.thingID).flatMap{
       thing =>
-        userDao.findAdminByCompanyID(thing.get.companyID).flatMap{
-          listAdmin =>
-            for(admin <- listAdmin){
-              if(future){
-                val email = Email(
-                  "Stato oggetto",
-                  "LatexeBiscotti <latexebiscotti@gmail.com>",
-                  Seq("Miss TO <"+admin.email+">"),
-                  bodyText = Some(thing.get.name+" si troverà in stato: "+measurement.label+" nella sua prossima misurazione.")
-                )
-                mailer.send(email)
-              }
-              else{
-                val email = Email(
-                  "Stato oggetto",
-                  "LatexeBiscotti <latexebiscotti@gmail.com>",
-                  Seq("Miss TO <"+admin.email+">"),
-                  bodyText = Some(thing.get.name+" è in stato: "+measurement.label+".")
-                )
-                mailer.send(email)
-              }
+      userDao.findByIDCompany(thing.get.companyID).flatMap{
+        listUserOfCmpany =>
+        var listAdmin = new ListBuffer[User]
+          for(user <- listUserOfCmpany){
+            if(user.role == "admin"){
+              listAdmin += user
             }
-            Future.successful(Ok(Json.toJson(listAdmin)))
-        }
+          }
+              for(admin <- listAdmin){
+                if(future){
+                  val email = Email(
+                    "Stato oggetto",
+                    "LatexeBiscotti <latexebiscotti@gmail.com>",
+                    Seq("Miss TO <"+admin.email+">"),
+                    bodyText = Some(thing.get.name+" si troverà in stato: "+measurement.label+" nella sua prossima misurazione.")
+                  )
+                  mailer.send(email)
+                }
+                else{
+                  val email = Email(
+                    "Stato oggetto",
+                    "LatexeBiscotti <latexebiscotti@gmail.com>",
+                    Seq("Miss TO <"+admin.email+">"),
+                    bodyText = Some(thing.get.name+" è in stato: "+measurement.label+".")
+                  )
+                  mailer.send(email)
+                }
+              }
+          Future.successful(listAdmin.toList)
+      }
+
         Future.successful(Ok(Json.toJson(thing)))
     }
   }
