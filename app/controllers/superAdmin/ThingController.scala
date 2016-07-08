@@ -33,6 +33,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Action
 
 import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.Future
 
 
@@ -307,33 +308,34 @@ extends Silhouette[User, JWTAuthenticator] {
                 listParametersthingType += infoThingType.name
               }
               if (!(listParametersthingType.equals(data.sensor))){
-                  val listDD = new ListBuffer[DetectionDouble]
-                  var count: Int = 0
-                  var dataSensor = data.sensor
-                  for (nameParameterMeasurement <- listParametersthingType){
-                    if(dataSensor.contains(nameParameterMeasurement)){
-                        var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
-                        listDD += dD
-                        count = count + 1
-                      }
-                    else{
-                        var dD = new DetectionDouble(nameParameterMeasurement, 1000000.0)
-                        listDD += dD
-                      }
-                    }
-                  val listBufferDD = listDD.toList
-                  var arrayDouble = Array.empty[Double]
-                  for(it <- listDD){
-                    arrayDouble:+it.value
-                  }
+
 
                   modelLogRegDao.findByThingID(data.thingID).flatMap{
                     case None =>
                       Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
                     case Some(modello) =>
+                    val listDD = new ListBuffer[DetectionDouble]
+                    var count: Int = 0
+                    var dataSensor = data.sensor
+                    for (nameParameterMeasurement <- listParametersthingType){
+                      if(dataSensor.contains(nameParameterMeasurement)){
+                          var dD = new DetectionDouble(nameParameterMeasurement, data.value(count))
+                          listDD += dD
+                          count = count + 1
+                        }
+                      else{
+                          var dD = new DetectionDouble(nameParameterMeasurement, 1000000.0)
+                          listDD += dD
+                        }
+                      }
+                    val listBufferDD = listDD.toList
+                    var arrayDouble =new ArrayBuffer[Double]
+                    for(it <- listDD){
+                      arrayDouble+=it.value
+                    }
                     val e = new Engine
                     // faccio la predizione della nuova label
-                    var newLabel = e.getLogRegPrediction(modello,arrayDouble)
+                    var newLabel = e.getLogRegPrediction(modello,arrayDouble.toArray)
 
                   val measurements = Measurements(
                       measurementsID = UUID.randomUUID(),
@@ -354,20 +356,21 @@ extends Silhouette[User, JWTAuthenticator] {
                   }
                 }
               else{
-                val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
-                yield new DetectionDouble(sensorName, valueDouble)
 
-                var arrayDouble = Array.empty[Double]
-                for(it <- listDD){
-                  arrayDouble :+ it.value
-                }
                 modelLogRegDao.findByThingID(data.thingID).flatMap{
                   case None =>
                     Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
                   case Some(modello) =>
+                  val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
+                  yield new DetectionDouble(sensorName, valueDouble)
+
+                  var arrayDouble =new ArrayBuffer[Double]
+                  for(it <- listDD){
+                    arrayDouble+=it.value
+                  }
                   val e = new Engine
                   // faccio la predizione della nuova label
-                  var newLabel = e.getLogRegPrediction(modello,arrayDouble)
+                  var newLabel = e.getLogRegPrediction(modello,arrayDouble.toArray)
                 val measurements = Measurements(
                   measurementsID = UUID.randomUUID(),
                   thingID = data.thingID,

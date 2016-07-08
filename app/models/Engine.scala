@@ -127,15 +127,29 @@ class Engine{
 
     val configuration = new SparkConf().setAppName("Simple Application").setMaster("local").set("spark.driver.allowMultipleContexts", "true") ;
     val sc = new SparkContext(configuration)
-
+    println("------------------------DEBUG------------------- ARRAY")
+    println(data.length)
+    val temp=Vectors.dense(data)
+    println("------------------------DEBUG-------------------")
+    println(temp.size)
     val vecMeasureArray = data.map(Vectors.dense(_))
     val test2:RDD[Vector] = sc.parallelize(vecMeasureArray)
     val weights = Vectors.dense(modello.getWeights)
-    val loadedModel:LogisticRegressionModel = new LogisticRegressionModel(weights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
-    val prediction = loadedModel.predict(test2)
-    val sol=prediction.collect.toArray
+    println("------------------------DEBUG-------------------")
+    println(modello.getNumFeatures)
+    println("------------------------DEBUG-------------------")
+    println(modello.getIntercept)
+    println("------------------------DEBUG-------------------")
+    println(modello.numFeatures)
+    val loadedModel:LogisticRegressionModel =new LogisticRegressionModel(weights,modello.getIntercept,modello.getNumFeatures,modello.getClasses)
+    val prediction = loadedModel.predict(temp)
+    println("------------------------DEBUG-------------------")
+    println(loadedModel)
+    println("------------------------DEBUG-------------------")
+    //println(prediction.isEmpty())
+    val sol=prediction//.collect.toArray
     sc.stop()
-    sol(0)
+    sol//(0)
   }
   // calcola una possibile misurazione futura
   def getFuture(lista:List[Array[Double]]):Array[Double] ={
