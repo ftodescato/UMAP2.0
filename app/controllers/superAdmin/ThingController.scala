@@ -149,21 +149,28 @@ extends Silhouette[User, JWTAuthenticator] {
 
   def addMeasurements = Action.async(parse.json) { implicit request =>
     request.body.validate[AddMeasurement.Data].map {
+      println("a")
       data =>
       val thingInfo = data.thingID
-      val numberOfMeasuremnts = thingDao.countMeasurements(thingInfo)
       thingDao.findByID(thingInfo).flatMap{
         case Some(thingToAssign) =>
         thingTypeDao.findByID(thingToAssign.thingTypeID).flatMap{
           case Some(thingType) =>
+          println("b")
+            var numberOfMeasurements = 0
+            for(measurement <- thingToAssign.datas){
+              numberOfMeasurements = numberOfMeasurements + 1
+            }
             var dataThingType = thingType.doubleValue
             var listParametersthingType = new ListBuffer[String]
             for(infoThingType <- dataThingType.infos)
               {
                 listParametersthingType += infoThingType.name
               }
+              println("d")
               if (!(listParametersthingType.equals(data.sensor)))
-                {
+                {println("x")
+
                   val listDD = new ListBuffer[DetectionDouble]
                   var count: Int = 0
                   var dataSensor = data.sensor
@@ -189,10 +196,14 @@ extends Silhouette[User, JWTAuthenticator] {
                           label = data.label
                       )
 
+                      println("1")
+
+
                       for{
                         thing <- thingDao.addMeasurements(thingInfo, measurements)
                       } yield {
-                        if(numberOfMeasuremnts > 5){
+                        if(numberOfMeasurements > 5){
+                          println("1")
                           modelLogRegDao.findByThingID(thingInfo).flatMap{
                             model =>
                             appController.modelLogRegUpdate(thingInfo, model.get.logRegModelID)
@@ -200,15 +211,31 @@ extends Silhouette[User, JWTAuthenticator] {
 
                           }
                         }else{
-                          if(numberOfMeasuremnts == 5){
-                            appController.modelLogRegSave(thingInfo)
+                          if(numberOfMeasurements == 5){
+                            thingDao.findByID(thingToAssign.thingID).flatMap{
+                              case None =>
+                                Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+                              case Some(thing) =>
+                                val label=thingDao.findListLabel(thing)
+                                val data=thingDao.findListArray(thing)
+                                //creo il modello di una thing
+                                val e = new Engine
+                                val modello:LogRegModel = e.getLogRegModel(thingToAssign.thingID,label,data)
+                                for {
+                                 modello <- modelLogRegDao.save(modello)
+                              } yield {
+                                Ok(Json.obj("ok" -> "ok"))
+                              }
+                            }
+                            //appController.modelLogRegSave(thingInfo)
+                            println("2")
                           }
                         }
                           Ok(Json.obj("ok" -> "ok"))
                       }
                 }
               else
-              {
+              {println("z")
                 val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
                 yield new DetectionDouble(sensorName, valueDouble)
                       val measurements = Measurements(
@@ -218,20 +245,40 @@ extends Silhouette[User, JWTAuthenticator] {
                           sensors = listDD,
                           label = data.label
                       )
+                      println(numberOfMeasurements)
                       for{
-
                         thing <- thingDao.addMeasurements(thingInfo, measurements)
                         } yield {
-                          if(numberOfMeasuremnts > 5){
+                          println("z2")
+                          if(numberOfMeasurements > 5){
+                            println("r")
                             modelLogRegDao.findByThingID(thingInfo).flatMap{
                               model =>
                               appController.modelLogRegUpdate(thingInfo, model.get.logRegModelID)
+                              println("3")
                               Future.successful(Ok(Json.toJson(model)))
 
                             }
                           }else{
-                            if(numberOfMeasuremnts == 5){
-                              appController.modelLogRegSave(thingInfo)
+                            if(numberOfMeasurements == 5){
+                              println("prova")
+                              thingDao.findByID(thingToAssign.thingID).flatMap{
+                                case None =>
+                                  Future.successful(BadRequest(Json.obj("message" -> Messages("thing.notExists"))))
+                                case Some(thing) =>
+                                  val label=thingDao.findListLabel(thing)
+                                  val data=thingDao.findListArray(thing)
+                                  //creo il modello di una thing
+                                  val e = new Engine
+                                  val modello:LogRegModel = e.getLogRegModel(thingToAssign.thingID,label,data)
+                                  for {
+                                   modello <- modelLogRegDao.save(modello)
+                                } yield {
+                                  Ok(Json.obj("ok" -> "ok"))
+                                }
+                              }
+                              //appController.modelLogRegSave(thingToAssign.thingID)
+                              println("4")
                             }
                           }
                           Ok(Json.obj("ok" -> "ok"))

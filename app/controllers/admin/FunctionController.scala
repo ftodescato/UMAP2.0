@@ -40,6 +40,8 @@ class FunctionController @Inject() (
   *   metodo che permette agli admin di selezionare le funzioni
   *   da rendere disponibile all'utente nel calcolo dei valori dei grafici
   */
+
+
   def selectFunction = SecuredAction(WithServices(Array("admin"), true)).async(parse.json){ implicit request =>
     // richiesta alla form forms.engine.SelectFunctionAdmin
     request.body.validate[SelectFunctionAdmin.Data].map { data =>
@@ -53,7 +55,7 @@ class FunctionController @Inject() (
             //riempimento di functionList con tutte le funzioni passate dalla form
             functionList += functionAlgList
           }
-          //nuova company contenente le nue funzioni
+          //nuova company contenente le nuove funzioni
           val newCompany = Company(
               companyID = company.companyID,
               companyBusinessName = company.companyBusinessName,

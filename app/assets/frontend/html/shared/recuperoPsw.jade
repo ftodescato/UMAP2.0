@@ -2,10 +2,10 @@ section(id="recuperoPsw")
 ul(class="breadcrumb")
   li(class="active") Recupero Password
 h1(class="page-header text-center") Recupero Password
-p(class="text-center") Inserisci la tua mail e ti verrà inviata la nuova password.
+p(class="text-center") Compila il form per resettare la password.
 div(class="container-fluid")
   div(class="row")
-    form(ng-submit="resetRequest()" name="myForm" class="col-xs-6 col-xs-offset-3")
+    form(ng-submit="editPsw()" name="myForm" class="col-xs-6 col-xs-offset-3")
       h2(class="text-center") {{errore}}
       label(for="emailInput") Indirizzo email
       input(type="text" id="emailInput" class="form-control" ng-model="credentials.email" placeholder="email" required="")

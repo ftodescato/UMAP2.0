@@ -8,6 +8,7 @@ import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.impl.authenticators.JWTAuthenticator
 import forms.thingType._
 import models.ThingType
+import models._
 import models.Thing
 import models.User
 import models.Info
@@ -39,7 +40,7 @@ class ThingTypeController @Inject() (
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
-  def showThingType = SecuredAction.async{ implicit request =>
+  def showThingType = SecuredAction(WithServices(Array("admin","user"), true)).async{ implicit request =>
    val thingType = thingTypeDao.findByCompanyID(request.identity.company)
    thingType.flatMap{
     thingType =>
@@ -47,7 +48,7 @@ extends Silhouette[User, JWTAuthenticator] {
    }
   }
 
-  def showThingTypeDetails(id: UUID) = SecuredAction.async{ implicit request =>
+  def showThingTypeDetails(id: UUID) = SecuredAction(WithServices(Array("admin","user"), true)).async{ implicit request =>
    val thingType = thingTypeDao.findByID(id)
    thingType.flatMap{
     thingType =>
@@ -55,7 +56,7 @@ extends Silhouette[User, JWTAuthenticator] {
    }
   }
 
-  def showThings  = SecuredAction.async{ implicit request =>
+  def showThings  = SecuredAction(WithServices(Array("admin","user"), true)).async{ implicit request =>
    val things = thingDao.findByCompanyID(request.identity.company)
    things.flatMap{
     things =>
@@ -63,7 +64,7 @@ extends Silhouette[User, JWTAuthenticator] {
    }
   }
 
-  def showThingDetails(id: UUID) = SecuredAction.async{ implicit request =>
+  def showThingDetails(id: UUID) = SecuredAction(WithServices(Array("admin","user"), true)).async{ implicit request =>
    val thing = thingDao.findByID(id)
    thing.flatMap{
     thing =>

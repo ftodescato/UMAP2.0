@@ -147,7 +147,7 @@ class CompanyController @Inject() (
   }
 
 //metodo per aggiungere una nuova company
-  def addCompany = UserAwareAction.async(parse.json) { implicit request =>
+  def addCompany = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     //richiesta alla form forms.company.AddCompany
     request.body.validate[AddCompany.Data].map { data =>
       //ricerca della company tramite Nome per evitare di inserirne una con nome uguale
@@ -190,7 +190,7 @@ class CompanyController @Inject() (
   }
 
 //metodo che permette di di modificare le funzioni disponibili per una company
-  def selectFunction = Action.async(parse.json) { implicit request =>
+  def selectFunction = SecuredAction(WithServices(Array("superAdmin","admin"), true)).async(parse.json) { implicit request =>
     //richiesta alla form forms.engine.SelectFunction
     request.body.validate[SelectFunction.Data].map { data =>
       //ricerca nel DB di una company tramite ID
@@ -232,7 +232,7 @@ class CompanyController @Inject() (
   }
 
 //metodo per selezionare i tipi di dati che potranno essere utilizzati dalle funzioni
-  def selectDataFromThingType = Action.async(parse.json) { implicit request =>
+  def selectDataFromThingType = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     //richiesta alla form forms.engine.SelectData
     request.body.validate[SelectData.Data].map { data =>
       //ricerca nel DB del thingType tramite ID

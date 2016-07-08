@@ -94,7 +94,7 @@ class AccountController @Inject() (
            Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
      }
    }
-   def updatePassword = SecuredAction.async(parse.json) { implicit request =>
+   def updatePassword = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
      request.body.validate[EditPassword.Data].map { data =>
        userDao.findByID(request.identity.userID).flatMap {
          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
@@ -132,7 +132,7 @@ class AccountController @Inject() (
        Future.successful(Unauthorized(Json.obj("message" -> Messages("invalid.data"))))
      }
  }
-   def setNewPassword = SecuredAction.async(parse.json) { implicit request =>
+   def setNewPassword = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
      request.body.validate[NewPassword.Data].map { data =>
        userDao.findByID(request.identity.userID).flatMap {
          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))

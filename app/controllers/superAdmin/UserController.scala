@@ -36,7 +36,7 @@ class UserController @Inject() (
   passwordHasher: PasswordHasher)
   extends Silhouette[User, JWTAuthenticator] {
 
-    def showUsers = Action.async{ implicit request =>
+    def showUsers = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
      val users = userDao.findAll()
      users.flatMap{
       users =>
@@ -44,7 +44,7 @@ class UserController @Inject() (
      }
     }
 
-    def showUserDetails(userID: UUID) = Action.async{ implicit request =>
+    def showUserDetails(userID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
       val user = userDao.findByID(userID)
         user.flatMap{
          user =>
@@ -53,7 +53,7 @@ class UserController @Inject() (
     }
 
 
-    def delete(userID: UUID) = Action.async{ implicit request =>
+    def delete(userID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
         userDao.findByID(userID).flatMap{
           case None => Future.successful(BadRequest(Json.obj("message" -> "User non trovato")))
           case Some (user) =>
@@ -67,7 +67,7 @@ class UserController @Inject() (
             }
      }
 
-    def updateUser(userID: UUID) = Action.async(parse.json) { implicit request =>
+    def updateUser(userID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
       request.body.validate[EditUser.Data].map { data =>
         userDao.findByID(userID).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))
@@ -121,7 +121,7 @@ class UserController @Inject() (
 
 
 
-  def addUser = Action.async(parse.json) { implicit request =>
+  def addUser = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[SignUp.Data].map { data =>
       var loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userDao.find(loginInfo).flatMap {

@@ -4,10 +4,8 @@
 
 
 GET         /                                   controllers.Assets.at(path="/public", file="html/layout.html")
-GET         /testDue                            controllers.ApplicationController.index
 GET         /user                               controllers.ApplicationController.user
 GET         /signOut                            controllers.ApplicationController.signOut
-POST        /test                               controllers.ApplicationController.test
 POST        /signIn                             controllers.shared.account.AuthController.authenticate
 GET         /api/getrole                        controllers.shared.account.AuthController.getRole
 
@@ -46,6 +44,7 @@ PUT         /api/usersA/:id                     controllers.admin.UserController
 DELETE      /api/usersA/:id                     controllers.admin.UserController.delete(id: java.util.UUID)
 GET         /api/getMyCompany                   controllers.admin.UserController.getMyCompany
 POST        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
+GET        /api/engineA/functions              controllers.admin.FunctionController.selectFunction
 
 
 

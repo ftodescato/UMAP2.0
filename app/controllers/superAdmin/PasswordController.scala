@@ -44,7 +44,7 @@ class PasswordController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-    def updatePassword(userID: UUID) = SecuredAction.async(parse.json) { implicit request =>
+    def updatePassword(userID: UUID) = SecuredAction(WithServices(Array("superAdmin","admin","user"), true)).async(parse.json) { implicit request =>
       request.body.validate[EditPassword.Data].map { data =>
         userDao.findByID(userID).flatMap {
           case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notComplete"))))

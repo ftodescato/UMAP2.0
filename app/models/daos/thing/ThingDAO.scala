@@ -32,7 +32,7 @@ trait ThingDAO {
 
   def findByThingTypeID(thingTypeID: UUID): Future[List[Thing]]
 
-  def countMeasurements(thingID: UUID): Int
+  //def countMeasurements(thingID: UUID): Int
 
   def save(thing: Thing): Future[Thing]
 

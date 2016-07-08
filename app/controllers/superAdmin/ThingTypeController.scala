@@ -43,14 +43,14 @@ class ThingTypeController @Inject() (
   companyDao: CompanyDAO)
 extends Silhouette[User, JWTAuthenticator] {
 
-  def showThingType = Action.async{ implicit request =>
+  def showThingType = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
    val thingType = thingTypeDao.findAll()
    thingType.flatMap{
     thingType =>
      Future.successful(Ok(Json.toJson(thingType)))
    }
   }
-  def showThingTypeDetails(id: UUID) = SecuredAction.async{ implicit request =>
+  def showThingTypeDetails(id: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
    val thingType = thingTypeDao.findByID(id)
    thingType.flatMap{
     thingType =>
@@ -58,7 +58,7 @@ extends Silhouette[User, JWTAuthenticator] {
    }
   }
 
-  def addThingType = Action.async(parse.json) { implicit request =>
+  def addThingType = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
     request.body.validate[AddThingType.Data].map { data =>
       val companyInfo = data.company
       companyDao.findAll().flatMap{

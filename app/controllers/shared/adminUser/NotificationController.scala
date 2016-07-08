@@ -37,7 +37,7 @@ class NotificationController @Inject() (
   extends Silhouette[User, JWTAuthenticator] {
 
 
-    def showNotificationDetails(notificationID: UUID) = Action.async { implicit request =>
+    def showNotificationDetails(notificationID: UUID) = SecuredAction(WithServices(Array("admin","user"), true)).async { implicit request =>
       val notification = notificationDao.findByID(notificationID)
       notification.flatMap{
         notification =>
@@ -45,14 +45,14 @@ class NotificationController @Inject() (
       }
     }
 
-    def showNotificationOfThingType(thingTypeID: UUID) = Action.async(parse.json) { implicit request =>
+    def showNotificationOfThingType(thingTypeID: UUID) = SecuredAction(WithServices(Array("admin","user"), true)).async(parse.json) { implicit request =>
       val notifications = notificationDao.findNotificationOfThingType(thingTypeID)
       notifications.flatMap{
         notifications =>
         Future.successful(Ok(Json.toJson(notifications)))
       }
     }
-    def showNotificationOfThing(thing: UUID) = Action.async(parse.json) { implicit request =>
+    def showNotificationOfThing(thing: UUID) = SecuredAction(WithServices(Array("admin","user"), true)).async(parse.json) { implicit request =>
       val notifications = notificationDao.findNotificationOfThing(thing)
       notifications.flatMap{
         notifications =>
@@ -60,7 +60,7 @@ class NotificationController @Inject() (
       }
     }
 
-    def showNotifications = Action.async{ implicit request =>
+    def showNotifications = SecuredAction(WithServices(Array("admin","user"), true)).async{ implicit request =>
      val notifications = notificationDao.findAll()
      notifications.flatMap{
       notifications =>
@@ -68,7 +68,7 @@ class NotificationController @Inject() (
      }
    }
 
-   def update(notificationID: UUID) = Action.async(parse.json){ implicit request =>
+   def update(notificationID: UUID) = SecuredAction(WithServices(Array("admin","user"), true)).async(parse.json){ implicit request =>
      request.body.validate[EditNotification.Data].map { data =>
        notificationDao.findByID(notificationID).flatMap{
          case None => Future.successful(BadRequest(Json.obj("message" -> Messages("notification.notExists"))))
@@ -116,7 +116,7 @@ class NotificationController @Inject() (
        }
      }
 
-   def delete(notificationID: UUID) = Action.async{ implicit request =>
+   def delete(notificationID: UUID) = SecuredAction(WithServices(Array("admin","user"), true)).async{ implicit request =>
      notificationDao.findByID(notificationID).flatMap{
        case None => Future.successful(BadRequest(Json.obj("message" -> Messages("notification.notExists"))))
        case Some (notification) =>
