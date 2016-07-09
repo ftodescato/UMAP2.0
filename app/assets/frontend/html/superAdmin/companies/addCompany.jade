@@ -9,7 +9,29 @@ section(id="companies")
   div(class="container-fluid")
     div(class="row")
       form(ng-submit="addCompany()" class="col-xs-6 col-xs-offset-3")
-        label(for="companyNameInput" ) Nome della company      
-        input(type="text" class="form-control" id="companyNameInput" ng-model="company.companyName" placeholder="company name")
+        label(for="companyName" ) Nome Company     
+        input(type="text" class="form-control" id="companyName" ng-model="company.companyName" placeholder="nome company")
         br
+        label(for="companyBusinessName" ) Company Business name      
+        input(type="text" class="form-control" id="companyBusinessName" ng-model="company.companyBusinessName" placeholder="Company Business name")
+        br
+        label(for="companyAddress" ) Indirizzo Company      
+        input(type="text" class="form-control" id="companyAddress" ng-model="company.companyAddress" placeholder="Indirizzo Company")
+        br
+        label(for="companyCity" ) Città   
+        input(type="text" class="form-control" id="companyCity" ng-model="company.companyCity" placeholder="Città")
+        br
+        label(for="companyCAP" ) CAP      
+        input(type="text" class="form-control" id="companyCAP" ng-model="company.companyCAP" placeholder="CAP")
+        br
+        label(for="companyPIVA" ) PIVA   
+        input(type="text" class="form-control" id="companyPIVA" ng-model="company.companyPIVA" placeholder="PIVA")
+        br
+        label(for="companyDescription" ) Descrizione      
+        input(type="text" class="form-control" id="companyDescription" ng-model="company.companyDescription" placeholder="Descrizione")
+        br
+        label(for="companyLicenseExpiration" ) Scadenza licenza      
+        input(type="text" class="form-control" id="companyLicenseExpiration" ng-model="company.companyLicenseExpiration" placeholder="Scadenza licenza")
+        br
+
         button(type='submit' class="btn btn-success") Aggiungi
