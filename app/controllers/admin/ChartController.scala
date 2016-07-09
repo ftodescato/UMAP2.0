@@ -64,7 +64,7 @@ class ChartController @Inject() (
       }
     }
 
-    def delete(chartID: UUID) = SecuredAction(WithServices(Array("superAdmin"), true)).async{ implicit request =>
+    def delete(chartID: UUID) = SecuredAction(WithServices(Array("admin"), true)).async{ implicit request =>
       chartDao.findByID(chartID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("chart.notExists"))))
         case Some (chart) =>
