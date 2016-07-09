@@ -45,7 +45,8 @@ section(id="thingsDetails" class="container-fluid" )
       div(ng-hide="loadings[c.chartID]")
         canvas(id="line" class="chart chart-line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick")
         h3.text-center Risultato: {{graphics[c.chartID].result}}
-        h4(ng-show="future") Previsto in data: {{graphics[c.chartID].labels[graphics[c.chartID].labels.length - 1]}}
+
+        h4(ng-show="graphics[c.chartID].isFuture") Previsto in data: {{graphics[c.chartID].labels[graphics[c.chartID].labels.length - 1]}}
       button.btn.btn-success(ng-click="showGraphics(c.chartID)") Aggiorna grafico  
       button.btn.btn-danger(ng-click="deleteChart(c.chartID)") Elimina 
 

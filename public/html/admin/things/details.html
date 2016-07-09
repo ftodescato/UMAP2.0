@@ -45,7 +45,7 @@
       <div ng-hide="loadings[c.chartID]">
         <canvas id="line" chart-data="graphics[c.chartID].data" chart-labels="graphics[c.chartID].labels" chart-legend="true" chart-series="series" chart-click="onClick" class="chart chart-line"></canvas>
         <h3 class="text-center">Risultato: {{graphics[c.chartID].result}}</h3>
-        <h4 ng-show="future">Previsto in data: {{graphics[c.chartID].labels[graphics[c.chartID].labels.length - 1]}}</h4>
+        <h4 ng-show="graphics[c.chartID].isFuture">Previsto in data: {{graphics[c.chartID].labels[graphics[c.chartID].labels.length - 1]}}</h4>
       </div>
       <button ng-click="showGraphics(c.chartID)" class="btn btn-success">Aggiorna grafico  </button>
       <button ng-click="deleteChart(c.chartID)" class="btn btn-danger">Elimina </button>

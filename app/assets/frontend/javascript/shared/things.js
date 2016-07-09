@@ -127,6 +127,8 @@
           aux.labels[i] = new Date(aux.labels[i]);
           aux.labels[i] = aux.labels[i].toDateString();
         }
+        aux.isFuture = graphic.futureV;
+        console.log(aux);
         $scope.graphics[id] = aux;
         $scope.loadings[id] = false;
         $scope.clicked[id] = '';

@@ -125,7 +125,7 @@ class UserController @Inject() (
 
 
 
-  def addUser = SecuredAction(WithServices(Array("superAdmin"), true)).async(parse.json) { implicit request =>
+  def addUser = Action.async(parse.json) { implicit request =>
     request.body.validate[SignUp.Data].map { data =>
       var loginInfo = LoginInfo(CredentialsProvider.ID, data.email)
       userDao.find(loginInfo).flatMap {
