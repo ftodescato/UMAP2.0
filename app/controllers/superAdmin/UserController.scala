@@ -146,7 +146,7 @@ class UserController @Inject() (
               mailConfirmed = false,
               token = "vuoto",
               role = data.role,
-              secretString = data.password
+              secretString = ""
             )
               val email = Email(
                 "Password d'autenticazione",

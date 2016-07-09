@@ -73,7 +73,7 @@ class AuthController @Inject() (
     }
   }
 
-  def getRole = SecuredAction(WithServices(Array("superAdmin","admin","user"), true)).async{ implicit request =>
+  def getRole = SecuredAction.async{ implicit request =>
     Future.successful(Ok(Json.obj("role"-> request.identity.role)))
   }
 }

@@ -51,7 +51,7 @@
           LoginService.Role.get({}, function(success){
             if(success !== null)
               $cookies.put('Role', success.role);
-              $state.go('root');
+            $state.go('root');
           });
           //$state.go('root.home');
         }, function(err){
