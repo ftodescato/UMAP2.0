@@ -61,7 +61,7 @@
         $scope.me = acc.userID;
         $scope.users = [];
         for (var i = 0; i < users.length; i++) {
-          if(users[i].userID != $scope.me){
+          if(users[i].userID != $scope.me && users[i].role != 'superAdmin'){
             $scope.users.push(users[i])
           }
         }
