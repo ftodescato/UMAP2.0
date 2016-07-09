@@ -131,9 +131,9 @@ class NotificationController @Inject() (
    }
 
 
-  def addNotification(userID: UUID) = SecuredAction(WithServices(Array("admin","user"), true)).async(parse.json){ implicit request =>
+  def addNotification = SecuredAction(WithServices(Array("admin","user"), true)).async(parse.json){ implicit request =>
     request.body.validate[AddNotification.Data].map { data =>
-      userDao.findByID(userID).flatMap{
+      userDao.findByID(request.identity.userID).flatMap{
         case None => Future.successful(BadRequest(Json.obj("message" -> Messages("user.notExists"))))
         case Some(user) =>
       if(data.modelOrThing == "Oggetto"){
