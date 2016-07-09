@@ -9,7 +9,28 @@ section(id="updateCompany")
   div(class="container-fluid")
     div(class="row")
       form(ng-submit="editCompany()" class="col-xs-6 col-xs-offset-3")
-        label(for="companyNameInput") Nome della company
-        input(type="text" id="companyNameInput" class="form-control" ng-model="company.companyName" placeholder="company name" value="{{company.companyName}}")
+        label(for="companyName" ) Nome Company     
+        input(type="text" class="form-control" id="companyName" ng-model="company.companyName" placeholder="nome company" value="company.companyName")
+        br
+        label(for="companyBusinessName" ) Company Business name      
+        input(type="text" class="form-control" id="companyBusinessName" ng-model="company.companyBusinessName" placeholder="Company Business name" value="company.companyBusinessName")
+        br
+        label(for="companyAddress" ) Indirizzo Company      
+        input(type="text" class="form-control" id="companyAddress" ng-model="company.companyAddress" placeholder="Indirizzo Company" value="company.companyAddress")
+        br
+        label(for="companyCity" ) Città   
+        input(type="text" class="form-control" id="companyCity" ng-model="company.companyCity" placeholder="Città" value="company.companyCity")
+        br
+        label(for="companyCAP" ) CAP      
+        input(type="text" class="form-control" id="companyCAP" ng-model="company.companyCAP" placeholder="CAP" value="company.companyCAP")
+        br
+        label(for="companyPIVA" ) PIVA   
+        input(type="text" class="form-control" id="companyPIVA" ng-model="company.companyPIVA" placeholder="PIVA" value="company.companyPIVA")
+        br
+        label(for="companyDescription" ) Descrizione      
+        input(type="text" class="form-control" id="companyDescription" ng-model="company.companyDescription" placeholder="Descrizione" value="company.companyDescription")
+        br
+        label(for="companyLicenseExpiration" ) Scadenza licenza      
+        input(type="text" class="form-control" id="companyLicenseExpiration" ng-model="company.companyLicenseExpiration" placeholder="Scadenza licenza" value="{company.companyLicenseExpiration | data:'MM/dd/yyyy'}")
         br
         button(type='submit' class="btn btn-success") Modifica
