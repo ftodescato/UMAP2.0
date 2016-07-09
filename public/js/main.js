@@ -40898,130 +40898,6 @@ app.provider('Flash', function() {
 }));
 
 (function(){
-  'use strict';
-
-  var umap = angular.module('umap', ['ngFlash','ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.superAdmin.engine','umap.login','umap.admin','umap.admin.user','umap.admin.analisi','umap.admin.engine','umap.adminUser.thingTypes','umap.adminUser.things','umap.adminUser.notifications','umap.user']);
-  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
-  function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
-  $urlRouterProvider.otherwise('/');
-
-    $stateProvider.state('root', {
-      url: '/',
-      //abstract:true,
-      views: {
-            'header': {
-              templateUrl: 'assets/html/shared/header.html'
-              //controller: 'HeaderController'
-            },
-            'content': {
-
-            },
-            'footer': {
-              templateUrl: 'assets/html/shared/footer.html'
-            //  controller: 'footer/FooterCtrl'
-            }
-    }
-  });
-  $httpProvider.interceptors.push('InjectHeadersService');
-  }]);
-
-  umap.run(['$rootScope','$state','$cookies','AccountService',function($rootScope,$state,$cookies, AccountService){
-    $rootScope.isLoggedIn = function (){
-      var token = $cookies.get('X-Auth-Token');
-      if(token === undefined)
-        return false;
-      else
-        return true;
-    };
-    $rootScope.logOut = function (){
-      $cookies.remove('X-Auth-Token');
-      $state.go('root.login');
-    }
-    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
-      var token = $cookies.get('X-Auth-Token');
-      var user;
-      if( token === undefined && (toState.name !== 'root.login' && toState.name !== 'root.resetPsw')){
-        event.preventDefault();
-        $state.go('root.login');
-        return;
-      }
-      if(token != undefined){
-        AccountService.Profile.get().$promise.then(
-        function(account){
-          user = account;
-          if( user.mailConfirmed === false){
-            event.preventDefault();
-            $state.go('root.account.psw');
-            return;
-          }
-          if(toState.name === 'root'){
-            switch (user.role) {
-              case 'superAdmin':
-                event.preventDefault();
-                $state.go('root.superAdmin');
-                break;
-              case 'admin':
-                event.preventDefault();
-                $state.go('root.admin');
-                break;
-              case 'user':
-                event.preventDefault();
-                $state.go('root.user');
-                break;
-              default:
-            }
-          }
-        });
-      }
-
-    });
-    $rootScope.$on('$stateChangeError', function(e, toState, toParams, fromState, fromParams, error){
-    if(error === "Not Authorized"){
-        $state.go("root");
-      }
-    });
-  }]);
-
-  umap.factory('InjectHeadersService',['$q','$cookies','$injector','$rootScope','Flash' ,function($q, $cookies,$injector,$rootScope, Flash){
-    return{
-      request: function(request) {
-        //console.log('started');
-        request.headers['Content-Type'] = 'application/json';
-        request.headers['Csrf-Token'] = 'nocheck';
-        var token = $cookies.get('X-Auth-Token');
-        if( token  !== null)
-          request.headers['X-Auth-Token'] = token;
-        return request;
-      },
-      responseError: function(rejection){
-        if(rejection.status === 401){
-          if(rejection.data.message === 'Authentication required'){
-            $rootScope.logOut();
-            $injector.get('$state').go('root');
-          }else{
-            var message = '<h2 class="text-center">'+rejection.data.message+'</h2>';
-            Flash.create('danger', message);
-          }
-        }
-        return $q.reject(rejection);
-      },
-      response: function(response){
-        //console.log('finished');
-        return response;
-      }
-    };
-  }]);/*
-  umap.factory('AuthService',['$cookies',function($cookies){
-
-  }]);
-  umap.controller('HeaderController',['$scope','$cookies',function($scope,$cookies) {
-
-  }]);*/
-
-
-})();
-
-(function(){
   var umap = angular.module('umap.account',['ui.router','ngResource']);
   umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
     $stateProvider.state('root.account', {
@@ -41460,6 +41336,385 @@ umap.factory('MyCompanyService', function($resource) {
           $state.go('root')
         });
       }
+    }
+  }]);
+})();
+
+(function(){
+  "use strict";
+  var umap = angular.module('umap.adminUser.notifications',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.notifications', {
+      url: '/notifications',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/notifications/index.html',
+              controller:  'NotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.user.notifications', {
+      url: '/notifications',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/notifications/index.html',
+              controller:  'NotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.admin.notifications.addNotification', {
+      url: '/addNotification',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/notifications/addNotification.html',
+              controller:  'AddNotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.user.notifications.addNotification', {
+      url: '/addNotification',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/notifications/addNotification.html',
+              controller:  'AddNotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.admin.notifications.updateNotification', {
+      url: '/notification/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/notifications/updateNotification.html',
+              controller:  'UpdateNotificationController'
+            }
+        }
+    });
+    $stateProvider.state('root.user.notifications.updateNotification', {
+      url: '/notification/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/notifications/updateNotification.html',
+              controller:  'UpdateNotificationController'
+            }
+        }
+    });
+  }]);
+
+  umap.factory('NotificationService', function($resource){
+    return{
+        Notification: $resource('/api/notifications/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+      })
+    }
+  });
+  umap.controller('NotificationController',['$state', '$scope','$window','NotificationService'  ,function($state, $scope,$window, NotificationService){
+    $scope.notificationThingType = [];
+    $scope.notificationThing = [];
+    NotificationService.Notification.query().$promise.then(function(notifications){
+      for (var i = 0; i < notifications.length; i++) {
+        if(notifications[i].thingTypeID)
+          $scope.notificationThingType.push(notifications[i]);
+        else
+          $scope.notificationThing.push(notifications[i]);
+      }
+    });
+    $scope.predicate = 'notificationID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
+    $scope.deleteNotification = function(id){
+      var deleteNot = $window.confirm('Sei sicuro ?');
+      if(deleteNot){
+        NotificationService.Notification.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
+    }
+  }]);
+  umap.controller('AddNotificationController',['$state', '$scope','$stateParams','NotificationService','ThingTypeServiceAU', function($state, $scope, $stateParams, NotificationService, ThingTypeServiceAU){
+    $scope.which = "Modello";
+    $scope.info = {};
+    $scope.parameterSelected = '';
+    //$scope.parameterSelected2 = '';
+    $scope.idModelloselected = '';
+    $scope.idOggettoSelected = '';
+    ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypesHash = {};
+      $scope.availableParametersHash = {};
+      for (var i = 0; i < thingTypes.length; i++) {
+        $scope.thingTypesHash[thingTypes[i].thingTypeID] = thingTypes[i];
+        $scope.availableParametersHash[thingTypes[i].thingTypeID] = [];
+        for (var j = 0; j < thingTypes[i].doubleValue.infos.length; j++) {
+          if(thingTypes[i].doubleValue.infos[j].visible)
+            $scope.availableParametersHash[thingTypes[i].thingTypeID].push( thingTypes[i].doubleValue.infos[j].name);
+        }
+      }
+    });
+    ThingTypeServiceAU.Thing.query().$promise.then(function(things){
+      $scope.thingsHash = {};
+      for (var i = 0; i < things.length; i++) {
+        $scope.thingsHash[things[i].thingID] = things[i];
+      }
+    });
+    $scope.send = function(user){
+      var infos = {
+        description: $scope.info.description,
+        objectID: '',
+        modelOrThing: $scope.which,
+        parameter: $scope.parameterSelected,
+        minValue: $scope.info.minValue,
+        maxValue: $scope.info.maxValue,
+        isThing: true
+      }
+      if($scope.which === 'Oggetto'){
+        infos.objectID = $scope.idOggettoSelected;
+        infos.isThing = true;
+      }else {
+        infos.objectID = $scope.idModelloselected;
+        infos.isThing = false;
+      }
+
+      NotificationService.Notification.save(infos).$promise.then(function(d){
+        if(user)
+          $state.go('root.user.notifications');
+        else
+          $state.go('root.admin.notifications');
+      });
+    }
+  }]);
+  umap.controller('UpdateNotificationController',['$scope', '$state','$stateParams', 'NotificationService', function($scope, $state, $stateParams,NotificationService){
+    NotificationService.Notification.get({id: $stateParams.id}).$promise.then(function(result){
+      $scope.notification = result;
+    })
+    $scope.editNotification = function(admin){
+      NotificationService.Notification.update({id: $stateParams.id}, $scope.notification).$promise.then(function(result){
+        if(admin)
+          $state.go("root.admin.notifications");
+        else
+          $state.go("root.user.notifications");
+      });
+    }
+  }]);
+})();
+
+(function(){
+  var umap = angular.module('umap.adminUser.thingTypes',['ui.router','ngResource']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.thingTypes', {
+      url: '/thingTypes',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/thingTypes/index.html',
+              controller:  'ThingTypesControllerAU'
+            }
+        }
+    });
+    $stateProvider.state('root.user.thingTypes', {
+      url: '/thingTypes',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/thingTypes/index.html',
+              controller:  'ThingTypesControllerAU'
+            }
+        }
+    });
+    $stateProvider.state('root.admin.thingTypesDetails', {
+      url: '/thingTypes/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/thingTypes/details.html',
+              controller:  'ThingTypesControllerDetailsAU'
+            }
+        }
+    });
+    $stateProvider.state('root.user.thingTypesDetails', {
+      url: '/thingTypes/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/thingTypes/details.html',
+              controller:  'ThingTypesControllerDetailsAU'
+            }
+        }
+    });
+  }]);
+  umap.factory('ThingTypeServiceAU', function($resource){
+    return{
+        ThingType: $resource('/api/thingTypes/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+      }),
+        Thing: $resource('/api/things/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+      })
+    }
+  });
+  umap.controller('ThingTypesControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
+    $scope.predicate = 'thingTypeID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
+    ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
+      $scope.thingTypes = thingTypes;
+    });
+  }]);
+  umap.controller('ThingTypesControllerDetailsAU', ['$scope','$stateParams','ThingTypeServiceAU',function($scope,$stateParams,ThingTypeServiceAU){
+    $scope.predicate = 'name';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
+    ThingTypeServiceAU.ThingType.get({id: $stateParams.id}).$promise.then(function(thingType){
+      $scope.thingType = thingType;
+    });
+
+  }]);
+})();
+
+(function(){
+  var umap = angular.module('umap.adminUser.things',['ui.router','ngResource', 'chart.js']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
+    $stateProvider.state('root.admin.things', {
+      url: '/things',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/things/index.html',
+              controller:  'ThingsControllerAU'
+            }
+        }
+    });
+    $stateProvider.state('root.user.things', {
+      url: '/things',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/things/index.html',
+              controller:  'ThingsControllerAU'
+            }
+        }
+    });
+    $stateProvider.state('root.admin.thingDetails', {
+      url: '/things/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/admin/things/details.html',
+              controller:  'ThingsControllerDetailsAU'
+            }
+        }
+    });
+    $stateProvider.state('root.user.thingDetails', {
+      url: '/things/:id',
+      views: {
+            'content@': {
+              templateUrl: 'assets/html/user/things/details.html',
+              controller:  'ThingsControllerDetailsAU'
+            }
+        }
+    });
+  }]);
+  umap.factory('GraphicService', function($resource){
+    return{
+        Graphic: $resource('/api/graphics/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          }
+        }),
+        Chart: $resource('/api/charts/:id',{id: "@id"},{
+          update:{
+            method: 'PUT'
+          },
+          get:{
+            method: 'GET',
+            isArray: true
+          }
+        })
+    }
+  });
+  umap.controller('ThingsControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
+    $scope.predicate = 'thingID';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
+    ThingTypeServiceAU.Thing.query().$promise.then(function(things){
+      $scope.things = things;
+    });
+  }]);
+  umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams','$state','$window' ,'ThingTypeServiceAU','GraphicService', function($scope, $stateParams, $state, $window, ThingTypeServiceAU, GraphicService ){
+    $scope.hashMisure = [];
+    $scope.predicate = 'dataTime';
+    $scope.reverse = true;
+    $scope.order = function(predicate) {
+      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
+      $scope.predicate = predicate;
+    };
+    ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
+      ThingTypeServiceAU.ThingType.get({id: thing.thingTypeID}).$promise.then(function(thingType){
+        $scope.hashVisibility = {};
+        for (var i = 0; i < thingType.doubleValue.infos.length; i++) {
+          $scope.hashMisure[thingType.doubleValue.infos[i].name] = thingType.doubleValue.infos[i].visible;
+        }
+        $scope.thing = thing;
+      });
+    });
+    $scope.loadings = {};
+    GraphicService.Chart.get({id: $stateParams.id}).$promise.then(function(charts){
+      $scope.charts = charts;
+      for (var i = 0; i < $scope.charts.length; i++) {
+        $scope.loadings[$scope.charts[i].chartID] = true;
+      }
+    });
+    //query su charts per prendermi tutti i chart col mio thingID
+    //ciclo questi chart e mi salvo la previsione in un array di previsioni
+    $scope.deleteChart = function(id){
+      var deleteUser = $window.confirm('Sei sicuro ?');
+      if(deleteUser){
+        GraphicService.Chart.delete({id:  id}, function(){
+          $state.go($state.current, {}, {reload: true});
+        });
+      }
+    };
+    $scope.graphics = {};
+    $scope.showGraphics = function(id){
+      $scope.clicked = {};
+      $scope.future = false;
+      $scope.clicked[id] = ' Caricamento ... ';;
+      var aux = {
+        data: [],
+        labels: [],
+        isFuture: false,
+        result: 0
+      };
+      GraphicService.Graphic.get({id: id}).$promise.then(function(graphic){
+        aux.data.push(graphic.valuesY);
+        aux.labels = graphic.valuesX;
+        aux.result = graphic.resultFunction;
+        if(!graphic.futureV){
+          var lastItem = aux.labels.length - 1;
+          aux.labels.splice(lastItem,1);
+        }else{
+          aux.data[0].push(graphic.resultFunction);
+          $scope.future = true;
+        }
+        for (var i = 0; i < aux.labels.length; i++) {
+          aux.labels[i] = new Date(aux.labels[i]);
+          aux.labels[i] = aux.labels[i].toDateString();
+        }
+        aux.isFuture = graphic.futureV;
+        console.log(aux);
+        $scope.graphics[id] = aux;
+        $scope.loadings[id] = false;
+        $scope.clicked[id] = '';
+      });
     }
   }]);
 })();
@@ -42086,380 +42341,125 @@ umap.factory('MyCompanyService', function($resource) {
 })();
 
 (function(){
-  "use strict";
-  var umap = angular.module('umap.adminUser.notifications',['ui.router','ngResource']);
-  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
-    $stateProvider.state('root.admin.notifications', {
-      url: '/notifications',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/admin/notifications/index.html',
-              controller:  'NotificationController'
-            }
-        }
-    });
-    $stateProvider.state('root.user.notifications', {
-      url: '/notifications',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/user/notifications/index.html',
-              controller:  'NotificationController'
-            }
-        }
-    });
-    $stateProvider.state('root.admin.notifications.addNotification', {
-      url: '/addNotification',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/admin/notifications/addNotification.html',
-              controller:  'AddNotificationController'
-            }
-        }
-    });
-    $stateProvider.state('root.user.notifications.addNotification', {
-      url: '/addNotification',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/user/notifications/addNotification.html',
-              controller:  'AddNotificationController'
-            }
-        }
-    });
-    $stateProvider.state('root.admin.notifications.updateNotification', {
-      url: '/notification/:id',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/admin/notifications/updateNotification.html',
-              controller:  'UpdateNotificationController'
-            }
-        }
-    });
-    $stateProvider.state('root.user.notifications.updateNotification', {
-      url: '/notification/:id',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/user/notifications/updateNotification.html',
-              controller:  'UpdateNotificationController'
-            }
-        }
-    });
-  }]);
+  'use strict';
 
-  umap.factory('NotificationService', function($resource){
-    return{
-        Notification: $resource('/api/notifications/:id',{id: "@id"},{
-          update:{
-            method: 'PUT'
-          }
-      })
+  var umap = angular.module('umap', ['ngFlash','ui.router','ngCookies','umap.account','umap.superAdmin','umap.superAdmin.things','umap.superAdmin.company','umap.superAdmin.user','umap.superAdmin.engine','umap.login','umap.admin','umap.admin.user','umap.admin.analisi','umap.admin.engine','umap.adminUser.thingTypes','umap.adminUser.things','umap.adminUser.notifications','umap.user']);
+  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider','$httpProvider',
+  function($stateProvider, $urlRouterProvider,$locationProvider, $httpProvider){
+  $urlRouterProvider.otherwise('/');
+
+    $stateProvider.state('root', {
+      url: '/',
+      //abstract:true,
+      views: {
+            'header': {
+              templateUrl: 'assets/html/shared/header.html'
+              //controller: 'HeaderController'
+            },
+            'content': {
+
+            },
+            'footer': {
+              templateUrl: 'assets/html/shared/footer.html'
+            //  controller: 'footer/FooterCtrl'
+            }
     }
   });
-  umap.controller('NotificationController',['$state', '$scope','$window','NotificationService'  ,function($state, $scope,$window, NotificationService){
-    $scope.notificationThingType = [];
-    $scope.notificationThing = [];
-    NotificationService.Notification.query().$promise.then(function(notifications){
-      for (var i = 0; i < notifications.length; i++) {
-        if(notifications[i].thingTypeID)
-          $scope.notificationThingType.push(notifications[i]);
-        else
-          $scope.notificationThing.push(notifications[i]);
-      }
-    });
-    $scope.predicate = 'notificationID';
-    $scope.reverse = true;
-    $scope.order = function(predicate) {
-      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
-      $scope.predicate = predicate;
+  $httpProvider.interceptors.push('InjectHeadersService');
+  }]);
+
+  umap.run(['$rootScope','$state','$cookies','AccountService',function($rootScope,$state,$cookies, AccountService){
+    $rootScope.isLoggedIn = function (){
+      var token = $cookies.get('X-Auth-Token');
+      if(token === undefined)
+        return false;
+      else
+        return true;
     };
-    $scope.deleteNotification = function(id){
-      var deleteNot = $window.confirm('Sei sicuro ?');
-      if(deleteNot){
-        NotificationService.Notification.delete({id:  id}, function(){
-          $state.go($state.current, {}, {reload: true});
+    $rootScope.logOut = function (){
+      $cookies.remove('X-Auth-Token');
+      $state.go('root.login');
+    }
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options){
+      var token = $cookies.get('X-Auth-Token');
+      var user;
+      if( token === undefined && (toState.name !== 'root.login' && toState.name !== 'root.resetPsw')){
+        event.preventDefault();
+        $state.go('root.login');
+        return;
+      }
+      if(token != undefined){
+        AccountService.Profile.get().$promise.then(
+        function(account){
+          user = account;
+          if( user.mailConfirmed === false){
+            event.preventDefault();
+            $state.go('root.account.psw');
+            return;
+          }
+          if(toState.name === 'root'){
+            switch (user.role) {
+              case 'superAdmin':
+                event.preventDefault();
+                $state.go('root.superAdmin');
+                break;
+              case 'admin':
+                event.preventDefault();
+                $state.go('root.admin');
+                break;
+              case 'user':
+                event.preventDefault();
+                $state.go('root.user');
+                break;
+              default:
+            }
+          }
         });
       }
-    }
-  }]);
-  umap.controller('AddNotificationController',['$state', '$scope','$stateParams','NotificationService','ThingTypeServiceAU', function($state, $scope, $stateParams, NotificationService, ThingTypeServiceAU){
-    $scope.which = "Modello";
-    $scope.info = {};
-    $scope.parameterSelected = '';
-    //$scope.parameterSelected2 = '';
-    $scope.idModelloselected = '';
-    $scope.idOggettoSelected = '';
-    ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
-      $scope.thingTypesHash = {};
-      $scope.availableParametersHash = {};
-      for (var i = 0; i < thingTypes.length; i++) {
-        $scope.thingTypesHash[thingTypes[i].thingTypeID] = thingTypes[i];
-        $scope.availableParametersHash[thingTypes[i].thingTypeID] = [];
-        for (var j = 0; j < thingTypes[i].doubleValue.infos.length; j++) {
-          if(thingTypes[i].doubleValue.infos[j].visible)
-            $scope.availableParametersHash[thingTypes[i].thingTypeID].push( thingTypes[i].doubleValue.infos[j].name);
-        }
-      }
-    });
-    ThingTypeServiceAU.Thing.query().$promise.then(function(things){
-      $scope.thingsHash = {};
-      for (var i = 0; i < things.length; i++) {
-        $scope.thingsHash[things[i].thingID] = things[i];
-      }
-    });
-    $scope.send = function(user){
-      var infos = {
-        description: $scope.info.description,
-        objectID: '',
-        modelOrThing: $scope.which,
-        parameter: $scope.parameterSelected,
-        minValue: $scope.info.minValue,
-        maxValue: $scope.info.maxValue,
-        isThing: true
-      }
-      if($scope.which === 'Oggetto'){
-        infos.objectID = $scope.idOggettoSelected;
-        infos.isThing = true;
-      }else {
-        infos.objectID = $scope.idModelloselected;
-        infos.isThing = false;
-      }
 
-      NotificationService.Notification.save(infos).$promise.then(function(d){
-        if(user)
-          $state.go('root.user.notifications');
-        else
-          $state.go('root.admin.notifications');
-      });
-    }
+    });
+    $rootScope.$on('$stateChangeError', function(e, toState, toParams, fromState, fromParams, error){
+    if(error === "Not Authorized"){
+        $state.go("root");
+      }
+    });
   }]);
-  umap.controller('UpdateNotificationController',['$scope', '$state','$stateParams', 'NotificationService', function($scope, $state, $stateParams,NotificationService){
-    NotificationService.Notification.get({id: $stateParams.id}).$promise.then(function(result){
-      $scope.notification = result;
-    })
-    $scope.editNotification = function(admin){
-      NotificationService.Notification.update({id: $stateParams.id}, $scope.notification).$promise.then(function(result){
-        if(admin)
-          $state.go("root.admin.notifications");
-        else
-          $state.go("root.user.notifications");
-      });
-    }
-  }]);
-})();
 
-(function(){
-  var umap = angular.module('umap.adminUser.thingTypes',['ui.router','ngResource']);
-  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
-    $stateProvider.state('root.admin.thingTypes', {
-      url: '/thingTypes',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/admin/thingTypes/index.html',
-              controller:  'ThingTypesControllerAU'
-            }
-        }
-    });
-    $stateProvider.state('root.user.thingTypes', {
-      url: '/thingTypes',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/user/thingTypes/index.html',
-              controller:  'ThingTypesControllerAU'
-            }
-        }
-    });
-    $stateProvider.state('root.admin.thingTypesDetails', {
-      url: '/thingTypes/:id',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/admin/thingTypes/details.html',
-              controller:  'ThingTypesControllerDetailsAU'
-            }
-        }
-    });
-    $stateProvider.state('root.user.thingTypesDetails', {
-      url: '/thingTypes/:id',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/user/thingTypes/details.html',
-              controller:  'ThingTypesControllerDetailsAU'
-            }
-        }
-    });
-  }]);
-  umap.factory('ThingTypeServiceAU', function($resource){
+  umap.factory('InjectHeadersService',['$q','$cookies','$injector','$rootScope','Flash' ,function($q, $cookies,$injector,$rootScope, Flash){
     return{
-        ThingType: $resource('/api/thingTypes/:id',{id: "@id"},{
-          update:{
-            method: 'PUT'
+      request: function(request) {
+        //console.log('started');
+        request.headers['Content-Type'] = 'application/json';
+        request.headers['Csrf-Token'] = 'nocheck';
+        var token = $cookies.get('X-Auth-Token');
+        if( token  !== null)
+          request.headers['X-Auth-Token'] = token;
+        return request;
+      },
+      responseError: function(rejection){
+        if(rejection.status === 401){
+          if(rejection.data.message === 'Authentication required'){
+            $rootScope.logOut();
+            $injector.get('$state').go('root');
+          }else{
+            var message = '<h2 class="text-center">'+rejection.data.message+'</h2>';
+            Flash.create('danger', message);
           }
-      }),
-        Thing: $resource('/api/things/:id',{id: "@id"},{
-          update:{
-            method: 'PUT'
-          }
-      })
-    }
-  });
-  umap.controller('ThingTypesControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
-    $scope.predicate = 'thingTypeID';
-    $scope.reverse = true;
-    $scope.order = function(predicate) {
-      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
-      $scope.predicate = predicate;
-    };
-    ThingTypeServiceAU.ThingType.query().$promise.then(function(thingTypes){
-      $scope.thingTypes = thingTypes;
-    });
-  }]);
-  umap.controller('ThingTypesControllerDetailsAU', ['$scope','$stateParams','ThingTypeServiceAU',function($scope,$stateParams,ThingTypeServiceAU){
-    $scope.predicate = 'name';
-    $scope.reverse = true;
-    $scope.order = function(predicate) {
-      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
-      $scope.predicate = predicate;
-    };
-    ThingTypeServiceAU.ThingType.get({id: $stateParams.id}).$promise.then(function(thingType){
-      $scope.thingType = thingType;
-    });
-
-  }]);
-})();
-
-(function(){
-  var umap = angular.module('umap.adminUser.things',['ui.router','ngResource', 'chart.js']);
-  umap.config(['$stateProvider','$urlRouterProvider','$locationProvider',function($stateProvider, $urlRouterProvider,$locationProvider){
-    $stateProvider.state('root.admin.things', {
-      url: '/things',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/admin/things/index.html',
-              controller:  'ThingsControllerAU'
-            }
         }
-    });
-    $stateProvider.state('root.user.things', {
-      url: '/things',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/user/things/index.html',
-              controller:  'ThingsControllerAU'
-            }
-        }
-    });
-    $stateProvider.state('root.admin.thingDetails', {
-      url: '/things/:id',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/admin/things/details.html',
-              controller:  'ThingsControllerDetailsAU'
-            }
-        }
-    });
-    $stateProvider.state('root.user.thingDetails', {
-      url: '/things/:id',
-      views: {
-            'content@': {
-              templateUrl: 'assets/html/user/things/details.html',
-              controller:  'ThingsControllerDetailsAU'
-            }
-        }
-    });
-  }]);
-  umap.factory('GraphicService', function($resource){
-    return{
-        Graphic: $resource('/api/graphics/:id',{id: "@id"},{
-          update:{
-            method: 'PUT'
-          }
-        }),
-        Chart: $resource('/api/charts/:id',{id: "@id"},{
-          update:{
-            method: 'PUT'
-          },
-          get:{
-            method: 'GET',
-            isArray: true
-          }
-        })
-    }
-  });
-  umap.controller('ThingsControllerAU', ['$scope','ThingTypeServiceAU',function($scope,ThingTypeServiceAU){
-    $scope.predicate = 'thingID';
-    $scope.reverse = true;
-    $scope.order = function(predicate) {
-      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
-      $scope.predicate = predicate;
-    };
-    ThingTypeServiceAU.Thing.query().$promise.then(function(things){
-      $scope.things = things;
-    });
-  }]);
-  umap.controller('ThingsControllerDetailsAU', ['$scope','$stateParams','$state','$window' ,'ThingTypeServiceAU','GraphicService', function($scope, $stateParams, $state, $window, ThingTypeServiceAU, GraphicService ){
-    $scope.hashMisure = [];
-    $scope.predicate = 'dataTime';
-    $scope.reverse = true;
-    $scope.order = function(predicate) {
-      $scope.reverse = ($scope.predicate === predicate) ? !$scope.reverse : false;
-      $scope.predicate = predicate;
-    };
-    ThingTypeServiceAU.Thing.get({id: $stateParams.id}).$promise.then(function(thing){
-      ThingTypeServiceAU.ThingType.get({id: thing.thingTypeID}).$promise.then(function(thingType){
-        $scope.hashVisibility = {};
-        for (var i = 0; i < thingType.doubleValue.infos.length; i++) {
-          $scope.hashMisure[thingType.doubleValue.infos[i].name] = thingType.doubleValue.infos[i].visible;
-        }
-        $scope.thing = thing;
-      });
-    });
-    $scope.loadings = {};
-    GraphicService.Chart.get({id: $stateParams.id}).$promise.then(function(charts){
-      $scope.charts = charts;
-      for (var i = 0; i < $scope.charts.length; i++) {
-        $scope.loadings[$scope.charts[i].chartID] = true;
-      }
-    });
-    //query su charts per prendermi tutti i chart col mio thingID
-    //ciclo questi chart e mi salvo la previsione in un array di previsioni
-    $scope.deleteChart = function(id){
-      var deleteUser = $window.confirm('Sei sicuro ?');
-      if(deleteUser){
-        GraphicService.Chart.delete({id:  id}, function(){
-          $state.go($state.current, {}, {reload: true});
-        });
+        return $q.reject(rejection);
+      },
+      response: function(response){
+        //console.log('finished');
+        return response;
       }
     };
-    $scope.graphics = {};
-    $scope.showGraphics = function(id){
-      $scope.clicked = {};
-      $scope.future = false;
-      $scope.clicked[id] = ' Caricamento ... ';;
-      var aux = {
-        data: [],
-        labels: [],
-        isFuture: false,
-        result: 0
-      };
-      GraphicService.Graphic.get({id: id}).$promise.then(function(graphic){
-        aux.data.push(graphic.valuesY);
-        aux.labels = graphic.valuesX;
-        aux.result = graphic.resultFunction;
-        if(!graphic.futureV){
-          var lastItem = aux.labels.length - 1;
-          aux.labels.splice(lastItem,1);
-        }else{
-          aux.data[0].push(graphic.resultFunction);
-          $scope.future = true;
-        }
-        for (var i = 0; i < aux.labels.length; i++) {
-          aux.labels[i] = new Date(aux.labels[i]);
-          aux.labels[i] = aux.labels[i].toDateString();
-        }
-        aux.isFuture = graphic.futureV;
-        console.log(aux);
-        $scope.graphics[id] = aux;
-        $scope.loadings[id] = false;
-        $scope.clicked[id] = '';
-      });
-    }
+  }]);/*
+  umap.factory('AuthService',['$cookies',function($cookies){
+
   }]);
+  umap.controller('HeaderController',['$scope','$cookies',function($scope,$cookies) {
+
+  }]);*/
+
+
 })();
