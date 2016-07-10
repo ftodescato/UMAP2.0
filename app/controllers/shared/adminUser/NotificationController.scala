@@ -182,43 +182,68 @@ class NotificationController @Inject() (
 
   def notifyAfterMeasurementThing(thingID: UUID, measurementID: UUID, future: Boolean) = {
     var bodyMail = ""
+    //cerco l'oggetto su cui si è aggiunta una misurazione tramite ID
       thingDao.findByID(thingID).flatMap{
         case None =>
           Future.successful(BadRequest(Json.obj("message" -> Messages("measurements.notExists"))))
         case Some(thing) =>
+        //cerco notifiche legate a quell'oggetto
           notificationDao.findNotificationOfThing(thingID).flatMap{
             listNotifications =>
+            //scorro la lista delle notifiche dell'oggetto
               for(notification <- listNotifications) {
                 var parameterFind = false
+                //prendo il parametro analizzato dalla notifica
                 var parameter = notification.inputType
+                //cerco le varie misurazioni dell'oggetto
                 thingDao.findMeasurements(thingID).flatMap{
                   listOfMeasurements =>
+                  //scorro la lista delle misurazioni trovate
                     for(measurement <- listOfMeasurements){
+                      //verifico che sia l'ultima misurazione inserita quella da verificare per la notifica
                       if(measurement.measurementsID == measurementID){
+                        //se la label è != da 0
                         if (measurement.label != 0){
+                          //se si tratta di una misurazione futura
                           if(future){
+                            //mando una mail a tutti gli admin di segnalazione
                             notificationToAdmin(measurement, true)
                           }
                           else{
+                            //mando una mail a tutti gli admin di segnalazione
                             notificationToAdmin(measurement, false)
-                          }                        }
+                          }
+                        }
+                        //se non ho ancora trovato il parametro della notifica continuo a ciclare sui parametri
                         for(detectionDouble <- measurement.sensors if parameterFind == false)
+                        //controllo se è il parametro da analizzare
                           if(detectionDouble.sensor == parameter){
                             parameterFind = true
+                            //verifico nel caso sia nel parametro corretto che il valore non sia maggiore di quello previsto
                             if(detectionDouble.value > notification.valMax){
                               bodyMail = bodyMail+"Il valore "+parameter+" è a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
+                              val email = Email(
+                                "Valori "+parameter+"",
+                                "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                //Seq("Miss TO <"+notification.emailUser+">"),
+                                Seq("Miss TO <filippo.todescato@gmail.com>"),
+                                bodyText = Some(bodyMail)
+                              )
+                              mailer.send(email)
                             }
+                            //verifico nel caso sia nel parametro corretto che il valore non sia minore di quello previsto
                             if(detectionDouble.value < notification.valMin){
                               bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
+                              val email = Email(
+                                "Valori "+parameter+"",
+                                "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                //Seq("Miss TO <"+notification.emailUser+">"),
+                                Seq("Miss TO <filippo.todescato@gmail.com>"),
+                                bodyText = Some(bodyMail)
+                              )
+                              mailer.send(email)
                             }
                           }
-                          val email = Email(
-                            "Valori "+parameter+"",
-                            "LatexeBiscotti <latexebiscotti2@gmail.com>",
-                            Seq("Miss TO <"+notification.emailUser+">"),
-                            bodyText = Some(bodyMail)
-                          )
-                          mailer.send(email)
                       }
                     }
                     Future.successful(Ok(Json.toJson(listOfMeasurements)))

@@ -300,15 +300,22 @@ extends Silhouette[User, JWTAuthenticator] {
     request.body.validate[AddNewMeasurement.Data].map {
       data =>
       val thingInfo = data.thingID
+      //cerco l'oggetto su cui inserire la nuova misurazione
       thingDao.findByID(thingInfo).flatMap{
+        //se lo trovo
         case Some(thingToAssign) =>
+        //cerco il thingType di questto oggetto
           thingTypeDao.findByID(thingToAssign.thingTypeID).flatMap{
+            //se lo trovo
             case Some(thingType) =>
-              var dataThingType = thingType.doubleValue
-              var listParametersthingType = new ListBuffer[String]
+              var dataThingType = thingType.doubleValue //mi prendo la lista di parametri
+              var listParametersthingType = new ListBuffer[String]  //creo una nuova ListBuffer di parametri vuota
+              //ciclo i vari parametri del modello dell'oggetto con la nuova misurazione da inserire
               for(infoThingType <- dataThingType.infos){
+                //e inserisco i parametri all'interno della nuova lista
                 listParametersthingType += infoThingType.name
               }
+              //controllo che la nuova lista sia diversa alla lista di parametri inserita nella nuova misurazione
               if (!(listParametersthingType.equals(data.sensor))){
 
                   modelLogRegDao.findByThingID(data.thingID).flatMap{
@@ -345,7 +352,7 @@ extends Silhouette[User, JWTAuthenticator] {
                       sensors = listBufferDD,
                       label = newLabel
                       )
-                      measurementsFuture(measurements)
+                      //measurementsFuture(measurements)
                   for{
                     thing <- thingDao.addMeasurements(thingInfo, measurements)
 
@@ -356,15 +363,18 @@ extends Silhouette[User, JWTAuthenticator] {
                     Future.successful(Ok(Json.toJson(newLabel)))
                   }
                 }
+                //se la lista è uguale
               else{
-
+                //cerco il modello label dell'oggetto a cui voglio inserire una misurazione
                 modelLogRegDao.findByThingID(data.thingID).flatMap{
                   case None =>
                     Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+                  //se lo trovo
                   case Some(modello) =>
+                  //ciclo doppio in cui inserisco i valori della misurazione da inserire
                   val listDD = for((sensorName, valueDouble) <- (data.sensor zip data.value))
                   yield new DetectionDouble(sensorName, valueDouble)
-
+                  //arrayBuffer vuoto contenente i DD value della misurazione
                   var arrayDouble =new ArrayBuffer[Double]
                   for(it <- listDD){
                     arrayDouble+=it.value
@@ -372,21 +382,57 @@ extends Silhouette[User, JWTAuthenticator] {
                   val e = new Engine
                   // faccio la predizione della nuova label
                   var newLabel = e.getLogRegPrediction(modello,arrayDouble.toArray)
-                val measurements = Measurements(
+                  //creo la nuova misurazione con label
+                  val measurements = Measurements(
                   measurementsID = UUID.randomUUID(),
                   thingID = data.thingID,
                   dataTime = data.dataTime,
                   sensors = listDD,
                   label = newLabel
                 )
-                measurementsFuture(measurements)
 
+                var count = 0
+                //new ListBuffer contenente
+                var futureSensorList = new ListBuffer[DetectionDouble]
+                var arrayDoubleF = new ArrayBuffer[Double]
+                //ciclo sui sui DD della misurazione appena inserita
+                for(sensorItem <- measurements.sensors){
+                  //calcolo il futuro per il valore DD in posizione count
+                  var valueFuture = appController.futureV(thingToAssign, count)
+                  //creo un nuovo DD con il valore futuro
+                  val futureDD = DetectionDouble(
+                    sensor = sensorItem.sensor,
+                    value = valueFuture
+                  )
+                  //aggiungo alla listaBuffer il nuovo DD
+                  futureSensorList += futureDD
+                  arrayDoubleF += futureDD.value
+                }
+
+                var nextDate= Calendar.getInstance()
+                nextDate.setTime(measurements.dataTime)
+                nextDate.add(Calendar.DAY_OF_MONTH, 1)
+                var newLabelF = e.getLogRegPrediction(modello,arrayDoubleF.toArray)
+
+                val futureMeasurement = Measurements(
+                  measurementsID = UUID.randomUUID(),
+                  thingID = data.thingID,
+                  dataTime = nextDate.getTime(),
+                  sensors = futureSensorList.toList,
+                  label = newLabelF
+                )
+                thingDao.addMeasurements(thingInfo, futureMeasurement)
+                notificationController.notifyAfterMeasurementThing(thingToAssign.thingID, futureMeasurement.measurementsID, true)
+                notificationController.notifyAfterMeasurementThingType(thingToAssign.thingTypeID, futureMeasurement.measurementsID, true)
                 for{
+                  //aggiungo la nuova misurazione
                   thing <- thingDao.addMeasurements(thingInfo, measurements)
+                  //thingF <- thingDao.addMeasurements(thingInfo, futureMeasurement)
                   } yield {
                     println("ciao")
-                    notificationController.notifyAfterMeasurementThing(thing.thingID, measurements.measurementsID, false)
-                    notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, measurements.measurementsID, false)
+                    notificationController.notifyAfterMeasurementThing(thingToAssign.thingID, measurements.measurementsID, false)
+                    notificationController.notifyAfterMeasurementThingType(thingToAssign.thingTypeID, measurements.measurementsID, false)
+
                     Ok(Json.obj("ok" -> "ok")) }
                     Future.successful(Ok(Json.toJson(newLabel)))
                   }
@@ -402,52 +448,55 @@ extends Silhouette[User, JWTAuthenticator] {
       }
   }
 
-  def measurementsFuture(measurement: Measurements) = {
-    thingDao.findByID(measurement.thingID).flatMap{
-      thing =>
-      modelLogRegDao.findByThingID(thing.get.thingID).flatMap{
-        case None =>
-          Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
-        case Some(modello) =>
-            var count = 0
-            var futureSensorList = new ListBuffer[DetectionDouble]
-            var arrayDouble = Array.empty[Double]
-            for(sensorItem <- measurement.sensors){
-              var valueFuture = appController.futureV(thing.get, count)
-              val futureDD = DetectionDouble(
-                sensor = sensorItem.sensor,
-                value = valueFuture
-              )
-              futureSensorList += futureDD
-              arrayDouble :+ futureDD.value
-            }
-          val e = new Engine
-          var nextDate= Calendar.getInstance()
-          nextDate.setTime(measurement.dataTime)
-          nextDate.add(Calendar.DAY_OF_MONTH, 1)
-          // faccio la predizione della nuova label
-          var newLabel = e.getLogRegPrediction(modello,arrayDouble)
 
 
-        val futureMeasurement = Measurements(
-          measurementsID = UUID.randomUUID(),
-          thingID = measurement.thingID,
-          dataTime = nextDate.getTime(),
-          sensors = futureSensorList.toList,
-          label = newLabel
-        )
-        for{
-          thing <-   thingDao.addMeasurements(measurement.thingID, futureMeasurement)
-          } yield {
 
-            notificationController.notifyAfterMeasurementThing(measurement.thingID, futureMeasurement.measurementsID, true)
-            notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, futureMeasurement.measurementsID, true)
-            Ok(Json.obj("ok" -> "ok"))
-            Future.successful(Ok(Json.toJson(newLabel)))
-          }
-      }
-      Future.successful(Ok(Json.toJson(thing)))
-     }
-  }
+  // def measurementsFuture(measurement: Measurements) = {
+  //   thingDao.findByID(measurement.thingID).flatMap{
+  //     thing =>
+  //     modelLogRegDao.findByThingID(thing.get.thingID).flatMap{
+  //       case None =>
+  //         Future.successful(BadRequest(Json.obj("message" -> Messages("modelLogReg.notExists"))))
+  //       case Some(modello) =>
+  //           var count = 0
+  //           var futureSensorList = new ListBuffer[DetectionDouble]
+  //           var arrayDouble = Array.empty[Double]
+  //           for(sensorItem <- measurement.sensors){
+  //             var valueFuture = appController.futureV(thing.get, count)
+  //             val futureDD = DetectionDouble(
+  //               sensor = sensorItem.sensor,
+  //               value = valueFuture
+  //             )
+  //             futureSensorList += futureDD
+  //             arrayDouble :+ futureDD.value
+  //           }
+  //       //   val e = new Engine
+  //       //   var nextDate= Calendar.getInstance()
+  //       //   nextDate.setTime(measurement.dataTime)
+  //       //   nextDate.add(Calendar.DAY_OF_MONTH, 1)
+  //       //   // faccio la predizione della nuova label
+  //       //   var newLabel = e.getLogRegPrediction(modello,arrayDouble)
+  //       //
+  //       //
+  //       // val futureMeasurement = Measurements(
+  //       //   measurementsID = UUID.randomUUID(),
+  //       //   thingID = measurement.thingID,
+  //       //   dataTime = nextDate.getTime(),
+  //       //   sensors = futureSensorList.toList,
+  //       //   label = newLabel
+  //       // )
+  //       for{
+  //         thing <-   thingDao.addMeasurements(measurement.thingID, futureMeasurement)
+  //         } yield {
+  //
+  //           notificationController.notifyAfterMeasurementThing(measurement.thingID, futureMeasurement.measurementsID, true)
+  //           notificationController.notifyAfterMeasurementThingType(thing.thingTypeID, futureMeasurement.measurementsID, true)
+  //           Ok(Json.obj("ok" -> "ok"))
+  //           Future.successful(Ok(Json.toJson(newLabel)))
+  //         }
+  //     }
+  //     Future.successful(Ok(Json.toJson(thing)))
+  //    }
+  // }
 
 }
