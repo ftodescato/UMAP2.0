@@ -224,7 +224,7 @@ class NotificationController @Inject() (
                               bodyMail = bodyMail+"Il valore "+parameter+" è a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
                               val email = Email(
                                 "Valori "+parameter+"",
-                                "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                "LatexeBiscotti <2latexebiscotti@gmail.com>",
                                 Seq("Miss TO <"+notification.emailUser+">"),
                                 bodyText = Some(bodyMail)
                               )
@@ -235,7 +235,7 @@ class NotificationController @Inject() (
                               bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
                               val email = Email(
                                 "Valori "+parameter+"",
-                                "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                "LatexeBiscotti <2latexebiscotti@gmail.com>",
                                 Seq("Miss TO <"+notification.emailUser+">"),
                                 bodyText = Some(bodyMail)
                               )
@@ -286,7 +286,7 @@ class NotificationController @Inject() (
                                       bodyMail = bodyMail+"Il valore "+parameter+" nella prossima misurazione sarà a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
                                       val email = Email(
                                         "Valori "+parameter+"",
-                                        "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                        "LatexeBiscotti <2latexebiscotti@gmail.com>",
                                         Seq("Miss TO <"+notification.emailUser+">"),
                                         bodyText = Some(bodyMail)
                                       )
@@ -296,7 +296,7 @@ class NotificationController @Inject() (
                                       bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il massimo previsto è per"+notification.valMin+"."
                                       val email = Email(
                                         "Valori "+parameter+"",
-                                        "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                        "LatexeBiscotti <2latexebiscotti@gmail.com>",
                                         Seq("Miss TO <"+notification.emailUser+">"),
                                         bodyText = Some(bodyMail)
                                       )
@@ -308,7 +308,7 @@ class NotificationController @Inject() (
                                       bodyMail = bodyMail+"Il valore "+parameter+" nella prossima misurazione sarà a: "+detectionDouble.value+" e il minimo previsto è per "+notification.valMax+"."
                                       val email = Email(
                                         "Valori "+parameter+"",
-                                        "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                        "LatexeBiscotti <2latexebiscotti@gmail.com>",
                                         Seq("Miss TO <"+notification.emailUser+">"),
                                         bodyText = Some(bodyMail)
                                       )
@@ -318,7 +318,7 @@ class NotificationController @Inject() (
                                       bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
                                       val email = Email(
                                         "Valori "+parameter+"",
-                                        "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                        "LatexeBiscotti <2latexebiscotti@gmail.com>",
                                         Seq("Miss TO <"+notification.emailUser+">"),
                                         bodyText = Some(bodyMail)
                                       )
@@ -354,7 +354,7 @@ class NotificationController @Inject() (
                 if(future){
                   val email = Email(
                     "Stato oggetto",
-                    "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                    "LatexeBiscotti <2latexebiscotti@gmail.com>",
                     Seq("Miss TO <"+admin.email+">"),
                     bodyText = Some(thing.get.name+" si troverà in stato: "+measurement.label+" nella sua prossima misurazione.")
                   )
@@ -363,7 +363,7 @@ class NotificationController @Inject() (
                 else{
                   val email = Email(
                     "Stato oggetto",
-                    "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                    "LatexeBiscotti <2latexebiscotti@gmail.com>",
                     Seq("Miss TO <"+admin.email+">"),
                     bodyText = Some(thing.get.name+" è in stato: "+measurement.label+".")
                   )
