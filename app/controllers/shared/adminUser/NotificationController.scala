@@ -225,8 +225,7 @@ class NotificationController @Inject() (
                               val email = Email(
                                 "Valori "+parameter+"",
                                 "LatexeBiscotti <latexebiscotti2@gmail.com>",
-                                //Seq("Miss TO <"+notification.emailUser+">"),
-                                Seq("Miss TO <filippo.todescato@gmail.com>"),
+                                Seq("Miss TO <"+notification.emailUser+">"),
                                 bodyText = Some(bodyMail)
                               )
                               mailer.send(email)
@@ -237,8 +236,7 @@ class NotificationController @Inject() (
                               val email = Email(
                                 "Valori "+parameter+"",
                                 "LatexeBiscotti <latexebiscotti2@gmail.com>",
-                                //Seq("Miss TO <"+notification.emailUser+">"),
-                                Seq("Miss TO <filippo.todescato@gmail.com>"),
+                                Seq("Miss TO <"+notification.emailUser+">"),
                                 bodyText = Some(bodyMail)
                               )
                               mailer.send(email)
@@ -248,7 +246,6 @@ class NotificationController @Inject() (
                     }
                     Future.successful(Ok(Json.toJson(listOfMeasurements)))
                 }
-
             }
             Future.successful(Ok(Json.toJson(listNotifications)))
           }
@@ -287,26 +284,48 @@ class NotificationController @Inject() (
                                   if(detectionDouble.value > notification.valMax){
                                     if(future){
                                       bodyMail = bodyMail+"Il valore "+parameter+" nella prossima misurazione sarà a: "+detectionDouble.value+" e il massimo previsto è per "+notification.valMax+"."
+                                      val email = Email(
+                                        "Valori "+parameter+"",
+                                        "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                        Seq("Miss TO <"+notification.emailUser+">"),
+                                        bodyText = Some(bodyMail)
+                                      )
+                                      mailer.send(email)
                                     }
                                     else{
                                       bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il massimo previsto è per"+notification.valMin+"."
+                                      val email = Email(
+                                        "Valori "+parameter+"",
+                                        "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                        Seq("Miss TO <"+notification.emailUser+">"),
+                                        bodyText = Some(bodyMail)
+                                      )
+                                      mailer.send(email)
                                     }
                                   }
                                   if(detectionDouble.value < notification.valMin){
                                     if(future){
                                       bodyMail = bodyMail+"Il valore "+parameter+" nella prossima misurazione sarà a: "+detectionDouble.value+" e il minimo previsto è per "+notification.valMax+"."
+                                      val email = Email(
+                                        "Valori "+parameter+"",
+                                        "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                        Seq("Miss TO <"+notification.emailUser+">"),
+                                        bodyText = Some(bodyMail)
+                                      )
+                                      mailer.send(email)
                                     }
                                     else{
                                       bodyMail = bodyMail+ "Il valore "+parameter+" è a:"+detectionDouble.value+" e il minimo previsto è per"+notification.valMin+"."
+                                      val email = Email(
+                                        "Valori "+parameter+"",
+                                        "LatexeBiscotti <latexebiscotti2@gmail.com>",
+                                        Seq("Miss TO <"+notification.emailUser+">"),
+                                        bodyText = Some(bodyMail)
+                                      )
+                                      mailer.send(email)
                                     }                                  }
                                 }
-                                val email = Email(
-                                  "Valori "+parameter+"",
-                                  "LatexeBiscotti <latexebiscotti2@gmail.com>",
-                                  Seq("Miss TO <"+notification.emailUser+">"),
-                                  bodyText = Some(bodyMail)
-                                )
-                                mailer.send(email)
+
                             }
                           }
                           Future.successful(Ok(Json.toJson(listOfMeasurements)))
